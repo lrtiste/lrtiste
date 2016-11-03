@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<button id="button">Click me</button>
+<button id="button2">Click me</button>
+<style>
+  [aria-hidden=true] {
+    display: none;
+  }
+</style>
+<ul role="tablist">
+  <li>
+    <article>
+      <h2 id="tab1" role="tab">foo
+        <button aria-controls="tabpanel1">label</button>
+      </h2>
+      <p id="tabpanel1" role="tabpanel" aria-labelledby="tab1">content</p>
+    </article>
+  </li>
+  <li>
+    <article>
+      <h2 id="tab2" role="tab">foo</h2>
+      <p id="tabpanel2" role="tabpanel" aria-labelledby="tab2">content</p>
+    </article>
+  </li>
+  <li>
+    <article>
+      <h2 id="tab3" role="tab">foo</h2>
+      <p id="tabpanel3" role="tabpanel" , aria-labelledby="tab3">content</p>
+    </article>
+  </li>
+</ul>
+<script src="./dist/index.js"></script>
+</body>
+</html>

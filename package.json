@@ -1,0 +1,22 @@
+{
+  "name": "lartiste",
+  "version": "1.0.0",
+  "description": "widget library, behaviours driven",
+  "main": "index.js",
+  "author": "Laurent Renard",
+  "license": "MIT",
+  "scripts": {
+    "build": "rollup -c ./rollup.config.js",
+    "build:test": "rollup -c ./test/rollup.config.js",
+    "test": "npm run build:test && node ./test/dist/index.js"
+  },
+  "dependencies": {
+    "stampit": "^3.0.6"
+  },
+  "devDependencies": {
+    "rollup": "^0.36.3",
+    "rollup-plugin-commonjs": "^5.0.5",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "tape": "^4.6.2"
+  }
+}
