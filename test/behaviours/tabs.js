@@ -1,4 +1,4 @@
-import {tabList, tab} from '../../lib/tabs';
+import {tabList, tab} from '../../behaviours/tabs';
 import {default as tape} from 'tape';
 
 export function test () {

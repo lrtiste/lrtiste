@@ -1,4 +1,4 @@
-import {list, set} from '../../lib/list';
+import {list, set} from '../../behaviours/list';
 import {default as tape} from 'tape';
 
 export function test () {

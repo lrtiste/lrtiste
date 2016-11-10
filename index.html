@@ -5,35 +5,167 @@
   <title>Title</title>
 </head>
 <body>
-<button id="button">Click me</button>
-<button id="button2">Click me</button>
 <style>
+
+  body {
+    box-sizing: border-box;
+  }
+
+  body * {
+    box-sizing: inherit;
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+
+  .tabs [role=tab] {
+    display: inline-block;
+    padding: 1em;
+    cursor: pointer;
+    border-radius: 5px 5px 0 0;
+  }
+
+  [role=tab][aria-selected=true] {
+    transition: background 0.3s;
+    background: lightgrey;
+    color: white;
+  }
+
+  [role=tab]:focus {
+    background: #ff8c8c;
+    transition: background 0.3s, color 0.3s;
+    outline: 0;
+    color: white;
+    box-shadow: 0 0 5px 0 #5b5fc9;
+  }
+
+  [role=tabpanel] {
+    background: lightgrey;
+    padding: 1em;
+    z-index: 33;
+  }
+
   [aria-hidden=true] {
     display: none;
   }
+
+  section {
+    margin: 2em;
+  }
+
+  nav {
+    width: 100%;
+  }
+
+  [role=menubar] {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+  }
+
+  /*ul.accordion {*/
+  /*list-style: none;*/
+  /*}*/
+
+  /*[role=tab]:focus {*/
+  /*}*/
+
+  /*[aria-hidden=true] {*/
+  /*display: none;*/
+  /*}*/
+
+  /*[aria-selected=true] {*/
+  /*background: #ebebeb;*/
+  /*}*/
+
+  /*[aria-selected=true]:focus {*/
+  /*background: lightblue;*/
+  /*border: none;*/
+  /*outline: none;*/
+  /*}*/
+
+  [aria-expanded=true] + [role='menu'] {
+    display: block;
+  }
+
+  [aria-expanded=false] + [role='menu'] {
+    display: none;
+  }
+
+  [role=menuitem]:focus {
+    background: lightblue;
+  }
+
+
 </style>
-<ul role="tablist">
-  <li>
-    <article>
-      <h2 id="tab1" role="tab">foo
-        <button aria-controls="tabpanel1">label</button>
-      </h2>
-      <p id="tabpanel1" role="tabpanel" aria-labelledby="tab1">content</p>
-    </article>
-  </li>
-  <li>
-    <article>
-      <h2 id="tab2" role="tab">foo</h2>
-      <p id="tabpanel2" role="tabpanel" aria-labelledby="tab2">content</p>
-    </article>
-  </li>
-  <li>
-    <article>
-      <h2 id="tab3" role="tab">foo</h2>
-      <p id="tabpanel3" role="tabpanel" , aria-labelledby="tab3">content</p>
-    </article>
-  </li>
-</ul>
+
+<section>
+  <div class="tabs">
+    <ul role="tablist">
+      <li id="tab1" role="tab" aria-controls="tabpanel1" aria-selected="true">Header 1</li>
+      <li id="tab2" role="tab" aria-controls="tabpanel2">Header 2</li>
+      <li id="tab3" role="tab" aria-controls="tabpanel3">header 3</li>
+    </ul>
+    <div role="tabpanel" id="tabpanel1">
+      <p>content for tab 1<input type="text"></p>
+    </div>
+    <div id="tabpanel2" role="tabpanel">
+      <p>content for tab second<input type="text"></p>
+    </div>
+    <div id="tabpanel3" role="tabpanel">
+      <p>content for tab 3<input type="text"></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div id="dropdown">
+    <button type="button" aria-haspopup="true" id="menu-toggler">Actions</button>
+    <ul id="myMenu" role="menu" aria-labelledby="menu-toggler">
+      <li role="menuitem" onclick="console.log('blah')">action1</li>
+      <li role="menuitem">option 2</li>
+      <li role="menuitem">option 3</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <nav tabindex="0" aria-label="site navigation" aria-describedby="description">
+    <ul role="menubar">
+      <li role="menuitem">
+        <button type="button" id="toggle1" aria-haspopup="true">Components</button>
+        <ul role="menu" aria-labelledby="toggle1">
+          <li role="menuitem">Accordion</li>
+          <li role="menuitem">tab</li>
+          <li role="menuitem">dropdown</li>
+          <li role="menuitem">menu</li>
+        </ul>
+      </li>
+      <li role="menuitem">
+        <span href="">foo</span>
+      </li>
+      <li role="menuitem">
+        <button type="button" aria-haspopup="true">Sub menu 3</button>
+        <ul role="menu">
+          <li role="menuitem"><span href="">foo bar s</span></li>
+          <li role="menuitem"><span href="">foo bar sdf</span></li>
+          <li role="menuitem"><span href="">foo bars dfds</span></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+</section>
+<section>
+  <div aria-valuemin="10" aria-valuemax="50" aria-valuenow="25" tabindex="0" role="slider">Slider</div>
+</section>
+
+<a href="">Get my focus</a>
+<p id="description">The site navigator will behave as a menu bar. To enter the menu press tab</p>
+
 <script src="./dist/index.js"></script>
 </body>
 </html>

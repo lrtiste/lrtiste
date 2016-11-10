@@ -6,6 +6,6 @@ import {test as tabs} from './tabs';
 export function test () {
   elements();
   observable();
-  list();
-  tabs();
+  // list();
+  // tabs();
 }

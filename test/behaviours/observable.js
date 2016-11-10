@@ -1,4 +1,4 @@
-import {observable} from '../../lib/observable';
+import {observable} from '../../behaviours/observable';
 import {default as tape} from 'tape';
 
 export function test () {
