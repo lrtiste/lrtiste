@@ -1,4 +1,5 @@
-import {init} from 'stampit';
+import {init, compose} from 'stampit';
+import {element} from './elements';
 
 export function observable (...properties) {
   return init(function () {
@@ -7,7 +8,7 @@ export function observable (...properties) {
     if (!this.$onChange || !this.$on) {
       this.$onChange = (prop, newVal) => {
         const ls = listeners[prop] || [];
-        for (let cb of ls) {
+        for (const cb of ls) {
           cb(newVal);
         }
         return this;
@@ -21,7 +22,7 @@ export function observable (...properties) {
       };
     }
 
-    for (let prop of properties) {
+    for (const prop of properties) {
       let value = this[prop];
       Object.defineProperty(this, prop, {
         get(){
@@ -34,4 +35,21 @@ export function observable (...properties) {
       });
     }
   });
+}
+
+const mandatoryEl = element();
+
+export function mapToAria (prop, ...attributes) {
+  const ariaAttributes = attributes.map(attr=>['aria', attr].join('-'));
+  return compose(
+    mandatoryEl,
+    observable(prop),
+    init(function () {
+      this.$on(prop, newVal => {
+          for (const att of ariaAttributes){
+            this.el.setAttribute(att,newVal);
+          }
+      });
+    })
+  );
 }

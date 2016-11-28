@@ -1,0 +1,17 @@
+doctype html
+html(lang='en')
+    head
+        title #{title + '| lrtiste website'}
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        link(href='../../../node_modules/prismjs/themes/prism-okaidia.css', rel='stylesheet')
+        link(href='../theme.css', rel='stylesheet')
+    body
+        header(role='banner')
+            nav
+                ul
+                    li
+                        a(href='#') test
+        main#main
+            block content
+        footer foo bar
+        script(src='../theme.js')

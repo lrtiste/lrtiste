@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+
+<style>
+
+  * {
+    box-sizing: border-box;
+  }
+
+  [role=tooltip] {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    padding: 1em;
+  }
+
+  [aria-describedby]:focus + [role=tooltip], [aria-describedby]:hover + [role=tooltip] {
+    display: inline-block;
+    background: darkblue;
+    color: white;
+    animation: 1s in;
+  }
+
+  @keyframes in {
+    0% {
+      opacity: 0
+    }
+    100% {
+      opacity: 1
+    }
+  }
+
+</style>
+<body>
+<div style="position:relative;display:inline-block">
+  <a tabindex="0" href="#" aria-describedby="tooltip">going there</a>
+  <p role="tooltip" id="tooltip">to go somewhere</p>
+</div>
+<p>hello world</p>
+<script src="../../dist/tooltips.js"></script>
+</body>
+</html>

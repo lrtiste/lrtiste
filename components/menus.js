@@ -70,7 +70,7 @@ const menuEventBinding = init(function () {
 
     const {keyCode:k, target} = event;
     if (k === 13 || k === 32) {
-      if (target.tagName !== 'BUTTON') {
+      if (target.tagName !== 'BUTTON' || target.tagName !== 'A') {
         this.toggle();
       }
     } else if (k === 40 && !this.isOpen) {
@@ -143,7 +143,7 @@ function menuInitStamp ({menuItem = menuItemStamp}={}) {
     this.toggler.setAttribute('tabindex', 0);
     this.menu.el.setAttribute('tabindex', -1);
 
-    for (let el of this.menu.el.querySelectorAll('[role="menuitem"]')) {
+    for (const el of this.menu.el.querySelectorAll('[role="menuitem"]')) {
       menuItem({listMediator: this, el});
     }
 
@@ -197,7 +197,7 @@ export function menuBar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) 
     ariaElement({ariaRole: 'menubar'}),
     listMediatorStamp,
     init(function () {
-      for (let item of findChildrenMenuItem(this.el)) {
+      for (const item of findChildrenMenuItem(this.el)) {
         if (item.querySelector('[role=menu]') !== null) {
           subMenu({el: item, listMediator: this});
         } else {

@@ -7,11 +7,10 @@ const abstractListMediatorStamp = init(function ({items = []}) {
     addItem(item){
       this.items.push(item);
     },
-    //speaking about focus
     selectItem(item){
       const index = this.items.indexOf(item);
       if (index !== -1) {
-        for (let i of this.items) {
+        for (const i of this.items) {
           i.isSelected = i === item;
         }
       }
@@ -52,7 +51,7 @@ const listItemStamp = init(function ({listMediator, isOpen}) {
     },
     selectNext(){
       this.listMediator.selectNextItem(this);
-    }
+    },
   });
 
 const multiSelectMediatorStamp = compose(abstractListMediatorStamp, methods({
@@ -66,7 +65,7 @@ const multiSelectMediatorStamp = compose(abstractListMediatorStamp, methods({
 
 const listMediatorStamp = compose(abstractListMediatorStamp, methods({
   toggleItem(item){
-    for (let i of this.items) {
+    for (const i of this.items) {
       i.isOpen = i === item ? !i.isOpen : false;
     }
     return this;

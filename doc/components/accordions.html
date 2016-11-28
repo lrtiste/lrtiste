@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Accordions</title>
+</head>
+<body>
+<style>
+
+  /*[role=tabpanel] {*/
+  /*display: none;*/
+  /*}*/
+
+  /*input[type=checkbox]:checked + [role=tabpanel] {*/
+  /*display: block;*/
+  /*}*/
+
+  .visuallyhidden {
+    position: absolute;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+  }
+
+  /*[role=tabpanel] {*/
+    /*display: none;*/
+  /*}*/
+
+  /*input[type=checkbox]:checked + h3 + [role=tabpanel] {*/
+    /*display: block;*/
+  /*}*/
+
+  /*input[type=checkbox]:focus + h3, h3:hover {*/
+    /*outline: 2px solid blue;*/
+  /*}*/
+
+  [role=tabpanel]{
+    display: none;
+  }
+
+  [role=tabpanel][aria-hidden=false]{
+    display: block;
+  }
+
+  [role=tab]:focus{
+    outline: 1px solid lightblue;
+  }
+
+  [role=tab][aria-selected=true]{
+    background: lightgrey;
+  }
+
+
+</style>
+<!--<div role="tablist" class="accordion">-->
+  <!--<input class="visuallyhidden" role="tab" aria-controls="accordion1" id="checkbox1" type="checkbox"/>-->
+  <!--<h3>-->
+    <!--<label id="header1" for="checkbox1">That is the first question</label>-->
+  <!--</h3>-->
+  <!--<p id="accordion1" aria-labelledby="header1" role="tabpanel">this is the content of accordion 1 <a href="#">a Link</a>-->
+  <!--</p>-->
+  <!--<input class="visuallyhidden" role="tab" aria-controls="accordion2" type="checkbox" id="checkbox2"/>-->
+  <!--<h3 id="header2">-->
+    <!--<label aria-controls="accordion2" for="checkbox2">Accordion 2</label>-->
+  <!--</h3>-->
+  <!--<p id="accordion2" aria-labelledby="header2" role="tabpanel">this is the content of accordion 2<a href="#foo">FOO</a>-->
+  <!--</p>-->
+  <!--<input class="visuallyhidden" role="tab" aria-controls="accordion3" type="checkbox" id="checkbox3"/>-->
+  <!--<h3 id="header3">-->
+    <!--<label aria-controls="accordion2" for="checkbox3">Accordion 3</label>-->
+  <!--</h3>-->
+  <!--<p id="accordion3" aria-labelledby="header3" role="tabpanel">this <a href="#accordion1">is</a> the content of-->
+    <!--accordion 3</p>-->
+<!--</div>-->
+
+<div role="tablist">
+  <section>
+    <h3 tabindex="0" role="tab" id="tab1" aria-controls="tabpanel1">header one</h3>
+    <p id="tabpanel1" role="tabpanel" aria-labelledby="tab1">
+      foo bar woot woot what raymond blah <a href="#">FOO</a>
+    </p>
+  </section>
+  <section>
+    <h3 role="tab" id="tab2" aria-controls="tabpanel2">second header</h3>
+    <p id="tabpanel2" role="tabpanel" aria-labelledby="tab2">
+      foo bar woot woot what raymond blah content
+    </p>
+  </section>
+  <section>
+    <h3 role="tab" id="tab3" aria-controls="tabpanel3">header three</h3>
+    <p id="tabpanel3" role="tabpanel" aria-labelledby="tab3">
+      foo bar woot woot what raymond blah third thing <a href="#">FOO</a>
+    </p>
+  </section>
+</div>
+
+<a href="#">outside focus</a>
+<script src="../../dist/accordions.js"></script>
+
+</body>
+</html>

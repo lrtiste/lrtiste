@@ -1,9 +1,3 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(factory());
-}(this, (function () { 'use strict';
-
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
@@ -455,7 +449,7 @@ var init = stampit_full$1.init;
 var methods = stampit_full$1.methods;
 
 function element ({propertyName = 'el'}={propertyName: 'el'}) {
-  return init(function (opts = {}) {
+  return init(function assertElement(opts = {}) {
     const el = opts[propertyName];
     if (!el) {
       throw new Error(`You must provide a dom element as "${propertyName}" property`);
@@ -466,48 +460,12 @@ function element ({propertyName = 'el'}={propertyName: 'el'}) {
 
 function ariaElement ({ariaRole, propertyName = 'el'}) {
   const elStamp = element({propertyName});
-  return compose(elStamp, init(function () {
+  return compose(elStamp, init(function assertAriaRole() {
     const role = this.el.getAttribute('role');
     if (role !== ariaRole) {
       throw new Error(`the element used to create the component is expected to have the aria role ${ariaRole}`);
     }
   }));
-}
-
-function observable (...properties$$1) {
-  return init(function () {
-    const listeners = {};
-
-    if (!this.$onChange || !this.$on) {
-      this.$onChange = (prop, newVal) => {
-        const ls = listeners[prop] || [];
-        for (let cb of ls) {
-          cb(newVal);
-        }
-        return this;
-      };
-
-      this.$on = (property, cb)=> {
-        const listenersList = listeners[property] || [];
-        listenersList.push(cb);
-        listeners[property] = listenersList;
-        return this;
-      };
-    }
-
-    for (let prop of properties$$1) {
-      let value = this[prop];
-      Object.defineProperty(this, prop, {
-        get(){
-          return value;
-        },
-        set(val){
-          value = val;
-          this.$onChange(prop, val);
-        }
-      });
-    }
-  });
 }
 
 const abstractListMediatorStamp = init(function ({items = []}) {
@@ -517,11 +475,10 @@ const abstractListMediatorStamp = init(function ({items = []}) {
     addItem(item){
       this.items.push(item);
     },
-    //speaking about focus
     selectItem(item){
       const index = this.items.indexOf(item);
       if (index !== -1) {
-        for (let i of this.items) {
+        for (const i of this.items) {
           i.isSelected = i === item;
         }
       }
@@ -562,7 +519,7 @@ const listItemStamp = init(function ({listMediator, isOpen}) {
     },
     selectNext(){
       this.listMediator.selectNextItem(this);
-    }
+    },
   });
 
 const multiSelectMediatorStamp = compose(abstractListMediatorStamp, methods({
@@ -576,111 +533,68 @@ const multiSelectMediatorStamp = compose(abstractListMediatorStamp, methods({
 
 const listMediatorStamp = compose(abstractListMediatorStamp, methods({
   toggleItem(item){
-    for (let i of this.items) {
+    for (const i of this.items) {
       i.isOpen = i === item ? !i.isOpen : false;
     }
     return this;
   }
 }));
 
-const tabPanelEventBinding = init(function () {
-  this.el.addEventListener('focusin', event => {
-    this.tabStamp.select();
-  });
-  this.el.addEventListener('click', event=> {
-    this.tabStamp.select();
-  });
-});
+function observable (...properties$$1) {
+  return init(function () {
+    const listeners = {};
 
-const ariaTabPanelStamp = compose(
-  ariaElement({ariaRole: 'tabpanel'}),
-  init(function ({tab}) {
-    if (!tab) {
-      throw new Error('you must pass a tab to your tabpanel');
+    if (!this.$onChange || !this.$on) {
+      this.$onChange = (prop, newVal) => {
+        const ls = listeners[prop] || [];
+        for (const cb of ls) {
+          cb(newVal);
+        }
+        return this;
+      };
+
+      this.$on = (property, cb)=> {
+        const listenersList = listeners[property] || [];
+        listenersList.push(cb);
+        listeners[property] = listenersList;
+        return this;
+      };
     }
-    Object.defineProperty(this, 'tab', {value: tab});
-  }),
-  methods({
-    hasFocus(){
-      return this.el.querySelector(':focus') !== null;
-    }
-  }),
-  tabPanelEventBinding
-);
 
-const tabEventBinding$1 = init(function () {
-  this.toggler.addEventListener('click', event => {
-    this.toggle();
-    this.select();
-  });
-
-  this.toggler.addEventListener('keydown', event=> {
-    const {keyCode:k, target} = event;
-    if (k === 13 || k === 32) {
-      if (target.tagName !== 'BUTTON') {
-        this.toggle();
-        this.select();
-      }
-    } else if (k === 37 || k === 38) {
-      this.selectPrevious();
-    } else if (k === 39 || k === 40) {
-      this.selectNext();
-    }
-  });
-});
-
-function tabPanelComponent () {
-  return ariaTabPanelStamp;
-}
-
-function tabComponent ({tabPanelComponent = ariaTabPanelStamp}) {
-  return compose(
-    ariaElement({ariaRole: 'tab'}),
-    listItemStamp,
-    observable('isOpen', 'isSelected'),
-    init(function ({tabPanelId}) {
-      const tabPanelEl = document.getElementById(tabPanelId);
-      if (!tabPanelEl) {
-        throw new Error(`could not find the tabpanel related to ${tabPanelId}`);
-      }
-      const toggler = this.el.querySelector(`[aria-controls="${tabPanelId}"`) || this.el;
-      const tabPanel = tabPanelComponent({el: tabPanelEl, tab: this});
-
-      Object.defineProperty(this, 'tabpanel', {value: tabPanel});
-      Object.defineProperty(this, 'toggler', {value: toggler});
-
-      this.$on('isOpen', isOpen => {
-        this.el.setAttribute('aria-expanded', isOpen);
-        this.tabpanel.el.setAttribute('aria-hidden', !isOpen);
-      });
-      this.$on('isSelected', isSelected => {
-        this.el.setAttribute('aria-selected', isSelected);
-        toggler.setAttribute('tabindex', isSelected ? 0 : -1);
-
-        if (isSelected && !this.tabpanel.hasFocus()) {
-          toggler.focus();
+    for (const prop of properties$$1) {
+      let value = this[prop];
+      Object.defineProperty(this, prop, {
+        get(){
+          return value;
+        },
+        set(val){
+          value = val;
+          this.$onChange(prop, val);
         }
       });
+    }
+  });
+}
 
-      this.isOpen = this.isOpen || !!this.el.getAttribute('aria-expanded');
-    }),
-    tabEventBinding$1
+const mandatoryEl = element();
+
+function mapToAria (prop, ...attributes) {
+  const ariaAttributes = attributes.map(attr=>['aria', attr].join('-'));
+  return compose(
+    mandatoryEl,
+    observable(prop),
+    init(function () {
+      this.$on(prop, newVal => {
+          for (const att of ariaAttributes){
+            this.el.setAttribute(att,newVal);
+          }
+      });
+    })
   );
 }
 
-function accordionPanel () {
-  return tabPanelComponent();
-}
-
-const defaultAccordionTabPanel = accordionPanel();
-function accordionTab ({accordionTabPanel = defaultAccordionTabPanel}={}) {
-  return tabComponent({tabPanelComponent: accordionTabPanel});
-}
-
-const defaultAccordionTab = accordionTab();
-
 const mandatoryElement = element();
-const tablist$1 = ariaElement({ariaRole: 'tablist'});
+const tablist = ariaElement({ariaRole: 'tablist'});
 
 const tabEventBinding = init(function () {
   this.el.addEventListener('keydown', event=> {
@@ -697,16 +611,14 @@ const tabEventBinding = init(function () {
   });
 });
 
-
 const tabStamp = compose(
   ariaElement({ariaRole: 'tab'}),
   listItemStamp,
-  observable('isSelected'),
-  init(function ({tabpanel}) {
+  mapToAria('isSelected','selected'),
+  init(function initializeTab({tabpanel}) {
     Object.defineProperty(this, 'tabpanel', {value: tabpanel});
 
     this.$on('isSelected', isSelected => {
-      this.el.setAttribute('aria-selected', isSelected);
       this.el.setAttribute('tabindex', isSelected ? 0 : -1);
       this.tabpanel.el.setAttribute('aria-hidden', !isSelected);
       if (isSelected) {
@@ -719,379 +631,42 @@ const tabStamp = compose(
   tabEventBinding
 );
 
+
 const tabPanelStamp = compose(
   ariaElement({ariaRole: 'tabpanel'})
 );
+
+
+
 
 
 function tabList () {
   return compose(
     mandatoryElement,
     listMediatorStamp,
-    init(function () {
-      Object.defineProperty(this, 'tablist', {value: tablist$1({el: this.el.querySelector('[role=tablist]') || this.el})});
+    init(function initializeTablist() {
+      Object.defineProperty(this, 'tablist', {value: tablist({el: this.el.querySelector('[role=tablist]') || this.el})});
       for (let tab of this.tablist.el.querySelectorAll('[role=tab]')) {
         const controlledId = tab.getAttribute('aria-controls');
-        const tabpanel = tabPanelStamp({el: this.el.querySelector(`#${controlledId}`)});
+        if(!controlledId){
+          console.log(tab);
+          throw new Error('for the tab element above, you must specify which tabpanel is controlled using aria-controls');
+        }
+        const tabpanelEl = this.el.querySelector(`#${controlledId}`);
+        if(!tabpanelEl){
+          console.log(tab);
+          throw new Error(`for the tab element above, could not find the related tabpanel with the id ${controlledId}`)
+        }
+        const tabpanel = tabPanelStamp({el: tabpanelEl});
         tabStamp({el: tab, listMediator: this, tabpanel});
       }
     })
   );
 }
 
-const mandatoryElement$1 = element();
-const menuElement = ariaElement({ariaRole: 'menu'});
-
-const abstractMenuItem = compose(
-  ariaElement({ariaRole: 'menuitem'}),
-  listItemStamp,
-  observable('isSelected'),
-  init(function () {
-    this.$on('isSelected', isSelected => {
-      this.el.setAttribute('tabindex', isSelected ? 0 : -1);
-      if (isSelected === true) {
-        this.el.focus();
-      }
-    });
-  })
-);
-
-const menuItemEvenBinding = init(function () {
-  this.el.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if (k === 37 || k === 38) {
-      this.selectPrevious();
-    } else if (k === 39 || k === 40) {
-      this.selectNext();
-    } else if ((k === 13 || k === 32) && this.listMediator.toggle) {
-      this.listMediator.toggle();
-    }
-  });
-});
-
-const menuItemStamp = compose(
-  abstractMenuItem,
-  menuItemEvenBinding
-);
-
-const subMenuItemEventBinding = init(function () {
-  this.el.addEventListener('keydown', event => {
-    const {keyCode:k} = event;
-    if (k === 38) {
-      this.selectPrevious();
-    } else if (k === 40) {
-      this.selectNext();
-    } else if (k === 13 || k === 32) {
-      this.listMediator.toggle();
-    }
-  });
-});
-
-const subMenuItemStamp = compose(
-  abstractMenuItem,
-  subMenuItemEventBinding
-);
-
-const toggleStamp = methods({
-  toggle(){
-    this.isOpen = !this.isOpen;
-  }
-});
-
-const menuEventBinding = init(function () {
-  this.toggler.addEventListener('click', event => {
-    this.toggle();
-  });
-  this.toggler.addEventListener('keydown', event => {
-
-    const {keyCode:k, target} = event;
-    if (k === 13 || k === 32) {
-      if (target.tagName !== 'BUTTON') {
-        this.toggle();
-      }
-    } else if (k === 40 && !this.isOpen) {
-      this.toggle();
-    } else if (k === 38 && this.isOpen) {
-      this.toggle();
-    }
-  });
-});
-
-const subMenuEventBinding = init(function () {
-
-  const next = () => {
-    this.selectNext();
-    if (this.isOpen) {
-      this.toggle();
-    }
-  };
-
-  const previous = () => {
-    this.selectPrevious();
-    if (this.isOpen) {
-      this.toggle();
-    }
-  };
-
-  this.toggler.addEventListener('click', event => {
-    this.toggle();
-  });
-  this.toggler.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if ((k === 13 || k === 32) && target.tagName !== 'BUTTON') {
-      this.toggle();
-    } else if (k === 39) {
-      next();
-    } else if (k === 37) {
-      previous();
-    } else if (k === 40 && target === this.toggler) {
-      if (!this.isOpen) {
-        this.toggle();
-      } else {
-        this.selectNext();
-      }
-    } else if (k === 38 && target === this.toggler) {
-      if (this.isOpen) {
-        this.toggle();
-      } else {
-        this.selectPrevious();
-      }
-    }
-  });
-  this.el.addEventListener('keydown', event => {
-    const {keyCode:k} = event;
-    if (k === 39) {
-      next();
-    } else if (k === 37) {
-      previous();
-    }
-  });
-});
-
-function menuInitStamp ({menuItem = menuItemStamp}={}) {
-  return init(function () {
-    const menu = menuElement({el: this.el.querySelector('[role=menu]') || this.el});
-    const toggler = this.el.querySelector('[aria-haspopup]') || this.el;
-
-    Object.defineProperty(this, 'toggler', {value: toggler});
-    Object.defineProperty(this, 'menu', {value: menu});
-
-    this.toggler.setAttribute('tabindex', 0);
-    this.menu.el.setAttribute('tabindex', -1);
-
-    for (let el of this.menu.el.querySelectorAll('[role="menuitem"]')) {
-      menuItem({listMediator: this, el});
-    }
-
-    this.$on('isOpen', isOpen => {
-      this.toggler.setAttribute('aria-expanded', isOpen);
-      this.menu.el.setAttribute('aria-hidden', !isOpen);
-      if (isOpen && this.items.length) {
-        this.selectItem(this.items[0]);
-      }
-    });
-    this.$on('isSelected', isSelected => {
-      this.toggler.setAttribute('tabindex', isSelected ? 0 : -1);
-      if (isSelected) {
-        this.toggler.focus();
-      }
-    });
-
-    this.isOpen = this.isOpen || !!this.toggler.getAttribute('aria-expanded');
-  });
-}
-
-const abstractMenuStamp = compose(
-  mandatoryElement$1,
-  listMediatorStamp,
-  toggleStamp,
-  observable('isOpen')
-);
-
-function dropdown ({menuItem = menuItemStamp} ={}) {
-  return compose(
-    abstractMenuStamp,
-    menuInitStamp({menuItem}),
-    menuEventBinding
-  );
-}
-
-function subMenu ({menuItem = subMenuItemStamp}={}) {
-  return compose(
-    listItemStamp,
-    abstractMenuStamp,
-    observable('isSelected'),
-    menuInitStamp({menuItem}),
-    subMenuEventBinding
-  );
-}
-
-const subMenuStamp = subMenu({menuItem: subMenuItemStamp});
-
-function menuBar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) {
-  return compose(
-    ariaElement({ariaRole: 'menubar'}),
-    listMediatorStamp,
-    init(function () {
-      for (let item of findChildrenMenuItem(this.el)) {
-        if (item.querySelector('[role=menu]') !== null) {
-          subMenu({el: item, listMediator: this});
-        } else {
-          menuItem({listMediator: this, el: item});
-        }
-      }
-    })
-  );
-}
-
-
-
-
-
-function findChildrenMenuItem (base) {
-  const items = [];
-  for (const c of base.children) {
-    const role = c.getAttribute('role');
-    if (role === 'menu') {
-      continue;
-    }
-    if (role === 'menuitem') {
-      items.push(c);
-    } else {
-      items.push(...findChildrenMenuItem(c));
-    }
-  }
-  return items;
-}
-
-const sliderInit = init(function ({stepSize = 1, valueTextFn = val => val}) {
-  Object.defineProperty(this, 'stepSize', {value: stepSize});
-  Object.defineProperty(this, 'valueText', {
-    get(){
-      return valueTextFn(this.currentValue);
-    }
-  });
-});
-
-const behaviour = init(function () {
-
-  let value = this.currentValue || this.minValue;
-
-  this.increment = function (steps = 1) {
-    value = Math.min(value + steps * this.stepSize, this.maxValue);
-    this.$onChange('currentValue', value); // manual emit (to keep the value private)
-  };
-
-  this.decrement = function (steps = 1) {
-    value = Math.max(value - steps * this.stepSize, this.minValue);
-    this.$onChange('currentValue', value); // manual emit (to keep the value private)
-  };
-
-  Object.defineProperty(this, 'currentValue', {
-    get(){
-      return value;
-    }
-  });
-
-  this.$onChange('currentValue', this.currentValue);
-});
-
-const sliderStamp = compose(sliderInit, observable(), behaviour);
-
-const sliderEventBinding = init(function () {
-  this.el.addEventListener('keydown', event => {
-    const {keyCode:k} = event;
-    if (k === 37 || k === 40) {
-      this.decrement();
-    }
-    else if (k === 38 || k === 39) {
-      this.increment();
-    }
-  });
-});
-
-const sliderLinking = init(function () {
-  this.minValue = +(this.el.getAttribute('aria-valuemin'));
-  this.maxValue = +(this.el.getAttribute('aria-valuemax'));
-  this.currentValue = +(this.el.getAttribute('aria-valuenow'));
-
-  this.$on('currentValue', val=> {
-    this.el.setAttribute('aria-valuenow', val);
-    this.el.setAttribute('aria-valuetext', this.valueText);
-  });
-
-  this.$on('minValue',value=>{
-    this.el.setAttribute('aria-valuemin',value);
-  });
-  this.$on('maxValue',value=>{
-    this.el.setAttribute('aria-valuemax',value);
-  });
-});
-
-
-function slider () {
-  return compose(
-    ariaElement({ariaRole: 'slider'}),
-    observable('minValue','maxValue'),
-    sliderLinking,
-    sliderStamp,
-    sliderEventBinding
-  );
-}
-
-// const animatedTab = compose(
-//   tabStamp(),
-//   init(function () {
-//     this.$on('isOpen', isOpen => {
-//       this.tabpanel.el.classList.toggle('expanded', isOpen);
-//     });
-//     this.$onChange('isOpen', this.isOpen);
-//   })
-// );
-
-
-//
-// const animatatedTab = compose(accordionTab(), init(function () {
-//   this.$on('isOpen', isOpen => {
-//     if (isOpen) {
-//       this.tabpanel.el.classList.remove('collapse');
-//       this.tabpanel.el.classList.add('collapsing');
-//       this.tabpanel.el.classList.add('in');
-//       setTimeout(()=> {
-//         this.tabpanel.el.classList.remove('collapsing');
-//         this.tabpanel.el.classList.add('collapse');
-//       }, 1000);
-//     } else {
-//       this.tabpanel.el.classList.remove('collapse');
-//       this.tabpanel.el.classList.add('collapsing');
-//       this.tabpanel.el.classList.add('in');
-//       setTimeout(()=> {
-//         this.tabpanel.el.classList.remove('collapsing');
-//         this.tabpanel.el.classList.add('collapse');
-//       }, 1000)
-//     }
-//
-//   });
-// }));
-
-
 const factory = tabList();
 
-const dropdownFactory = dropdown();
-
-const menubarFactory = menuBar();
-
-const sliderFactory = slider();
-
-const tablist = factory({el: document.querySelector('.tabs')});
-
-const ddown = dropdownFactory({el: document.getElementById('dropdown')});
-
-const menubar = menubarFactory({el: document.querySelector('[role=menubar]')});
-
-const slder = sliderFactory({
-  el: document.querySelector('[role=slider]'),
-  valueTextFn: val => `${val} woot`
-});
-
-})));
+const nodeList = document.querySelectorAll('[data-lrtiste-tabs]');
+for (const tlist of nodeList){
+  factory({el:tlist});
+}

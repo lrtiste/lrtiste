@@ -1,0 +1,62 @@
+/* utility class to hide visually content*/
+.visuallyhidden {
+    position: absolute;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+}
+
+#progressive-tabs[role=tablist] {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#progressive-tabs label {
+    flex-grow: 1;
+    order: 1;
+    text-align: center;
+    padding: 1em;
+    border-radius: 4px 4px 0 0;
+    background: #f4f4f4;
+}
+
+#progressive-tabs label:not(:last-of-type) {
+    margin-right: 0.1em;
+}
+
+#progressive-tabs input[type=radio]:checked:not([aria-selected]) + label,
+#progressive-tabs [aria-selected=true] + label {
+    background: lightgrey;
+}
+
+#progressive-tabs input[type=radio]:focus:not([aria-selected]) + label,
+#progressive-tabs input[type=radio]:hover + label,
+#progressive-tabs [aria-selected]:focus + label {
+    background: #ff8c8c;
+    transition: background 0.3s, color 0.3s;
+    outline: 0;
+    color: white;
+}
+
+#progressive-tabs input[type=radio]:focus:not([aria-selected]) + label,
+#progressive-tabs [aria-selected]:focus + label {
+    box-shadow: 0 0 5px 1px #5354a9;
+}
+
+#progressive-tabs [role=tabpanel] {
+    display: none;
+    flex-basis: 100%;
+    flex-grow: 1;
+    order: 2;
+    background: lightgrey;
+    padding: 1em;
+}
+
+#progressive-tabs input[type=radio]:checked + label + section[role=tabpanel]:not([aria-hidden=true]),
+#progressive-tabs [aria-hidden=false] {
+    display: block;
+}

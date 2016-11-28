@@ -1,0 +1,61 @@
+#tabcontent-sample {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#tabcontent-sample [role=tablist] {
+    display: flex;
+    flex-grow: 1;
+    flex-basis: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#tabcontent-sample [role=tablist] > li {
+    display: flex;
+    flex-grow: 1;
+}
+
+#tabcontent-sample [role=tablist] > li:not(:last-child) {
+    margin-right: 0.1em;
+}
+
+#tabcontent-sample [role=tab]{
+    width: 100%;
+    padding: 1em;
+    text-align: center;
+    border-radius: 4px 4px 0 0;
+    background: #f4f4f4;
+    text-decoration: none;
+    color: inherit;
+}
+
+#tabcontent-sample [role=tab][aria-selected=true]{
+    background: lightgray;
+}
+
+/*give feedbacks to both mouse and keyboard users*/
+#tabcontent-sample [role=tab]:hover,
+#tabcontent-sample [role=tab]:focus{
+    background: #ff8c8c;
+    transition: background 0.3s, color 0.3s;
+    outline: 0;
+    color: white;
+}
+
+#tabcontent-sample [role=tab]:focus {
+    box-shadow: 0 0 5px 1px #5354a9;
+}
+
+/* Content is visible by default until script is available and aria states taken into account*/
+#tabcontent-sample [role=tabpanel] {
+    flex-grow: 1;
+    flex-basis: 100%;
+    background: lightgray;
+    padding: 1em;
+}
+
+
+#tabcontent-sample [role=tabpanel][aria-hidden=true] {
+    display: none;
+}
