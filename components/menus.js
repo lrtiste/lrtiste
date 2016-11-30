@@ -1,6 +1,7 @@
 import {ariaElement, element} from '../behaviours/elements';
-import {compose, methods, init} from 'stampit';
-import{observable} from '../behaviours/observables';
+import {compose, init} from 'stampit';
+import{observable, mapToAria} from '../behaviours/observables';
+import {toggle} from '../behaviours/toggle';
 import {listMediatorStamp, listItemStamp} from '../behaviours/listMediators';
 
 const mandatoryElement = element();
@@ -56,21 +57,14 @@ const subMenuItemStamp = compose(
   subMenuItemEventBinding
 );
 
-const toggleStamp = methods({
-  toggle(){
-    this.isOpen = !this.isOpen;
-  }
-});
-
 const menuEventBinding = init(function () {
   this.toggler.addEventListener('click', event => {
     this.toggle();
   });
   this.toggler.addEventListener('keydown', event => {
-
     const {keyCode:k, target} = event;
     if (k === 13 || k === 32) {
-      if (target.tagName !== 'BUTTON' || target.tagName !== 'A') {
+      if (!/button|a/i.test(target.tagName)) { //already handled by the click event
         this.toggle();
       }
     } else if (k === 40 && !this.isOpen) {
@@ -168,7 +162,7 @@ function menuInitStamp ({menuItem = menuItemStamp}={}) {
 const abstractMenuStamp = compose(
   mandatoryElement,
   listMediatorStamp,
-  toggleStamp,
+  toggle(),
   observable('isOpen')
 );
 
@@ -214,6 +208,46 @@ export function menuItem () {
 
 export function subMenuItem () {
   return subMenuItemStamp;
+}
+
+const expandableStamp = compose(
+  element(),
+  toggle(),
+  mapToAria('isOpen', 'expanded'),
+  init(function () {
+    Object.defineProperty(this, 'toggler', {value: this.el});
+  }),
+  menuEventBinding
+);
+
+export function expandable () {
+  return compose(element(),
+    init(function () {
+      const toggler = this.el.querySelector('[aria-haspopup]');
+      if (!toggler) {
+        console.log(this.el);
+        throw new Error('the element above must contain a control with aria-haspopup attribute set to true');
+      }
+      Object.defineProperty(this, 'button', {value: expandableStamp({el: toggler})});
+
+      const controlledId = toggler.getAttribute('aria-controls');
+      if (!controlledId) {
+        console.log(toggler);
+        throw new Error('the toggler above must explicitly control a section via the aria-controls attribute');
+      }
+
+      const expandableSection = this.el.querySelector(`#${controlledId}`);
+      if (!expandableSection) {
+        throw new Error('Could not find the element referenced by id ' + controlledId);
+      }
+      Object.defineProperty(this, 'expandableSection', {value: expandableSection});
+
+      this.button.$on('isOpen', isExpanded => {
+        this.expandableSection.setAttribute('aria-hidden', !isExpanded);
+      });
+
+      this.button.isOpen = !!this.button.el.getAttribute('aria-expanded');
+    }));
 }
 
 function findChildrenMenuItem (base) {

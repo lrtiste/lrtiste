@@ -1,0 +1,51 @@
+extends ../../layout/main
+include ../../partials/code
+include ../../partials/content
+
+block content
+    style
+        include ./samples/accordions.css
+    h1 Accordion component
+    blockquote(cite='https://www.w3.org/TR/wai-aria-practices/#accordion')
+        p An accordion component is a collection of expandable panels associated with a common outer container. Panels consist of a header and an associated content region or panel. The primary use of an Accordion is to present multiple sections of content on a single page without scrolling [...]
+    section
+        h2#contents Contents
+        nav
+            ul
+                +contentEntry('#keyboard', 'Keyboard interaction')
+                +contentEntry('#checkbox', 'Using a set of collapsing sections')
+                +contentEntry('#lrtiste','Give lrtiste control')
+                    ul
+                        +contentEntry('#demo','Demo: accordion control using lrtiste')
+    section
+        h2#keyboard Keyboard interactions
+        p The #[a(href="https://www.w3.org/TR/wai-aria-practices/#accordion") recommended keyboard interaction] is quite complex and you should probably refers to it for a better understanding. The idea is to be able to navigate through the content while keeping the TAB queue short and giving the ability to switch from one item to the other using arrows instead.
+    section
+        h2#checkbox
+        p You could start by making your different sections expandable as shown in the #[a(href='#foo') expandable sections tutorial] and let a[href=('#lrtiste') lrtiste takes controls].
+    section
+        h2#lrtiste Give lrtiste control
+        p The markup must be made of a container with the role #[code tablist]. It is recommended to add the #[code multiselect] attribute to make sure the assistive technologies understand they are dealing with an accordion rather than #[a(href='#sfdsf') regular tabs] (although it will be added by lrtiste if Javascript is available).
+        p Within the container, you should use regular section markup and add the relevant roles as lrtiste will use your semantic to find out which elements are part of your accordion group. By doing so, you'll make sure you content is accessible even without Javascript enabled.
+        div(data-lrtiste-tabs)
+            ul(role='tablist')
+                li(role='presentation')
+                    a(href='#sample-markup', role='tab', aria-controls='sample-markup', aria-selected='true') Markup
+                li(role='presentation')
+                    a(href='#sample-style', role='tab', aria-controls='sample-style') Style
+                li(role='presentation')
+                    a(href='#sample-script', role='tab', aria-controls='sample-script') Script
+            div#sample-markup(role='tabpanel')
+                h4(tabindex=0) index.html
+                +code('accordions.pug')
+            div#sample-style(role='tabpanel')
+                h4(tabindex=0) theme.css
+                +code('accordions.css')
+                p we use the #[code #accordions-sample] to scope the style to our component. In practice you would use a more generic selector
+            div#sample-script(role='tabpanel')
+                h4(tabindex=0) index.js
+                +code('index.js')
+                p Just pass the dom element to the factory and lrtiste will do the rest: keyboar interaction and aria-states management.
+        h3#demo Demo: accordion control using lrtiste
+        include ./samples/accordions
+    script(src='./accordions.js')

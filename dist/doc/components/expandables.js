@@ -1,3 +1,6 @@
+(function () {
+'use strict';
+
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
@@ -468,6 +471,67 @@ function ariaElement ({ariaRole, propertyName = 'el'}) {
   }));
 }
 
+function observable (...properties$$1) {
+  return init(function () {
+    const listeners = {};
+
+    if (!this.$onChange || !this.$on) {
+      this.$onChange = (prop, newVal) => {
+        const ls = listeners[prop] || [];
+        for (const cb of ls) {
+          cb(newVal);
+        }
+        return this;
+      };
+
+      this.$on = (property, cb)=> {
+        const listenersList = listeners[property] || [];
+        listenersList.push(cb);
+        listeners[property] = listenersList;
+        return this;
+      };
+    }
+
+    for (const prop of properties$$1) {
+      let value = this[prop];
+      Object.defineProperty(this, prop, {
+        get(){
+          return value;
+        },
+        set(val){
+          value = val;
+          this.$onChange(prop, val);
+        }
+      });
+    }
+  });
+}
+
+const mandatoryEl = element();
+
+function mapToAria (prop, ...attributes) {
+  const ariaAttributes = attributes.map(attr=>['aria', attr].join('-'));
+  return compose(
+    mandatoryEl,
+    observable(prop),
+    init(function () {
+      this.$on(prop, newVal => {
+          for (const att of ariaAttributes){
+            this.el.setAttribute(att,newVal);
+          }
+      });
+    })
+  );
+}
+
+function toggle (prop = 'isOpen') {
+  return methods({
+    toggle(){
+      this[prop] = !this[prop];
+    }
+  });
+}
+
 const abstractListMediatorStamp = init(function ({items = []}) {
   Object.defineProperty(this, 'items', {value: items});
 })
@@ -540,140 +604,267 @@ const listMediatorStamp = compose(abstractListMediatorStamp, methods({
   }
 }));
 
-function observable (...properties$$1) {
-  return init(function () {
-    const listeners = {};
-
-    if (!this.$onChange || !this.$on) {
-      this.$onChange = (prop, newVal) => {
-        const ls = listeners[prop] || [];
-        for (const cb of ls) {
-          cb(newVal);
-        }
-        return this;
-      };
-
-      this.$on = (property, cb)=> {
-        const listenersList = listeners[property] || [];
-        listenersList.push(cb);
-        listeners[property] = listenersList;
-        return this;
-      };
-    }
-
-    for (const prop of properties$$1) {
-      let value = this[prop];
-      Object.defineProperty(this, prop, {
-        get(){
-          return value;
-        },
-        set(val){
-          value = val;
-          this.$onChange(prop, val);
-        }
-      });
-    }
-  });
-}
-
-const mandatoryEl = element();
-
-function mapToAria (prop, ...attributes) {
-  const ariaAttributes = attributes.map(attr=>['aria', attr].join('-'));
-  return compose(
-    mandatoryEl,
-    observable(prop),
-    init(function () {
-      this.$on(prop, newVal => {
-          for (const att of ariaAttributes){
-            this.el.setAttribute(att,newVal);
-          }
-      });
-    })
-  );
-}
-
 const mandatoryElement = element();
-const tablist = ariaElement({ariaRole: 'tablist'});
+const menuElement = ariaElement({ariaRole: 'menu'});
 
-const tabEventBinding = init(function () {
-  this.el.addEventListener('keydown', event=> {
-    const {keyCode:k} = event;
+const abstractMenuItem = compose(
+  ariaElement({ariaRole: 'menuitem'}),
+  listItemStamp,
+  observable('isSelected'),
+  init(function () {
+    this.$on('isSelected', isSelected => {
+      this.el.setAttribute('tabindex', isSelected ? 0 : -1);
+      if (isSelected === true) {
+        this.el.focus();
+      }
+    });
+  })
+);
+
+const menuItemEvenBinding = init(function () {
+  this.el.addEventListener('keydown', event => {
+    const {keyCode:k, target} = event;
     if (k === 37 || k === 38) {
       this.selectPrevious();
     } else if (k === 39 || k === 40) {
       this.selectNext();
+    } else if ((k === 13 || k === 32) && this.listMediator.toggle) {
+      this.listMediator.toggle();
     }
-  });
-
-  this.el.addEventListener('click', event => {
-    this.select();
   });
 });
 
-const tabStamp = compose(
-  ariaElement({ariaRole: 'tab'}),
-  listItemStamp,
-  mapToAria('isSelected','selected'),
-  init(function initializeTab({tabpanel}) {
-    Object.defineProperty(this, 'tabpanel', {value: tabpanel});
+const menuItemStamp = compose(
+  abstractMenuItem,
+  menuItemEvenBinding
+);
 
+const subMenuItemEventBinding = init(function () {
+  this.el.addEventListener('keydown', event => {
+    const {keyCode:k} = event;
+    if (k === 38) {
+      this.selectPrevious();
+    } else if (k === 40) {
+      this.selectNext();
+    } else if (k === 13 || k === 32) {
+      this.listMediator.toggle();
+    }
+  });
+});
+
+const subMenuItemStamp = compose(
+  abstractMenuItem,
+  subMenuItemEventBinding
+);
+
+const menuEventBinding = init(function () {
+  this.toggler.addEventListener('click', event => {
+    this.toggle();
+  });
+  this.toggler.addEventListener('keydown', event => {
+    const {keyCode:k, target} = event;
+    if (k === 13 || k === 32) {
+      if (!/button|a/i.test(target.tagName)) { //already handled by the click event
+        this.toggle();
+      }
+    } else if (k === 40 && !this.isOpen) {
+      this.toggle();
+    } else if (k === 38 && this.isOpen) {
+      this.toggle();
+    }
+  });
+});
+
+const subMenuEventBinding = init(function () {
+
+  const next = () => {
+    this.selectNext();
+    if (this.isOpen) {
+      this.toggle();
+    }
+  };
+
+  const previous = () => {
+    this.selectPrevious();
+    if (this.isOpen) {
+      this.toggle();
+    }
+  };
+
+  this.toggler.addEventListener('click', event => {
+    this.toggle();
+  });
+  this.toggler.addEventListener('keydown', event => {
+    const {keyCode:k, target} = event;
+    if ((k === 13 || k === 32) && target.tagName !== 'BUTTON') {
+      this.toggle();
+    } else if (k === 39) {
+      next();
+    } else if (k === 37) {
+      previous();
+    } else if (k === 40 && target === this.toggler) {
+      if (!this.isOpen) {
+        this.toggle();
+      } else {
+        this.selectNext();
+      }
+    } else if (k === 38 && target === this.toggler) {
+      if (this.isOpen) {
+        this.toggle();
+      } else {
+        this.selectPrevious();
+      }
+    }
+  });
+  this.el.addEventListener('keydown', event => {
+    const {keyCode:k} = event;
+    if (k === 39) {
+      next();
+    } else if (k === 37) {
+      previous();
+    }
+  });
+});
+
+function menuInitStamp ({menuItem = menuItemStamp}={}) {
+  return init(function () {
+    const menu = menuElement({el: this.el.querySelector('[role=menu]') || this.el});
+    const toggler = this.el.querySelector('[aria-haspopup]') || this.el;
+
+    Object.defineProperty(this, 'toggler', {value: toggler});
+    Object.defineProperty(this, 'menu', {value: menu});
+
+    this.toggler.setAttribute('tabindex', 0);
+    this.menu.el.setAttribute('tabindex', -1);
+
+    for (const el of this.menu.el.querySelectorAll('[role="menuitem"]')) {
+      menuItem({listMediator: this, el});
+    }
+
+    this.$on('isOpen', isOpen => {
+      this.toggler.setAttribute('aria-expanded', isOpen);
+      this.menu.el.setAttribute('aria-hidden', !isOpen);
+      if (isOpen && this.items.length) {
+        this.selectItem(this.items[0]);
+      }
+    });
     this.$on('isSelected', isSelected => {
-      this.el.setAttribute('tabindex', isSelected ? 0 : -1);
-      this.tabpanel.el.setAttribute('aria-hidden', !isSelected);
+      this.toggler.setAttribute('tabindex', isSelected ? 0 : -1);
       if (isSelected) {
-        this.el.focus();
+        this.toggler.focus();
       }
     });
 
-    this.isSelected = this.isSelected || !!this.el.getAttribute('aria-selected');
-  }),
-  tabEventBinding
+    this.isOpen = this.isOpen || !!this.toggler.getAttribute('aria-expanded');
+  });
+}
+
+const abstractMenuStamp = compose(
+  mandatoryElement,
+  listMediatorStamp,
+  toggle(),
+  observable('isOpen')
 );
 
 
-const tabPanelStamp = compose(
-  ariaElement({ariaRole: 'tabpanel'})
-);
 
-
-
-
-
-function tabList () {
+function subMenu ({menuItem = subMenuItemStamp}={}) {
   return compose(
-    mandatoryElement,
-    listMediatorStamp,
-    init(function initializeTablist() {
-      Object.defineProperty(this, 'tablist', {value: tablist({el: this.el.querySelector('[role=tablist]') || this.el})});
-      for (let tab of this.tablist.el.querySelectorAll('[role=tab]')) {
-        const controlledId = tab.getAttribute('aria-controls');
-        if(!controlledId){
-          console.log(tab);
-          throw new Error('for the tab element above, you must specify which tabpanel is controlled using aria-controls');
-        }
-        const tabpanelEl = this.el.querySelector(`#${controlledId}`);
-        if(!tabpanelEl){
-          console.log(tab);
-          throw new Error(`for the tab element above, could not find the related tabpanel with the id ${controlledId}`)
-        }
-        const tabpanel = tabPanelStamp({el: tabpanelEl});
-        tabStamp({el: tab, listMediator: this, tabpanel});
-      }
-    })
+    listItemStamp,
+    abstractMenuStamp,
+    observable('isSelected'),
+    menuInitStamp({menuItem}),
+    subMenuEventBinding
   );
 }
 
-const factory = compose(
-  tabList(),
+const subMenuStamp = subMenu({menuItem: subMenuItemStamp});
+
+
+
+
+
+
+
+const expandableStamp = compose(
+  element(),
+  toggle(),
+  mapToAria('isOpen', 'expanded'),
   init(function () {
-    for (const tab$$1 of this.el.querySelectorAll('a[role=tab]')) {
-      tab$$1.addEventListener('click', event=>event.preventDefault());
-    }
-  })
+    Object.defineProperty(this, 'toggler', {value: this.el});
+  }),
+  menuEventBinding
 );
 
-const nodeList = document.querySelectorAll('[data-lrtiste-tabs]');
-for (const tlist of nodeList) {
-  factory({el: tlist});
+function expandable () {
+  return compose(element(),
+    init(function () {
+      const toggler = this.el.querySelector('[aria-haspopup]');
+      if (!toggler) {
+        console.log(this.el);
+        throw new Error('the element above must contain a control with aria-haspopup attribute set to true');
+      }
+      Object.defineProperty(this, 'button', {value: expandableStamp({el: toggler})});
+
+      const controlledId = toggler.getAttribute('aria-controls');
+      if (!controlledId) {
+        console.log(toggler);
+        throw new Error('the toggler above must explicitly control a section via the aria-controls attribute');
+      }
+
+      const expandableSection = this.el.querySelector(`#${controlledId}`);
+      if (!expandableSection) {
+        throw new Error('Could not find the element referenced by id ' + controlledId);
+      }
+      Object.defineProperty(this, 'expandableSection', {value: expandableSection});
+
+      this.button.$on('isOpen', isExpanded => {
+        this.expandableSection.setAttribute('aria-hidden', !isExpanded);
+      });
+
+      this.button.isOpen = !!this.button.el.getAttribute('aria-expanded');
+    }));
 }
+
+function findChildrenMenuItem (base) {
+  const items = [];
+  for (const c of base.children) {
+    const role = c.getAttribute('role');
+    if (role === 'menu') {
+      continue;
+    }
+    if (role === 'menuitem') {
+      items.push(c);
+    } else {
+      items.push(...findChildrenMenuItem(c));
+    }
+  }
+  return items;
+}
+
+function bootstrap () {
+  const expandableFactory = compose(
+    expandable()
+    , init(function () {
+      //as we have javascript we explicitly set the button role on the checkbox
+      const checkbox = this.el.querySelector('input[type=checkbox]');
+      checkbox.setAttribute('role', 'button');
+
+      // and we prevent default checkbox event binding
+      // to give control back to the expandable component script
+      checkbox.addEventListener('keydown', ev=>ev.preventDefault());
+      checkbox.addEventListener('click', ev=> ev.preventDefault());
+    }));
+
+  return expandableFactory({el: document.getElementById('checkbox-expandable')});
+}
+
+function bootstrap$1 () {
+  const factory = expandable();
+  return factory({el: document.getElementById('button-expandable')})
+}
+
+bootstrap();
+bootstrap$1();
+
+}());

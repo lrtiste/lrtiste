@@ -19,12 +19,12 @@ block content
                     ul
                         +contentEntry('#first-step','CSS powered tabs')
                         +contentEntry('#second-step','Javascript enhancement with lrtiste')
-                        +contentEntry('#result','End result')
+                        +contentEntry('#result','Demo: tabs components with radio button')
                 +contentEntry('#tabcontent','Tabs as table of content strategy')
                     ul
                         +contentEntry('#tabcontent-first-step','Semantic')
                         +contentEntry('#tabcontent-second-step','Show and hide behaviour with Javascript')
-                        +contentEntry('#tabcontent-result','End result')
+                        +contentEntry('#tabcontent-result','Demo: tabs component as table of content')
 
     section
         h2#keyboard Keyboard interactions
@@ -36,14 +36,14 @@ block content
         p In this strategy we are going to progressively enhance our tab component so it would keep working without javascript while still conveying meaningful semantic and providing relevant keyboard interaction.
         p Note: you should be able to interact with the resulting tab component with Javascript disabled.
         h3#first-step First step: creating a tab component css powered using native html5 elements
-        p We use visually hidden (but not hidden for assisting user agents) inputs type radio to provide keyboard interactions. A combination of flexbox properties and sibling selectors then give us the visual aspect expected fo such component.
-        p We also add the recommended aria roles so assisting technologies such voice over manages to give more accurate semantic to the user.
+        p We use visually hidden (but not hidden for assistive user agents) inputs type radio to provide keyboard interactions. A combination of flexbox properties and sibling selectors then give us the visual aspect expected fo such component.
+        p We also add the recommended aria roles so assistive technologies such voice over manages to give more accurate semantic to the user.
         div(data-lrtiste-tabs)
             ul(role='tablist')
                 li(role='presentation')
-                    a(href='#progressive-1-markup-tab',role='tab', aria-controls='progressive-1-markup-tabpanel', aria-selected='true') Markup
+                    a(href='#progressive-1-markup-tabpanel',role='tab', aria-controls='progressive-1-markup-tabpanel', aria-selected='true') Markup
                 li(role='presentation')
-                    a(href='#progressive-1-css-tab',role='tab', aria-controls='progressive-1-css-tabpanel') Style
+                    a(href='#progressive-1-css-tabpanel',role='tab', aria-controls='progressive-1-css-tabpanel') Style
             div#progressive-1-markup-tabpanel(role='tabpanel')
                 h4(tabindex=0) index.html
                 +code('progressive-tabs-1.pug')
@@ -57,11 +57,11 @@ block content
         div(data-lrtiste-tabs)
             ul(role='tablist')
                 li(role='presentation')
-                    a(href='#progressive-markup-tab',role='tab', aria-controls='progressive-markup-tabpanel', aria-selected='true') Markup
+                    a(href='#progressive-markup-tabpanel',role='tab', aria-controls='progressive-markup-tabpanel', aria-selected='true') Markup
                 li(role='presentation')
-                    a(href='#progressive-css-tab',role='tab', aria-controls='progressive-css-tabpanel') Style
+                    a(href='#progressive-css-tabpanel',role='tab', aria-controls='progressive-css-tabpanel') Style
                 li(role='presentation')
-                    a(href='#progressive-js-tab',role='tab', aria-controls='progressive-js-tabpanel') Script
+                    a(href='#progressive-js-tabpanel',role='tab', aria-controls='progressive-js-tabpanel') Script
             div#progressive-markup-tabpanel(role='tabpanel')
                 h4(tabindex=0) index.html
                 +code('progressive-tabs.pug')
@@ -75,7 +75,7 @@ block content
                 +code('tabs.js')
                 p The code is really simple: we only create an instance of lrtiste tablist with the appropriate HTML element.
                 P Note: we could have composed our lrtiste with a behaviour to select by default the tab with the attribute #[em checked] (so there is no need to add the #[code aria-selected] attribute to the default tab)
-        h3#result End result
+        h3#result Demo: tabs components with radio button
         include ./samples/progressive-tabs
         p The great thing with this technique is you already have the expected keyboard interaction as well as an acceptable semantic/ui-state phrasing without Javascrit (ie it will work while waiting for the script to load or if an error occurs)
     section
@@ -102,8 +102,8 @@ block content
             div#tabcontent-script(role='tabpanel')
                 h4(tabindex=0) index.js
                 +code('tabcontent.js')
-                p We use #[a(href="#") stampit] to compose our widgets with more behaviours. In this case we want to prevent the browser to follow the link related to the tab when Javascript is enabled.
-        h3#tabcontent-result End result
+                p We use #[a(href="#stampit") stampit] to compose our widgets with more behaviours. In this case we want to prevent the browser to follow the link related to the tab when Javascript is enabled.
+        h3#tabcontent-result Demo: tabs component as table of content
         include ./samples/tabcontent
         p This technique provides a clean semantic approach showing content by default, which makes it accessible. However the keyboard interaction (and the proper tab behaviour) only comes with Javascript.
     script(src='./tabs.js')

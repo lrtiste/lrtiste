@@ -1,0 +1,48 @@
+/* utility class to hide visually content*/
+.visuallyhidden {
+    position: absolute;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+}
+
+#checkbox-expandable div,
+#checkbox-expandable [aria-hidden=true] {
+    display: none;
+}
+
+#checkbox-expandable input[type=checkbox]:checked + label + div,
+#checkbox-expandable div[aria-hidden=false]{
+    display: block;
+}
+
+#checkbox-expandable label {
+    padding: 0.5rem 1rem;
+    text-align: center;
+    border-radius: 0.3em;
+    color: cadetblue;
+    border: 1px solid cadetblue;
+    box-shadow: 1px 1px 3px 0 rgb(180, 180, 180);
+}
+
+#checkbox-expandable label:after {
+    content: '\25be\0020';
+    padding-left: 0.5rem;
+}
+
+/*respond to both keyboard and mouse events*/
+#checkbox-expandable input[type=checkbox]:focus + label,
+#checkbox-expandable label:hover {
+    background: cadetblue;
+    color: white;
+    transition: all 0.5s;
+}
+
+#checkbox-expandable input[type=checkbox]:checked + label:after,
+#checkbox-expandable [aria-expanded=true] + label:after{
+    content: '\25b4\0020';
+}

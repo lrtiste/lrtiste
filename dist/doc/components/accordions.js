@@ -1,3 +1,6 @@
+(function () {
+'use strict';
+
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
@@ -468,6 +471,59 @@ function ariaElement ({ariaRole, propertyName = 'el'}) {
   }));
 }
 
+function observable (...properties$$1) {
+  return init(function () {
+    const listeners = {};
+
+    if (!this.$onChange || !this.$on) {
+      this.$onChange = (prop, newVal) => {
+        const ls = listeners[prop] || [];
+        for (const cb of ls) {
+          cb(newVal);
+        }
+        return this;
+      };
+
+      this.$on = (property, cb)=> {
+        const listenersList = listeners[property] || [];
+        listenersList.push(cb);
+        listeners[property] = listenersList;
+        return this;
+      };
+    }
+
+    for (const prop of properties$$1) {
+      let value = this[prop];
+      Object.defineProperty(this, prop, {
+        get(){
+          return value;
+        },
+        set(val){
+          value = val;
+          this.$onChange(prop, val);
+        }
+      });
+    }
+  });
+}
+
+const mandatoryEl = element();
+
+function mapToAria (prop, ...attributes) {
+  const ariaAttributes = attributes.map(attr=>['aria', attr].join('-'));
+  return compose(
+    mandatoryEl,
+    observable(prop),
+    init(function () {
+      this.$on(prop, newVal => {
+          for (const att of ariaAttributes){
+            this.el.setAttribute(att,newVal);
+          }
+      });
+    })
+  );
+}
+
 const abstractListMediatorStamp = init(function ({items = []}) {
   Object.defineProperty(this, 'items', {value: items});
 })
@@ -540,140 +596,106 @@ const listMediatorStamp = compose(abstractListMediatorStamp, methods({
   }
 }));
 
-function observable (...properties$$1) {
-  return init(function () {
-    const listeners = {};
-
-    if (!this.$onChange || !this.$on) {
-      this.$onChange = (prop, newVal) => {
-        const ls = listeners[prop] || [];
-        for (const cb of ls) {
-          cb(newVal);
-        }
-        return this;
-      };
-
-      this.$on = (property, cb)=> {
-        const listenersList = listeners[property] || [];
-        listenersList.push(cb);
-        listeners[property] = listenersList;
-        return this;
-      };
-    }
-
-    for (const prop of properties$$1) {
-      let value = this[prop];
-      Object.defineProperty(this, prop, {
-        get(){
-          return value;
-        },
-        set(val){
-          value = val;
-          this.$onChange(prop, val);
-        }
-      });
-    }
-  });
-}
-
-const mandatoryEl = element();
-
-function mapToAria (prop, ...attributes) {
-  const ariaAttributes = attributes.map(attr=>['aria', attr].join('-'));
-  return compose(
-    mandatoryEl,
-    observable(prop),
-    init(function () {
-      this.$on(prop, newVal => {
-          for (const att of ariaAttributes){
-            this.el.setAttribute(att,newVal);
-          }
-      });
-    })
-  );
-}
-
 const mandatoryElement = element();
 const tablist = ariaElement({ariaRole: 'tablist'});
 
-const tabEventBinding = init(function () {
-  this.el.addEventListener('keydown', event=> {
-    const {keyCode:k} = event;
-    if (k === 37 || k === 38) {
+const accordionTabEventBinding = init(function () {
+  this.el.addEventListener('click', event=> {
+    this.toggle();
+    this.select();
+  });
+
+  this.el.addEventListener('keydown', event => {
+    const {keyCode:k, target} = event;
+    if (k === 13 || k === 32) {
+      if (target.tagName !== 'BUTTON' || target.tagName === 'A') {
+        this.toggle();
+        this.select();
+      }
+    } else if (k === 37 || k === 38) {
       this.selectPrevious();
     } else if (k === 39 || k === 40) {
       this.selectNext();
     }
   });
-
-  this.el.addEventListener('click', event => {
-    this.select();
+});
+const accordionTabpanelEventBinding = init(function () {
+  this.el.addEventListener('focusin', event => {
+    this.tab.select();
+  });
+  this.el.addEventListener('click', event=> {
+    this.tab.select();
   });
 });
 
-const tabStamp = compose(
+const accordionTabpanelStamp = compose(
+  ariaElement({ariaRole: 'tabpanel'}),
+  methods({
+    hasFocus(){
+      return this.el.querySelector(':focus') !== null;
+    }
+  }),
+  init(function initializeAccordionTabpanel({tab}) {
+    Object.defineProperty(this, 'tab', {value: tab});
+  }),
+  accordionTabpanelEventBinding
+);
+
+const accordionTabStamp = compose(
   ariaElement({ariaRole: 'tab'}),
   listItemStamp,
+  mapToAria('isOpen','expanded'),
   mapToAria('isSelected','selected'),
-  init(function initializeTab({tabpanel}) {
+  init(function initializeAccordionTab({tabpanelEl}) {
+    const tabpanel = accordionTabpanelStamp({el: tabpanelEl, tab: this});
     Object.defineProperty(this, 'tabpanel', {value: tabpanel});
+    this.$on('isOpen', isOpen => {
+      this.tabpanel.el.setAttribute('aria-hidden', !isOpen);
+    });
 
-    this.$on('isSelected', isSelected => {
+    this.$on('isSelected', isSelected=> {
       this.el.setAttribute('tabindex', isSelected ? 0 : -1);
-      this.tabpanel.el.setAttribute('aria-hidden', !isSelected);
-      if (isSelected) {
+      if (isSelected && !this.tabpanel.hasFocus()) {
         this.el.focus();
       }
     });
 
-    this.isSelected = this.isSelected || !!this.el.getAttribute('aria-selected');
+    this.isOpen = this.isOpen || !!this.el.getAttribute('aria-expanded');
   }),
-  tabEventBinding
-);
-
-
-const tabPanelStamp = compose(
-  ariaElement({ariaRole: 'tabpanel'})
+  accordionTabEventBinding
 );
 
 
 
 
 
-function tabList () {
-  return compose(
-    mandatoryElement,
-    listMediatorStamp,
-    init(function initializeTablist() {
-      Object.defineProperty(this, 'tablist', {value: tablist({el: this.el.querySelector('[role=tablist]') || this.el})});
-      for (let tab of this.tablist.el.querySelectorAll('[role=tab]')) {
+function accordion () {
+  return compose(mandatoryElement,
+    multiSelectMediatorStamp,
+    init(function initializeAccordionTablist() {
+      Object.defineProperty(this, 'tablist', {
+        value: tablist({
+          el: this.el.querySelector('[role=tablist]') || this.el
+        })
+      });
+      this.tablist.el.setAttribute('aria-multiselectable', true);
+      for (const tab of this.tablist.el.querySelectorAll('[role=tab]')) {
         const controlledId = tab.getAttribute('aria-controls');
         if(!controlledId){
           console.log(tab);
-          throw new Error('for the tab element above, you must specify which tabpanel is controlled using aria-controls');
+          throw new Error('for the accordion tab element above, you must specify which tabpanel is controlled using aria-controls');
         }
         const tabpanelEl = this.el.querySelector(`#${controlledId}`);
         if(!tabpanelEl){
           console.log(tab);
           throw new Error(`for the tab element above, could not find the related tabpanel with the id ${controlledId}`)
         }
-        const tabpanel = tabPanelStamp({el: tabpanelEl});
-        tabStamp({el: tab, listMediator: this, tabpanel});
+        accordionTabStamp({tabpanelEl, el: tab, listMediator: this});
       }
-    })
-  );
+    }));
 }
 
-const factory = compose(
-  tabList(),
-  init(function () {
-    for (const tab$$1 of this.el.querySelectorAll('a[role=tab]')) {
-      tab$$1.addEventListener('click', event=>event.preventDefault());
-    }
-  })
-);
+const accordionFactory = accordion();
+accordionFactory({el:document.getElementById('accordions-sample')});
 
-const nodeList = document.querySelectorAll('[data-lrtiste-tabs]');
-for (const tlist of nodeList) {
-  factory({el: tlist});
-}
+}());

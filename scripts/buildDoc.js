@@ -8,67 +8,77 @@ const prism = require('prismjs');
 
 const highlighter = {
   loadContent(file){
-    return fs.readFileSync(path.join(process.cwd(), '/doc/components/tabs/samples/', file));
+    return fs.readFileSync(path.join(this.root, file));
   },
 };
 
-function prismHighlighter (language) {
-  return {
+function prismHighlighter (language, root) {
+  const instance = {
     highlight(file){
       const content = this.loadContent(file);
       return this.prism.highlight(content.toString(), this.prism.languages[language]);
     }
+  };
+  Object.defineProperty(instance, 'root', {value: root});
+  return instance;
+}
+
+const cssHighlighter = function (prism, root) {
+  return Object.create(Object.assign(prismHighlighter('css', root), highlighter), {prism: {value: prism}});
+};
+
+const jsHighlighter = function (prism, root) {
+  return Object.create(Object.assign(prismHighlighter('javascript', root), highlighter), {prism: {value: prism}});
+};
+
+const markupHighlighter = function (prism, root) {
+  const instance = Object.create(Object.assign(prismHighlighter('markup', root), highlighter), {prism: {value: prism}});
+
+  const load = instance.loadContent.bind(instance);
+  instance.loadContent = function (file) {
+    return pug.render(load(file), {pretty: true});
+  };
+  return instance;
+};
+
+function highlight (root) {
+  return function (fileName) {
+    const [fn, extension] = fileName.split('.');
+    switch (extension) {
+      case 'css':
+        return cssHighlighter(prism, root).highlight(fileName);
+      case 'js':
+        return jsHighlighter(prism, root).highlight(fileName);
+      case 'pug':
+        return markupHighlighter(prism, root).highlight(fileName);
+      default:
+        throw new Error('unsupported language');
+    }
   }
 }
 
-const cssHighlighter = function (prism) {
-  return Object.create(Object.assign({}, highlighter, prismHighlighter('css')), {prism: {value: prism}});
-};
+const files = fs.readdirSync(path.join(process.cwd(), '/doc/components/'));
 
-const jsHighlighter = function (prism) {
-  return Object.create(Object.assign({}, highlighter, prismHighlighter('javascript')), {prism: {value: prism}});
-};
+for (const f of files.filter(file=>file.split('.').length === 1)) {
+  const writeStream = fs.createWriteStream(path.join(process.cwd(), '/dist/doc/components/', [f, 'html'].join('.')));
+  const html = pug.renderFile(path.join(process.cwd(), `/doc/components/${f}/`, [f, 'pug'].join('.')), {
+    title: `${f} component`,
+    highlight: highlight(path.join(process.cwd(), `/doc/components/${f}/samples/`))
+  });
 
-const markupHighlighter = function (prism) {
-  return Object.create(Object.assign({loadContent(file){
-    return pug.render(highlighter.loadContent(file),{pretty:true});
-  }}, prismHighlighter('markup')), {prism: {value: prism}});
-};
+  writeStream.write(html);
 
-
-function highlight (fileName) {
-  const [fn, extension] = fileName.split('.');
-  switch (extension) {
-    case 'css':
-      return cssHighlighter(prism).highlight(fileName);
-    case 'js':
-      return jsHighlighter(prism).highlight(fileName);
-    case 'pug':
-      return markupHighlighter(prism).highlight(fileName);
-    default:
-      throw new Error('unsupported language');
-  }
+  rollup({
+    entry: path.join(process.cwd(), `/doc/components/${f}/samples/`, 'index.js'),
+    plugins: [node(), commonjs()],
+  }).then(function (bundle) {
+    return bundle.write({
+      format: 'iife',
+      dest: path.join(process.cwd(), '/dist/doc/components/', [f, 'js'].join('.'))
+    });
+  })
+    .catch(err=> {
+      console.log(err);
+      process.exit(1);
+    });
 }
-
-const writeStream = fs.createWriteStream(path.join(process.cwd(), '/dist/doc/components/', 'tabs.html'));
-const html = pug.renderFile(path.join(process.cwd(), '/doc/components/tabs/', 'tabs.pug'), {
-  title: 'tabs component',
-  highlight
-});
-
-writeStream.write(html);
-
-rollup({
-  entry: path.join(process.cwd(), '/doc/components/tabs/samples/', 'index.js'),
-  plugins: [node(), commonjs()],
-}).then(function (bundle) {
-  return bundle.write({
-    format: 'iife',
-    dest: path.join(process.cwd(), '/dist/doc/components/', 'tabs.js')
-  });
-})
-  .catch(err=>{
-    console.log(err);
-    process.exit(1);
-  });
-
