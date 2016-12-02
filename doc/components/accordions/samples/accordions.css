@@ -35,6 +35,12 @@
     display: none;
 }
 
+#accordions-sample [role=tabpanel][aria-hidden=false] {
+    animation-name: tabpanel-in;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+}
+
 #accordions-sample [role=tab][aria-selected=true] {
     background: lightsalmon;
     color: white;
@@ -48,5 +54,18 @@
     color: white;
     box-shadow: 0 0 5px 0 black;
     transform: scale(1.02, 1.02);
-    transition: all 0.5s;
+    transition: all 0.3s;
+}
+
+@keyframes tabpanel-in {
+    0% {
+        transform: scaleY(0);
+        transform-origin: top;
+        opacity: 0;
+    }
+    100% {
+        transform-origin: top;
+        transform: scaleY(1);
+        opacity: 1;
+    }
 }

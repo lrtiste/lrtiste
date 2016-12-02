@@ -1,0 +1,108 @@
+<!DOCTYPE html><html lang="en"><head><title>menubars component| lrtiste website</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="../../../node_modules/prismjs/themes/prism-okaidia.css" rel="stylesheet"><link href="../theme.css" rel="stylesheet"></head><body><header role="banner"><nav role="navigation"><ul><li><a href="#foo">test</a></li></ul></nav></header><main id="main"><style>[role=menubar] {
+    display: flex;
+    width: 100%;
+    border: 1px solid #5e7eff;
+    border-radius: 0.3rem;
+}
+
+[role=menubar] ul,
+ul[role=menubar] {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* a kind of reset to align the theme of popup button to regular menu items*/
+[role=menubar] button[aria-haspopup] {
+    font: inherit;
+    border: none;
+    box-shadow: none;
+}
+
+[role=menubar] [role=menuitem] {
+    flex-grow: 1;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/*leaf menuitems (increase click surface)*/
+[role=menubar] [role=menuitem] [role=menuitem],
+[role=menubar] > [role=menuitem] > span {
+    padding: 0.5rem;
+}
+
+[role=menubar] > [role=menuitem],
+[role=menubar] button[aria-haspopup=true] {
+    position: relative;
+    color: #5e7eff;
+    background: white;
+}
+
+[role=menubar] [role=menuitem]:focus,
+[role=menubar] button[aria-haspopup=true]:focus {
+    background: #5e7eff;
+    color: white;
+    transition: all 0.5s;
+    outline: none;
+}
+
+[role=menubar] > [role=menuitem] > *:first-child {
+    flex-basis: 100%;
+    text-align: center;
+    font-weight: bolder;
+}
+
+[role=menubar] > [role=menuitem] > [aria-haspopup=true]:after {
+    content: '\25be\0020';
+    padding-left: 0.5rem;
+}
+
+[role=menubar] > [role=menuitem] > [aria-haspopup=true][aria-expanded=true]:after {
+    content: '\25b4\0020';
+}
+
+[role=menubar] > [role=menuitem]:not(:last-child) {
+    border-right: 1px solid #5e7eff;
+}
+
+[role=menubar] > [role=menuitem] [role=menu] {
+    position: absolute;
+    border-radius: 0 0 0.3rem 0.3rem;
+    display: inline-block;
+    z-index: 999;
+    left: 0;
+    top: 100%;
+    width: 100%;
+    background: white;
+    color: #242424;
+    border-top: 1px solid #5e7eff;
+    box-shadow: 0 0.3rem 0.1rem 0 #454545;
+}
+
+[role=menubar] > [role=menuitem] [role=menu][aria-hidden=true] {
+    display: none;
+}
+
+[role=menubar] > [role=menuitem] [role=menu][aria-hidden=false] {
+    animation-name: menu-in;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-out;
+}
+
+@keyframes menu-in {
+    0% {
+        transform: scaleY(0);
+        transform-origin: top;
+        opacity: 0;
+    }
+    100% {
+        transform-origin: top;
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+
+</style><h1>Menubar component</h1><blockquote cite="https://www.w3.org/TR/wai-aria-practices/#menu"><p>A menu that is visually persistent is a menubar. A menubar is typically horizontal and is often used to create a menu bar similar to those found near the top of the window in many desktop applications, offering the user quick access to a consistent set of commands.</p></blockquote><P>It can be seen as a composite of menuitems and <a href="#foo">dropdown menus</a></P><section><h2 id="contents">Contents</h2><nav><ul><li><a href="#keyboard">Keyboard interaction</a></li><li><a href="#lrtiste">Menu bar using lrtiste</a></li><li><a href="#demo">Demo: menubar component using lrtiste</a></li></ul></nav></section><section><h2 id="keyboard">Keyboard interaction</h2><p>The recommended keyboard interaction is quite complex and I recommend you to read directly from <a href="https://www.w3.org/TR/wai-aria-practices/#menu">WAI-ARIA Authoring Practices</a> which will explain it much better than I would.</p><div id="menubar-sample"><ul role="menubar"><li role="menuitem"><button id="b1" type="button" aria-haspopup="true" tabindex="0" aria-controls="submenu1">Menu 1</button><ul id="submenu1" aria-labelledby="b1" role="menu"><li role="menuitem">sub action 1.1</li><li role="menuitem">sub action 1.2</li><li role="menuitem">sub action 1.3</li><li role="menuitem">sub action 1.4</li></ul></li><li role="menuitem"><button id="b2" type="button" aria-haspopup="true" tabindex="-1" aria-controls="submenu2">Menu 2</button><ul id="submenu2" aria-labelledby="b2" role="menu"><li role="menuitem">sub action 2.1</li><li role="menuitem">sub action 2.2</li><li role="menuitem">sub action 2.3</li></ul></li><li role="menuitem"><span>Some single action</span></li><li role="menuitem" aria-haspopup="true"><button id="b4" type="button" aria-haspopup="true" tabindex="-1" aria-controls="submenu4">Menu 3</button><ul id="submenu4" aria-labelledby="b4" role="menu"><li role="menuitem">sub action 4.1</li><li role="menuitem">sub action 4.2</li></ul></li></ul></div></section><section><h2 id="lrtiste">Menu bar using lrtiste</h2><p>As a menu bar would be a set of grouped actions, it may not be relevant/easy to have it working without Javascript and we are going to consider for this example that Javascript is available.</p><p>There is a <a href="#aldjf">specification draft</a> on a eventually new <code>menu</code> html element whose read might help to understand what is expected for such a component.</p></section><section><h2 id="demo"></h2></section><script src="./menubars.js"></script></main><footer>foo bar</footer><script src="../theme.js"></script></body></html>

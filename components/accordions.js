@@ -18,11 +18,14 @@ const accordionTabEventBinding = init(function () {
       if (target.tagName !== 'BUTTON' || target.tagName === 'A') {
         this.toggle();
         this.select();
+        event.preventDefault();
       }
     } else if (k === 37 || k === 38) {
       this.selectPrevious();
+      event.preventDefault();
     } else if (k === 39 || k === 40) {
       this.selectNext();
+      event.preventDefault();
     }
   });
 });

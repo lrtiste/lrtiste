@@ -1,0 +1,51 @@
+extends ../../layout/main
+include ../../partials/code
+include ../../partials/content
+
+block content
+    style
+        include ./samples/dropdowns.css
+    h1 Dropdown menu component
+    blockquote(cite='https://www.w3.org/TR/wai-aria-practices/#menu')
+        p A menu is a widget that offers a list of choices to the user, such as a set of actions or functions. A menu is usually opened, or made visible, by activating a menu button[...]
+    p The dropdown menu can be seen as a #[a(href='#foobar') an expandable section] with extra behaviour like keyboard interaction allowing to quickly move from one menu item to the other.
+    section
+        h2#contents Contents
+        nav
+            ul
+                +contentEntry('#keyboard','Keyboard interaction')
+                +contentEntry('#expandable','Expandable section comparison')
+                +contentEntry('#lrtiste','Dropdown menu using lrtiste')
+                +contentEntry('#demo','Demo: dropdown menu using lrtiste')
+    section
+        h2#keyboard Keyboard interaction
+        p The menu button should be focusable using #[em tab]. #[em ENTER], #[em SPACE] and optionally #[em DOWN ARROW] should open the menu and put the focus on the first item. You should then be able to navigate from item to the other using arrow keys whereas #[em tab] key should move the focus out of the menu.
+    section
+        h2#expandable Expandable section comparison
+        p In many aspects a dropdown menu follows the #[a(href='#foobar') expandable section] behaviour and you could follow its tutorial to get started with a progressive approach.
+    section
+        h2#lrtiste Dropdown menu using lrtiste
+        p On top of the regular expandable section markup, we need to add the aria roles specific to menu and menu items. We can then let lrtiste do the job of managing aria states and providing expected keyboard interaction.
+        div(data-lrtiste-tabs)
+            ul(role='tablist')
+                li(role='presentation')
+                    a(href='#sample-markup', role='tab',aria-controls='sample-markup', aria-selected='true') Markup
+                li(role='presentation')
+                    a(href='#sample-markup', role='tab',aria-controls='sample-style') Theme
+                li(role='presentation')
+                    a(href='#sample-markup', role='tab',aria-controls='sample-script') Script
+            div#sample-markup(role='tabpanel')
+                h3(tabindex=0) index.html
+                +code('dropdowns.pug')
+            div#sample-style(role='tabpanel')
+                h3(tabindex=0) theme.css
+                +code('dropdowns.css')
+                p The style is scoped to our component thanks to its id selector. In practice you would use a more generic selector such a class name.
+            div#sample-script(role='tabpanel')
+                h3(tabindex=0) index.js
+                +code('index.js')
+    section
+        h2#demo Demo: dropdown menu using lrtiste
+        include ./samples/dropdowns
+        p You'll notice that using an absolute position for our menu can be troublesome as it will likely overlap other content on the page. It is "pretty" for sighted users but can turns wrong if Javascript fails, for example.
+    script(src='./dropdowns.js')

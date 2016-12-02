@@ -601,8 +601,10 @@ const tabEventBinding = init(function () {
     const {keyCode:k} = event;
     if (k === 37 || k === 38) {
       this.selectPrevious();
+      event.preventDefault();
     } else if (k === 39 || k === 40) {
       this.selectNext();
+      event.preventDefault();
     }
   });
 
@@ -614,8 +616,8 @@ const tabEventBinding = init(function () {
 const tabStamp = compose(
   ariaElement({ariaRole: 'tab'}),
   listItemStamp,
-  mapToAria('isSelected','selected'),
-  init(function initializeTab({tabpanel}) {
+  mapToAria('isSelected', 'selected'),
+  init(function initializeTab ({tabpanel}) {
     Object.defineProperty(this, 'tabpanel', {value: tabpanel});
 
     this.$on('isSelected', isSelected => {
@@ -644,16 +646,16 @@ function tabList () {
   return compose(
     mandatoryElement,
     listMediatorStamp,
-    init(function initializeTablist() {
+    init(function initializeTablist () {
       Object.defineProperty(this, 'tablist', {value: tablist({el: this.el.querySelector('[role=tablist]') || this.el})});
       for (let tab of this.tablist.el.querySelectorAll('[role=tab]')) {
         const controlledId = tab.getAttribute('aria-controls');
-        if(!controlledId){
+        if (!controlledId) {
           console.log(tab);
           throw new Error('for the tab element above, you must specify which tabpanel is controlled using aria-controls');
         }
         const tabpanelEl = this.el.querySelector(`#${controlledId}`);
-        if(!tabpanelEl){
+        if (!tabpanelEl) {
           console.log(tab);
           throw new Error(`for the tab element above, could not find the related tabpanel with the id ${controlledId}`)
         }

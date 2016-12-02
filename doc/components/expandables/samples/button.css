@@ -1,9 +1,9 @@
 #button-expandable button {
     padding: 0.5rem 1rem;
     text-align: center;
-    border-radius: 0.3em;
-    color: cadetblue;
-    border: 1px solid cadetblue;
+    border-radius: 0.3rem;
+    color: #5e7eff;
+    border: 1px solid #5e7eff;
     box-shadow: 1px 1px 3px 0 rgb(180, 180, 180);
     background: white;
     font: inherit;
@@ -20,7 +20,7 @@
 }
 
 #button-expandable button:focus, #button-expandable button:hover {
-    background: cadetblue;
+    background: #5e7eff;
     color: white;
     transition: all 0.5s;
     outline: none;

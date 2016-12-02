@@ -24,8 +24,8 @@
     padding: 0.5rem 1rem;
     text-align: center;
     border-radius: 0.3em;
-    color: cadetblue;
-    border: 1px solid cadetblue;
+    color: #5e7eff;
+    border: 1px solid #5e7eff;
     box-shadow: 1px 1px 3px 0 rgb(180, 180, 180);
 }
 
@@ -37,7 +37,7 @@
 /*respond to both keyboard and mouse events*/
 #checkbox-expandable input[type=checkbox]:focus + label,
 #checkbox-expandable label:hover {
-    background: cadetblue;
+    background: #5e7eff;
     color: white;
     transition: all 0.5s;
 }
@@ -49,9 +49,9 @@
 #button-expandable button {
     padding: 0.5rem 1rem;
     text-align: center;
-    border-radius: 0.3em;
-    color: cadetblue;
-    border: 1px solid cadetblue;
+    border-radius: 0.3rem;
+    color: #5e7eff;
+    border: 1px solid #5e7eff;
     box-shadow: 1px 1px 3px 0 rgb(180, 180, 180);
     background: white;
     font: inherit;
@@ -68,7 +68,7 @@
 }
 
 #button-expandable button:focus, #button-expandable button:hover {
-    background: cadetblue;
+    background: #5e7eff;
     color: white;
     transition: all 0.5s;
     outline: none;
@@ -78,7 +78,7 @@
     content: '\25be\0020';
 }
 
-</style><h1>Expandable components</h1><p>A lot of components consist in showing/hiding a section. Although they may convey specific semantic or have their particular behaviour like <a href="#adf">dropdown menu</a>, <a href="#asdfs">accordions</a> or <a href="#adfsd">tabs</a>, at the end, the ability to show/hide a part of the component on demand is quite common. In this tutorial we are going to review several techniques to implement this behaviour in a progressive and accessible way.</p><section><h2 id="contents">Contents</h2><nav><ul><li><a href="#keyboard">Keyboard interaction</a></li><li><a href="#checkbox">Progressive enhancement using a native html5 checkbox</a><ul><li><a href="#checkbox-no-javascript">Without Javascript</a></li><li><a href="#checkbox-javascript">Javascript enhancement</a></li><li><a href="#result-checkbox">Demo: expandable section with a checkbox</a></li></ul></li><li><a href="#button">Using a button</a><ul><li><a href="#result-button">Demo: expandable section using a regular button</a></li></ul></li></ul></nav></section><section><h2 id="keyboard">Keyboard interaction</h2><p>The common anatomy of such a component is to have a toggle button changing the state of the expanding/collapsing section. The button should be focusable and should respond to the ENTER and SPACE keys (optionally to DOWN and UP arrows) to change the collapsed/expanded state of the corresponding section.</p><p>What happen then in term of focus and keyboard navigation will depends on the nature of the component (menu, accordion, etc)</p></section><section><h2 id="checkbox">Progressive enhancement using a native html5 checkbox</h2><p>In this technique we use a checkbox as the button as it already provides the expected keyboard interactions.</p><h3 id="checkbox-no-javascript">Without Javascript</h3><p>We hide the visual nature of the checkbox to fake it into a button.</p><p>We then use css pseudo selectors and adjacent selector to show/hide the section on demand.</p><p>The main advantage with this technique is that our component has the show/hide behaviour as well as a basic keyboard support even when Javascript is not available.</p><div data-lrtiste-tabs><ul role="tablist"><li role="presentation"><a href="#checkbox-1-markup-tab" role="tab" aria-controls="checkbox-1-markup-tab" aria-selected="true">Markup</a></li><li role="presentation"><a href="#checkbox-1-style-tab" role="tab" aria-controls="checkbox-1-style-tab">Style</a></li></ul><div id="checkbox-1-markup-tab" role="tabpanel"><h4 tabindex="0">index.html</h4><pre class="language-markup"><code class="language-markup">
+</style><h1>Expandable components</h1><p>A lot of components consist in showing/hiding a section. Although they may convey specific semantic or have their particular behaviour like <a href="#adf">dropdown menu</a>, <a href="#asdfs">accordions</a> or <a href="#adfsd">tabs</a>, at the end, the ability to show/hide a part of the component on demand is quite common. In this tutorial we are going to review several techniques to implement this behaviour in a progressive and accessible way.</p><section><h2 id="contents">Contents</h2><nav><ul><li><a href="#keyboard">Keyboard interaction</a></li><li><a href="#checkbox">Progressive enhancement using a native html5 checkbox</a><ul><li><a href="#checkbox-no-javascript">Without Javascript</a></li><li><a href="#checkbox-javascript">Javascript enhancement</a></li><li><a href="#result-checkbox">Demo: expandable section with a checkbox</a></li></ul></li><li><a href="#button">Using a button</a><ul><li><a href="#result-button">Demo: expandable section using a regular button</a></li></ul></li></ul></nav></section><section><h2 id="keyboard">Keyboard interaction</h2><p>The common anatomy of such a component is to have a toggle button changing the state of the expanding/collapsing section. The button should be focusable and should respond to the ENTER and SPACE keys (optionally to DOWN and UP arrows) to change the collapsed/expanded state of the corresponding section.</p><p>What happens then in term of focus and keyboard navigation will depend on the nature of the component (menu, accordion, etc)</p></section><section><h2 id="checkbox">Progressive enhancement using a native html5 checkbox</h2><p>In this technique we use a checkbox as the button: it already provides the expected keyboard interactions.</p><h3 id="checkbox-no-javascript">Without Javascript</h3><p>We hide the visual nature of the checkbox to fake it into a button.</p><p>We then use css pseudo selectors and adjacent selector to show/hide the section on demand.</p><p>The main advantage with this technique is that our component has the show/hide behaviour as well as a basic keyboard support even when Javascript is not available.</p><div data-lrtiste-tabs><ul role="tablist"><li role="presentation"><a href="#checkbox-1-markup-tab" role="tab" aria-controls="checkbox-1-markup-tab" aria-selected="true">Markup</a></li><li role="presentation"><a href="#checkbox-1-style-tab" role="tab" aria-controls="checkbox-1-style-tab">Style</a></li></ul><div id="checkbox-1-markup-tab" role="tabpanel"><h4 tabindex="0">index.html</h4><pre class="language-markup"><code class="language-markup">
 <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>div</span> <span class="token attr-name" >id</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>checkbox-expandable<span class="token punctuation" >"</span></span><span class="token punctuation" >></span></span>
   <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>input</span> <span class="token attr-name" >class</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>visuallyhidden<span class="token punctuation" >"</span></span> <span class="token attr-name" >id</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>checkbox-button<span class="token punctuation" >"</span></span> <span class="token attr-name" >type</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>checkbox<span class="token punctuation" >"</span></span> <span class="token attr-name" >aria-haspopup</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>true<span class="token punctuation" >"</span></span> <span class="token attr-name" >aria-controls</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>checkbox-expandable-section<span class="token punctuation" >"</span></span><span class="token punctuation" >/></span></span>
   <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>label</span> <span class="token attr-name" >for</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>checkbox-button<span class="token punctuation" >"</span></span><span class="token punctuation" >></span></span>toggle<span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;/</span>label</span><span class="token punctuation" >></span></span>
@@ -109,8 +109,8 @@
     <span class="token property" >padding</span><span class="token punctuation" >:</span> 0.5rem 1rem<span class="token punctuation" >;</span>
     <span class="token property" >text-align</span><span class="token punctuation" >:</span> center<span class="token punctuation" >;</span>
     <span class="token property" >border-radius</span><span class="token punctuation" >:</span> 0.3em<span class="token punctuation" >;</span>
-    <span class="token property" >color</span><span class="token punctuation" >:</span> cadetblue<span class="token punctuation" >;</span>
-    <span class="token property" >border</span><span class="token punctuation" >:</span> 1px solid cadetblue<span class="token punctuation" >;</span>
+    <span class="token property" >color</span><span class="token punctuation" >:</span> #5e7eff<span class="token punctuation" >;</span>
+    <span class="token property" >border</span><span class="token punctuation" >:</span> 1px solid #5e7eff<span class="token punctuation" >;</span>
     <span class="token property" >box-shadow</span><span class="token punctuation" >:</span> 1px 1px 3px 0 <span class="token function" >rgb</span><span class="token punctuation" >(</span>180, 180, 180<span class="token punctuation" >)</span><span class="token punctuation" >;</span>
 <span class="token punctuation" >}</span>
 
@@ -122,7 +122,7 @@
 <span class="token comment" spellcheck="true">/*respond to both keyboard and mouse events*/</span>
 <span class="token selector" >#checkbox-expandable input[type=checkbox]:focus + label,
 #checkbox-expandable label:hover</span> <span class="token punctuation" >{</span>
-    <span class="token property" >background</span><span class="token punctuation" >:</span> cadetblue<span class="token punctuation" >;</span>
+    <span class="token property" >background</span><span class="token punctuation" >:</span> #5e7eff<span class="token punctuation" >;</span>
     <span class="token property" >color</span><span class="token punctuation" >:</span> white<span class="token punctuation" >;</span>
     <span class="token property" >transition</span><span class="token punctuation" >:</span> all 0.5s<span class="token punctuation" >;</span>
 <span class="token punctuation" >}</span>
@@ -175,8 +175,8 @@
     <span class="token property" >padding</span><span class="token punctuation" >:</span> 0.5rem 1rem<span class="token punctuation" >;</span>
     <span class="token property" >text-align</span><span class="token punctuation" >:</span> center<span class="token punctuation" >;</span>
     <span class="token property" >border-radius</span><span class="token punctuation" >:</span> 0.3em<span class="token punctuation" >;</span>
-    <span class="token property" >color</span><span class="token punctuation" >:</span> cadetblue<span class="token punctuation" >;</span>
-    <span class="token property" >border</span><span class="token punctuation" >:</span> 1px solid cadetblue<span class="token punctuation" >;</span>
+    <span class="token property" >color</span><span class="token punctuation" >:</span> #5e7eff<span class="token punctuation" >;</span>
+    <span class="token property" >border</span><span class="token punctuation" >:</span> 1px solid #5e7eff<span class="token punctuation" >;</span>
     <span class="token property" >box-shadow</span><span class="token punctuation" >:</span> 1px 1px 3px 0 <span class="token function" >rgb</span><span class="token punctuation" >(</span>180, 180, 180<span class="token punctuation" >)</span><span class="token punctuation" >;</span>
 <span class="token punctuation" >}</span>
 
@@ -188,7 +188,7 @@
 <span class="token comment" spellcheck="true">/*respond to both keyboard and mouse events*/</span>
 <span class="token selector" >#checkbox-expandable input[type=checkbox]:focus + label,
 #checkbox-expandable label:hover</span> <span class="token punctuation" >{</span>
-    <span class="token property" >background</span><span class="token punctuation" >:</span> cadetblue<span class="token punctuation" >;</span>
+    <span class="token property" >background</span><span class="token punctuation" >:</span> #5e7eff<span class="token punctuation" >;</span>
     <span class="token property" >color</span><span class="token punctuation" >:</span> white<span class="token punctuation" >;</span>
     <span class="token property" >transition</span><span class="token punctuation" >:</span> all 0.5s<span class="token punctuation" >;</span>
 <span class="token punctuation" >}</span>
@@ -196,18 +196,18 @@
 <span class="token selector" >#checkbox-expandable input[type=checkbox]:checked + label:after</span><span class="token punctuation" >{</span>
     <span class="token property" >content</span><span class="token punctuation" >:</span> <span class="token string" >'\25b4\0020'</span><span class="token punctuation" >;</span>
 <span class="token punctuation" >}</span>
-</code></pre><p>We keep the same rules but add css selectors based on aria-states</p></div><p>At the end, we have a component with more accurate semantic, with synchronised states and with keyboard interactions (ENTER, SPACE, ARROW DOWN, ARROW UP)</p></div><h3 id="result-checkbox">Demo: expandable section with a checkbox</h3><div id="checkbox-expandable"><input class="visuallyhidden" id="checkbox-button" type="checkbox" aria-haspopup="true" aria-controls="checkbox-expandable-section"><label for="checkbox-button">toggle</label><div id="checkbox-expandable-section"><p>I can be shown/hidden</p></div></div></section><section><h2 id="button">Using a button</h2><p>Here, we are going to assume Javascript will be available and we will be using a regular button as toggle control. Content will be displayed by default in case anything goes wrong with the script.</p><p>Our markup needs to hold all the required aria-roles and aria-attributes, then lrtiste will do the rest !</p><div data-lrtiste-tabs><ul role="tablist"><li role="presentation"><a href="#button-markup-tab" role="tab" aria-controls="button-markup-tab" aria-selected="true">Markup</a></li><li role="presentation"><a href="#button-style-tab" role="tab" aria-controls="button-style-tab">Style</a></li><li role="presentation"><a href="#button-script-tab" role="tab" aria-controls="button-script-tab">Script</a></li></ul><div id="button-markup-tab" role="tabpanel"><h4 tabindex="0">index.html</h4><pre class="language-markup"><code class="language-markup">
+</code></pre><p>We keep the same rules but add css selectors based on aria-states</p></div><p>At the end, we have a component with more accurate semantic, with synchronised states and with keyboard interaction (ENTER, SPACE, ARROW DOWN, ARROW UP)</p></div><h3 id="result-checkbox">Demo: expandable section with a checkbox</h3><div id="checkbox-expandable"><input class="visuallyhidden" id="checkbox-button" type="checkbox" aria-haspopup="true" aria-controls="checkbox-expandable-section"><label for="checkbox-button">toggle</label><div id="checkbox-expandable-section"><p>I can be shown/hidden</p></div></div></section><section><h2 id="button">Using a button</h2><p>Here, we are going to assume Javascript will be available and we will be using a regular button as toggle control. Content will be displayed by default in case anything goes wrong with the script.</p><p>Our markup needs to hold all the required aria-roles and aria-attributes, then lrtiste will do the rest !</p><div data-lrtiste-tabs><ul role="tablist"><li role="presentation"><a href="#button-markup-tab" role="tab" aria-controls="button-markup-tab" aria-selected="true">Markup</a></li><li role="presentation"><a href="#button-style-tab" role="tab" aria-controls="button-style-tab">Style</a></li><li role="presentation"><a href="#button-script-tab" role="tab" aria-controls="button-script-tab">Script</a></li></ul><div id="button-markup-tab" role="tabpanel"><h4 tabindex="0">index.html</h4><pre class="language-markup"><code class="language-markup">
 <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>div</span> <span class="token attr-name" >id</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>button-expandable<span class="token punctuation" >"</span></span><span class="token punctuation" >></span></span>
-  <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>button</span> <span class="token attr-name" >aria-haspopup</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>true<span class="token punctuation" >"</span></span> <span class="token attr-name" >aria-expanded</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>true<span class="token punctuation" >"</span></span> <span class="token attr-name" >aria-controls</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>button-expandable-section<span class="token punctuation" >"</span></span><span class="token punctuation" >></span></span>toggle<span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;/</span>button</span><span class="token punctuation" >></span></span>
+  <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>button</span> <span class="token attr-name" >aria-haspopup</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>true<span class="token punctuation" >"</span></span> <span class="token attr-name" >type</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>button<span class="token punctuation" >"</span></span> <span class="token attr-name" >aria-expanded</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>true<span class="token punctuation" >"</span></span> <span class="token attr-name" >aria-controls</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>button-expandable-section<span class="token punctuation" >"</span></span><span class="token punctuation" >></span></span>toggle<span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;/</span>button</span><span class="token punctuation" >></span></span>
   <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>div</span> <span class="token attr-name" >id</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>button-expandable-section<span class="token punctuation" >"</span></span><span class="token punctuation" >></span></span>
-    <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>p</span><span class="token punctuation" >></span></span>Hello world<span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;/</span>p</span><span class="token punctuation" >></span></span>
+    <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>p</span> <span class="token attr-name" >tabindex</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>0<span class="token punctuation" >"</span></span><span class="token punctuation" >></span></span>Hello world<span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;/</span>p</span><span class="token punctuation" >></span></span>
   <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;/</span>div</span><span class="token punctuation" >></span></span>
 <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;/</span>div</span><span class="token punctuation" >></span></span></code></pre><p>all aria roles are set by default.</p></div><div id="button-style-tab" role="tabpanel"><h4 tabindex="0">theme.css</h4><pre class="language-markup"><code class="language-markup"><span class="token selector" >#button-expandable button</span> <span class="token punctuation" >{</span>
     <span class="token property" >padding</span><span class="token punctuation" >:</span> 0.5rem 1rem<span class="token punctuation" >;</span>
     <span class="token property" >text-align</span><span class="token punctuation" >:</span> center<span class="token punctuation" >;</span>
-    <span class="token property" >border-radius</span><span class="token punctuation" >:</span> 0.3em<span class="token punctuation" >;</span>
-    <span class="token property" >color</span><span class="token punctuation" >:</span> cadetblue<span class="token punctuation" >;</span>
-    <span class="token property" >border</span><span class="token punctuation" >:</span> 1px solid cadetblue<span class="token punctuation" >;</span>
+    <span class="token property" >border-radius</span><span class="token punctuation" >:</span> 0.3rem<span class="token punctuation" >;</span>
+    <span class="token property" >color</span><span class="token punctuation" >:</span> #5e7eff<span class="token punctuation" >;</span>
+    <span class="token property" >border</span><span class="token punctuation" >:</span> 1px solid #5e7eff<span class="token punctuation" >;</span>
     <span class="token property" >box-shadow</span><span class="token punctuation" >:</span> 1px 1px 3px 0 <span class="token function" >rgb</span><span class="token punctuation" >(</span>180, 180, 180<span class="token punctuation" >)</span><span class="token punctuation" >;</span>
     <span class="token property" >background</span><span class="token punctuation" >:</span> white<span class="token punctuation" >;</span>
     <span class="token property" >font</span><span class="token punctuation" >:</span> inherit<span class="token punctuation" >;</span>
@@ -224,7 +224,7 @@
 <span class="token punctuation" >}</span>
 
 <span class="token selector" >#button-expandable button:focus, #button-expandable button:hover</span> <span class="token punctuation" >{</span>
-    <span class="token property" >background</span><span class="token punctuation" >:</span> cadetblue<span class="token punctuation" >;</span>
+    <span class="token property" >background</span><span class="token punctuation" >:</span> #5e7eff<span class="token punctuation" >;</span>
     <span class="token property" >color</span><span class="token punctuation" >:</span> white<span class="token punctuation" >;</span>
     <span class="token property" >transition</span><span class="token punctuation" >:</span> all 0.5s<span class="token punctuation" >;</span>
     <span class="token property" >outline</span><span class="token punctuation" >:</span> none<span class="token punctuation" >;</span>
@@ -239,4 +239,4 @@
 <span class="token keyword" >export</span> <span class="token keyword" >function</span> bootstrap <span class="token punctuation" >(</span><span class="token punctuation" >)</span> <span class="token punctuation" >{</span>
   <span class="token keyword" >const</span> factory <span class="token operator" >=</span> <span class="token function" >expandable</span><span class="token punctuation" >(</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
   <span class="token keyword" >return</span> <span class="token function" >factory</span><span class="token punctuation" >(</span><span class="token punctuation" >{</span>el<span class="token punctuation" >:</span> document<span class="token punctuation" >.</span><span class="token function" >getElementById</span><span class="token punctuation" >(</span><span class="token string" >'button-expandable'</span><span class="token punctuation" >)</span><span class="token punctuation" >}</span><span class="token punctuation" >)</span>
-<span class="token punctuation" >}</span></code></pre><p>No rocket science here, we just use lrtiste</p></div></div><h3 id="result-button">Demo: expandable section using a regular button</h3><div id="button-expandable"><button aria-haspopup="true" aria-expanded="true" aria-controls="button-expandable-section">toggle</button><div id="button-expandable-section"><p>Hello world</p></div></div><p>At the end, the component "won't work" without javascript, but on the other hand things are much easier and if we make sure content is displayed by default, it remains accessible to everybody.</p><script src="./expandables.js"></script></section></main><footer>foo bar</footer><script src="../theme.js"></script></body></html>
+<span class="token punctuation" >}</span></code></pre><p>No rocket science here, we just use lrtiste</p></div></div><h3 id="result-button">Demo: expandable section using a regular button</h3><div id="button-expandable"><button aria-haspopup="true" type="button" aria-expanded="true" aria-controls="button-expandable-section">toggle</button><div id="button-expandable-section"><p tabindex="0">Hello world</p></div></div><p>At the end, the component "won't work" without javascript, but on the other hand things are much easier and if we make sure content is displayed by default, it remains accessible to everybody.</p><script src="./expandables.js"></script></section></main><footer>foo bar</footer><script src="../theme.js"></script></body></html>

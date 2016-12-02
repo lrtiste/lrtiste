@@ -27,7 +27,7 @@ block content
                         +contentEntry('#tabcontent-result','Demo: tabs component as table of content')
 
     section
-        h2#keyboard Keyboard interactions
+        h2#keyboard Keyboard interaction
         P The user should be able to reach the active tab component (ie the header) by pressing #[span TAB] following the regular source flow.
         p Once the tab interface is reached, if the user press #[span TAB] again, the focus will be send to the next focusable element within the active tabpanel until there is not more focusable element so that the focus leaves the component.
         p When the focus is on the tab headers, the user can use the different arrow keys to switch the active tab.
@@ -36,7 +36,7 @@ block content
         p In this strategy we are going to progressively enhance our tab component so it would keep working without javascript while still conveying meaningful semantic and providing relevant keyboard interaction.
         p Note: you should be able to interact with the resulting tab component with Javascript disabled.
         h3#first-step First step: creating a tab component css powered using native html5 elements
-        p We use visually hidden (but not hidden for assistive user agents) inputs type radio to provide keyboard interactions. A combination of flexbox properties and sibling selectors then give us the visual aspect expected fo such component.
+        p We use visually hidden (but not hidden for assistive user agents) inputs type radio to provide keyboard interaction. A combination of flexbox properties and sibling selectors then give us the visual aspect expected fo such component.
         p We also add the recommended aria roles so assistive technologies such voice over manages to give more accurate semantic to the user.
         div(data-lrtiste-tabs)
             ul(role='tablist')
@@ -80,7 +80,7 @@ block content
         p The great thing with this technique is you already have the expected keyboard interaction as well as an acceptable semantic/ui-state phrasing without Javascrit (ie it will work while waiting for the script to load or if an error occurs)
     section
         h2#tabcontent Tabs as table of content strategy
-        p The idea is to consider the tab headers as navigation link for you component (as the very same #[a(href="#contents") table of contents] of this page).
+        p The idea is to consider the tab headers as navigation links for you component (as the very same #[a(href="#contents") table of contents] of this page).
         h3#tabcontent-first-step Semantic
         p The tab headers would be a nothing more than a bunch of links targeting sections within our document.
         p We add the related aria-roles and attributes to be more accurate in our semantic. And we make sure our sections are focusable by adding a tabindex to the headers of our sections.

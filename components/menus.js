@@ -28,8 +28,9 @@ const menuItemEvenBinding = init(function () {
       this.selectPrevious();
     } else if (k === 39 || k === 40) {
       this.selectNext();
-    } else if ((k === 13 || k === 32) && this.listMediator.toggle) {
-      this.listMediator.toggle();
+    }
+    if (/37|38|39|40/.test(k)) {
+      event.preventDefault();
     }
   });
 });
@@ -46,8 +47,10 @@ const subMenuItemEventBinding = init(function () {
       this.selectPrevious();
     } else if (k === 40) {
       this.selectNext();
-    } else if (k === 13 || k === 32) {
-      this.listMediator.toggle();
+    }
+
+    if (/38|40/.test(k)) {
+      event.preventDefault();
     }
   });
 });
@@ -72,7 +75,20 @@ const menuEventBinding = init(function () {
     } else if (k === 38 && this.isOpen) {
       this.toggle();
     }
+
+    if (/38|40/.test(k)) {
+      event.preventDefault();
+    }
   });
+  this.el.addEventListener('keydown', event=> {
+    const {keyCode:k} = event;
+    if (/9|27/.test(k) && this.isOpen) {
+      this.toggle();
+      if (k === 27) {
+        this.toggler.focus();
+      }
+    }
+  })
 });
 
 const subMenuEventBinding = init(function () {
@@ -96,7 +112,7 @@ const subMenuEventBinding = init(function () {
   });
   this.toggler.addEventListener('keydown', event => {
     const {keyCode:k, target} = event;
-    if ((k === 13 || k === 32) && target.tagName !== 'BUTTON') {
+    if (/13|32/.test(k) && target.tagName !== 'BUTTON' && target === this.toggler) {
       this.toggle();
     } else if (k === 39) {
       next();
@@ -115,13 +131,27 @@ const subMenuEventBinding = init(function () {
         this.selectPrevious();
       }
     }
+
+    if (/37|38|39|40/.test(k)) {
+      event.preventDefault();
+    }
+
   });
+
   this.el.addEventListener('keydown', event => {
     const {keyCode:k} = event;
     if (k === 39) {
       next();
     } else if (k === 37) {
       previous();
+    } else if (/9|27/.test(k) && this.isOpen) {
+      this.toggle();
+      if (k === 27) {
+        this.toggler.focus();
+      }
+    }
+    if (/37|39/.test(k)) {
+      event.preventDefault();
     }
   });
 });
@@ -133,9 +163,6 @@ function menuInitStamp ({menuItem = menuItemStamp}={}) {
 
     Object.defineProperty(this, 'toggler', {value: toggler});
     Object.defineProperty(this, 'menu', {value: menu});
-
-    this.toggler.setAttribute('tabindex', 0);
-    this.menu.el.setAttribute('tabindex', -1);
 
     for (const el of this.menu.el.querySelectorAll('[role="menuitem"]')) {
       menuItem({listMediator: this, el});
@@ -154,8 +181,7 @@ function menuInitStamp ({menuItem = menuItemStamp}={}) {
         this.toggler.focus();
       }
     });
-
-    this.isOpen = this.isOpen || !!this.toggler.getAttribute('aria-expanded');
+    this.isOpen = !!this.toggler.getAttribute('aria-expanded');
   });
 }
 
@@ -186,7 +212,7 @@ export function subMenu ({menuItem = subMenuItemStamp}={}) {
 
 const subMenuStamp = subMenu({menuItem: subMenuItemStamp});
 
-export function menuBar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) {
+export function menubar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) {
   return compose(
     ariaElement({ariaRole: 'menubar'}),
     listMediatorStamp,

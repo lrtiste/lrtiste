@@ -25,10 +25,10 @@ block content
     section
         h2#keyboard Keyboard interaction
         p The common anatomy of such a component is to have a toggle button changing the state of the expanding/collapsing section. The button should be focusable and should respond to the ENTER and SPACE keys (optionally to DOWN and UP arrows) to change the collapsed/expanded state of the corresponding section.
-        p What happen then in term of focus and keyboard navigation will depends on the nature of the component (menu, accordion, etc)
+        p What happens then in term of focus and keyboard navigation will depend on the nature of the component (menu, accordion, etc)
     section
         h2#checkbox Progressive enhancement using a native html5 checkbox
-        p In this technique we use a checkbox as the button as it already provides the expected keyboard interactions.
+        p In this technique we use a checkbox as the button: it already provides the expected keyboard interactions.
         h3#checkbox-no-javascript Without Javascript
         p We hide the visual nature of the checkbox to fake it into a button.
         p We then use css pseudo selectors and adjacent selector to show/hide the section on demand.
@@ -64,7 +64,7 @@ block content
                 h4(tabindex=0) theme.css
                 +code('checkbox.css')
                 p We keep the same rules but add css selectors based on aria-states
-            p At the end, we have a component with more accurate semantic, with synchronised states and with keyboard interactions (ENTER, SPACE, ARROW DOWN, ARROW UP)
+            p At the end, we have a component with more accurate semantic, with synchronised states and with keyboard interaction (ENTER, SPACE, ARROW DOWN, ARROW UP)
         h3#result-checkbox Demo: expandable section with a checkbox
         include ./samples/checkbox
     section

@@ -1,0 +1,31 @@
+extends ../../layout/main
+include ../../partials/code
+include ../../partials/content
+
+block content
+    style
+        include ./samples/menubars.css
+    h1 Menubar component
+    blockquote(cite='https://www.w3.org/TR/wai-aria-practices/#menu')
+        p A menu that is visually persistent is a menubar. A menubar is typically horizontal and is often used to create a menu bar similar to those found near the top of the window in many desktop applications, offering the user quick access to a consistent set of commands.
+    P It can be seen as a composite of menuitems and #[a(href='#foo') dropdown menus]
+    section
+        h2#contents Contents
+        nav
+            ul
+                +contentEntry('#keyboard', 'Keyboard interaction')
+                +contentEntry('#lrtiste','Menu bar using lrtiste')
+                +contentEntry('#demo','Demo: menubar component using lrtiste')
+    section
+        h2#keyboard Keyboard interaction
+        p The recommended keyboard interaction is quite complex and I recommend you to read directly from #[a(href='https://www.w3.org/TR/wai-aria-practices/#menu') WAI-ARIA Authoring Practices] which will explain it much better than I would.
+        include ./samples/menubars
+    section
+        h2#lrtiste Menu bar using lrtiste
+        p As a menu bar would be a set of grouped actions, it may not be relevant/easy to have it working without Javascript and we are going to consider for this example that Javascript is available.
+        p There is a #[a(href='#aldjf') specification draft] on a eventually new #[code menu] html element whose read might help to understand what is expected for such a component.
+    section
+        h2#demo
+    script(src='./menubars.js')
+
+
