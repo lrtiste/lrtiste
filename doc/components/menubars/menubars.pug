@@ -13,19 +13,56 @@ block content
         h2#contents Contents
         nav
             ul
-                +contentEntry('#keyboard', 'Keyboard interaction')
-                +contentEntry('#lrtiste','Menu bar using lrtiste')
                 +contentEntry('#demo','Demo: menubar component using lrtiste')
+                    ul
+                        +contentEntry('#keyboard-support', 'Supported keyboard interactions')
+                +contentEntry('#source','Method and comments')
+                    ul
+                        +contentEntry('#markup','Markup')
+                        +contentEntry('#lrtist','Style and script')
     section
-        h2#keyboard Keyboard interaction
-        p The recommended keyboard interaction is quite complex and I recommend you to read directly from #[a(href='https://www.w3.org/TR/wai-aria-practices/#menu') WAI-ARIA Authoring Practices] which will explain it much better than I would.
+        h2#demo Demo: menubar component using lrtiste
         include ./samples/menubars
+        h3#keyboard-support Supported keyboard interactions
+        p Here are the supported keyboard interactions
+        h4 When focus on is a menu item which can expand a submenu (direct child of the menu bar)
+        ul
+            li down arrow, enter, space will open the submenu if not yet opened.
+            li up arrow, enter, space will close the submenu if already opened.
+            li left arrow will go the previous menu item in the menu bar.
+            li right arrow will go to the next menu item in the menu bar.
+            li tab will focus the next focusable element in the source flow leaving the menubar.
+        h4 When focus is on a menu item inside of an expanded sub menu (nested child).
+        ul
+            li down arrow will go to the next menu item inside the submenu.
+            li up arrow will go to the previous menu item inside the submenu.
+            li esc will close the submenu and focus the submenu pop up button.
+            li left arrow will close the submenu and select the previous item in the menubar.
+            li right arrow will close the submenu and select the next item in the menubar.
+            li tab will focus the next focusable element in the source flow leaving and closing the submenu.
     section
-        h2#lrtiste Menu bar using lrtiste
+        h2#source Method and comments
         p As a menu bar would be a set of grouped actions, it may not be relevant/easy to have it working without Javascript and we are going to consider for this example that Javascript is available.
-        p There is a #[a(href='#aldjf') specification draft] on a eventually new #[code menu] html element whose read might help to understand what is expected for such a component.
-    section
-        h2#demo
+        h3#markup Markup
+        p There is a #[a(href='#aldjf') specification draft] on a eventually new #[code menu] html element whose read might help to understand what is expected for such a component
+        p The container with the role #[code menubar] will be persistent and each item will have the role #[code menuitem]
+        p We follow the currently provided example of sub memus on #[a(href='#fdsfd') mozilla documentation for menu and menuitem html5 elements]. If you don't follow the pattern, the event handling may be buggy
+        p Sub menu will have a button with #[code aria-haspopup] attribute. We put the tabindex to -1 except on the first item to make sure the tab sequence remains short (lrtiste will update them accordingly to the component state)
+        +code('menubars.pug')
+        h3#lrtist Style and script
+        div(data-lrtiste-tabs)
+            ul(role='tablist')
+                li(role='presentation')
+                    a(href='#sample-style', role='tab',aria-controls='sample-style', aria-selected='true') Style
+                li(role='presentation')
+                    a(href='#sample-script', role='tab',aria-controls='sample-script') Script
+                div#sample-style(role='tabpanel')
+                    h4(tabindex=0) theme.css
+                    +code('menubars.css')
+                    p We try to use as much as possible semantic selector so style can be adapted to different markup
+                div#sample-script(role='tabpanel')
+                    h4(tabindex=0) index.js
+                    +code('index.js')
     script(src='./menubars.js')
 
 

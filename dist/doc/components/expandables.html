@@ -143,7 +143,13 @@
 
       <span class="token comment" spellcheck="true">// and we prevent default checkbox event binding</span>
       <span class="token comment" spellcheck="true">// to give control back to the expandable component script</span>
-      checkbox<span class="token punctuation" >.</span><span class="token function" >addEventListener</span><span class="token punctuation" >(</span><span class="token string" >'keydown'</span><span class="token punctuation" >,</span> ev<span class="token operator" >=</span><span class="token operator" >></span>ev<span class="token punctuation" >.</span><span class="token function" >preventDefault</span><span class="token punctuation" >(</span><span class="token punctuation" >)</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+      checkbox<span class="token punctuation" >.</span><span class="token function" >addEventListener</span><span class="token punctuation" >(</span><span class="token string" >'keydown'</span><span class="token punctuation" >,</span> ev<span class="token operator" >=</span><span class="token operator" >></span> <span class="token punctuation" >{</span>
+          <span class="token keyword" >const</span> <span class="token punctuation" >{</span>keyCode<span class="token punctuation" >:</span>k<span class="token punctuation" >}</span> <span class="token operator" >=</span> ev<span class="token punctuation" >;</span>
+          <span class="token keyword" >if</span> <span class="token punctuation" >(</span><span class="token regex" >/13|32|40|38/</span><span class="token punctuation" >.</span><span class="token function" >test</span><span class="token punctuation" >(</span>k<span class="token punctuation" >)</span><span class="token punctuation" >)</span> <span class="token punctuation" >{</span>
+            ev<span class="token punctuation" >.</span><span class="token function" >preventDefault</span><span class="token punctuation" >(</span><span class="token punctuation" >)</span>
+          <span class="token punctuation" >}</span>
+        <span class="token punctuation" >}</span>
+      <span class="token punctuation" >)</span><span class="token punctuation" >;</span>
       checkbox<span class="token punctuation" >.</span><span class="token function" >addEventListener</span><span class="token punctuation" >(</span><span class="token string" >'click'</span><span class="token punctuation" >,</span> ev<span class="token operator" >=</span><span class="token operator" >></span> ev<span class="token punctuation" >.</span><span class="token function" >preventDefault</span><span class="token punctuation" >(</span><span class="token punctuation" >)</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
     <span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
 

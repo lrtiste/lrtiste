@@ -13,13 +13,28 @@ block content
         h2#contents Contents
         nav
             ul
-                +contentEntry('#keyboard','Keyboard interaction')
+                +contentEntry('#demo','Demo: dropdown menu using lrtiste')
+                    ul
+                        +contentEntry('#keyboard','Keyboard interaction')
                 +contentEntry('#expandable','Expandable section comparison')
                 +contentEntry('#lrtiste','Dropdown menu using lrtiste')
-                +contentEntry('#demo','Demo: dropdown menu using lrtiste')
     section
-        h2#keyboard Keyboard interaction
-        p The menu button should be focusable using #[em tab]. #[em ENTER], #[em SPACE] and optionally #[em DOWN ARROW] should open the menu and put the focus on the first item. You should then be able to navigate from item to the other using arrow keys whereas #[em tab] key should move the focus out of the menu.
+        h2#demo Demo: dropdown menu using lrtiste
+        include ./samples/dropdowns
+        p You'll notice that using an absolute position for our menu can be troublesome as it will likely overlap other content on the page. It is "pretty" for sighted users but can turns wrong if Javascript fails, for example.
+        h3#keyboard Keyboard interactions
+        h4 When focus is on the toggle button
+        ul
+            li if the menu is not expanded yet ENTER, SPACE, DOWN ARROW will expand the menu and put focus on the first item
+            li if the menu is expanded ENTER, SPACE, UP ARROW will collapse the menu
+            li TAB will focus the next focusable element on the page, closing the menu
+        h4 When focus is on a menuitem
+        ul
+            li LEFT and UP ARROW will select the previous menu item
+            li RIGHT AND DOWN ARROW will select the next menu item
+            li ESC will close the menu and put focus on the menu button
+            li SHIFT TAB will focus the menu button, closing the menu
+            li TAB will focus the next focusable element on the page, closing the menu
     section
         h2#expandable Expandable section comparison
         p In many aspects a dropdown menu follows the #[a(href='#foobar') expandable section] behaviour and you could follow its tutorial to get started with a progressive approach.
@@ -44,8 +59,4 @@ block content
             div#sample-script(role='tabpanel')
                 h3(tabindex=0) index.js
                 +code('index.js')
-    section
-        h2#demo Demo: dropdown menu using lrtiste
-        include ./samples/dropdowns
-        p You'll notice that using an absolute position for our menu can be troublesome as it will likely overlap other content on the page. It is "pretty" for sighted users but can turns wrong if Javascript fails, for example.
     script(src='./dropdowns.js')

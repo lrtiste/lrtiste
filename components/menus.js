@@ -29,7 +29,7 @@ const menuItemEvenBinding = init(function () {
     } else if (k === 39 || k === 40) {
       this.selectNext();
     }
-    if (/37|38|39|40/.test(k)) {
+    if (/\b37\b|\b38\b|\b39\b|\b40\b/.test(k)) {
       event.preventDefault();
     }
   });
@@ -49,7 +49,7 @@ const subMenuItemEventBinding = init(function () {
       this.selectNext();
     }
 
-    if (/38|40/.test(k)) {
+    if (/\b38\b|\b40\b/.test(k)) {
       event.preventDefault();
     }
   });
@@ -76,19 +76,22 @@ const menuEventBinding = init(function () {
       this.toggle();
     }
 
-    if (/38|40/.test(k)) {
+    if (/\b38\b|\b40\b/.test(k)) {
       event.preventDefault();
     }
   });
-  this.el.addEventListener('keydown', event=> {
-    const {keyCode:k} = event;
-    if (/9|27/.test(k) && this.isOpen) {
-      this.toggle();
-      if (k === 27) {
-        this.toggler.focus();
+
+  if (this.el !== this.toggler) {
+    this.el.addEventListener('keydown', event=> {
+      const {keyCode:k} = event;
+      if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
+        this.toggle();
+        if (k === 27) {
+          this.toggler.focus();
+        }
       }
-    }
-  })
+    })
+  }
 });
 
 const subMenuEventBinding = init(function () {
@@ -112,7 +115,7 @@ const subMenuEventBinding = init(function () {
   });
   this.toggler.addEventListener('keydown', event => {
     const {keyCode:k, target} = event;
-    if (/13|32/.test(k) && target.tagName !== 'BUTTON' && target === this.toggler) {
+    if (/\b13\b|\b32\b/.test(k) && target.tagName !== 'BUTTON' && target === this.toggler) {
       this.toggle();
     } else if (k === 39) {
       next();
@@ -132,7 +135,7 @@ const subMenuEventBinding = init(function () {
       }
     }
 
-    if (/37|38|39|40/.test(k)) {
+    if (/\b37\b|\b38\b|\b39\b|\b40\b/.test(k)) {
       event.preventDefault();
     }
 
@@ -144,13 +147,13 @@ const subMenuEventBinding = init(function () {
       next();
     } else if (k === 37) {
       previous();
-    } else if (/9|27/.test(k) && this.isOpen) {
+    } else if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
       this.toggle();
       if (k === 27) {
         this.toggler.focus();
       }
     }
-    if (/37|39/.test(k)) {
+    if (/\b37\b|\b39\b/.test(k)) {
       event.preventDefault();
     }
   });

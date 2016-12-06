@@ -11,7 +11,13 @@ export function bootstrap () {
 
       // and we prevent default checkbox event binding
       // to give control back to the expandable component script
-      checkbox.addEventListener('keydown', ev=>ev.preventDefault());
+      checkbox.addEventListener('keydown', ev=> {
+          const {keyCode:k} = ev;
+          if (/13|32|40|38/.test(k)) {
+            ev.preventDefault()
+          }
+        }
+      );
       checkbox.addEventListener('click', ev=> ev.preventDefault());
     }));
 

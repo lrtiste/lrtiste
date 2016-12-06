@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="en"><head><title>tooltips component| lrtiste website</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="../../../node_modules/prismjs/themes/prism-okaidia.css" rel="stylesheet"><link href="../theme.css" rel="stylesheet"></head><body><header role="banner"><nav role="navigation"><ul><li><a href="#foo">test</a></li></ul></nav></header><main id="main"><style>#tooltip-sample {
+    position: relative;
+    display: inline-block;
+    overflow: visible;
+}
+
+#tooltip-sample [role='tooltip'] {
+    display: none;
+    background: #3d3d3d;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 3px;
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 1rem;
+    left: 0;
+    z-index: 9999;
+    box-shadow: 1px 0.1rem 0.3rem 0 #818181;
+    white-space: pre;
+    opacity: 0;
+    font-size: 0.8rem;
+}
+
+/*
+react to both mouse and keyboard focus
+*/
+#tooltip-sample [aria-describedby]:focus + [role=tooltip],
+#tooltip-sample [aria-describedby]:hover + [role=tooltip] {
+    display: inline-block;
+    animation-name: show-tooltip;
+    animation-delay: 0.5s;
+    animation-duration: 0.4s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes show-tooltip {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}</style><h1>Tooltips components</h1><blockquote cite="https://www.w3.org/TR/wai-aria-practices/#tooltip"><p>Popup that displays a description for an element when a user hovers over or focuses on that element. It should popup automatically when the user gives input focus to the widget or element with which it is associated.</p></blockquote><section><h2 id="contents">Contents</h2><nav><ul><li><a href="#demo">Demo: tooltip with keyboard interaction</a></li><li><a href="#css">CSS powered tooltip</a></li><li><a href="#script">Enhancement with Javascript</a></li></ul></nav></section><section><h2 id="demo"></h2><p>The focusable element will display/provide a hint when the target element either has focus, either the mouse is over. However focus will remain on the target element.</p><div id="tooltip-sample"><a href="/" aria-describedby="tooltip-hint">Home link</a><div role="tooltip" id="tooltip-hint">Follow the link to return on the home page</div></div></section><section><h2 id="css">CSS powered tooltip</h2><p>By following the recommended markup, we add the <code>aria-describedby</code> attribute on the target and the <code>tooltip</code> role on the the hint. The idea then is to put the hint next to the target and use sibling css selector to reveal the tooltip.</p><p>Note with Javascript disabled, we can't hide the tooltip using the <em>esc</em> key</p><div data-lrtiste-tabs><ul role="tablist"><li role="presentation"><a href="#tooltip-1-markup" role="tab" aria-controls="tooltip-1-markup" aria-selected="true">Markup</a></li><li role="presentation"><a href="#tooltip-1-style" role="tab" aria-controls="tooltip-1-style">Style</a></li></ul><div id="tooltip-1-markup" role="tabpanel"><h4 tabindex="0">index.html</h4><pre class="language-markup"><code class="language-markup">
+<span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>div</span> <span class="token attr-name" >id</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>tooltip-sample<span class="token punctuation" >"</span></span><span class="token punctuation" >></span></span><span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>a</span> <span class="token attr-name" >href</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>/<span class="token punctuation" >"</span></span> <span class="token attr-name" >aria-describedby</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>tooltip-hint<span class="token punctuation" >"</span></span><span class="token punctuation" >></span></span>Home link<span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;/</span>a</span><span class="token punctuation" >></span></span>
+  <span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;</span>div</span> <span class="token attr-name" >role</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>tooltip<span class="token punctuation" >"</span></span> <span class="token attr-name" >id</span><span class="token attr-value" ><span class="token punctuation" >=</span><span class="token punctuation" >"</span>tooltip-hint<span class="token punctuation" >"</span></span><span class="token punctuation" >></span></span>Follow the link to return on the home page<span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;/</span>div</span><span class="token punctuation" >></span></span>
+<span class="token tag" ><span class="token tag" ><span class="token punctuation" >&lt;/</span>div</span><span class="token punctuation" >></span></span></code></pre></div><div id="tooltip-1-style" role="tabpanel"><h4 tabindex="0">incex.css</h4><pre class="language-markup"><code class="language-markup"><span class="token selector" >#tooltip-sample</span> <span class="token punctuation" >{</span>
+    <span class="token property" >position</span><span class="token punctuation" >:</span> relative<span class="token punctuation" >;</span>
+    <span class="token property" >display</span><span class="token punctuation" >:</span> inline-block<span class="token punctuation" >;</span>
+    <span class="token property" >overflow</span><span class="token punctuation" >:</span> visible<span class="token punctuation" >;</span>
+<span class="token punctuation" >}</span>
+
+<span class="token selector" >#tooltip-sample [role='tooltip']</span> <span class="token punctuation" >{</span>
+    <span class="token property" >display</span><span class="token punctuation" >:</span> none<span class="token punctuation" >;</span>
+    <span class="token property" >background</span><span class="token punctuation" >:</span> #3d3d3d<span class="token punctuation" >;</span>
+    <span class="token property" >color</span><span class="token punctuation" >:</span> white<span class="token punctuation" >;</span>
+    <span class="token property" >padding</span><span class="token punctuation" >:</span> 0.5rem<span class="token punctuation" >;</span>
+    <span class="token property" >border-radius</span><span class="token punctuation" >:</span> 3px<span class="token punctuation" >;</span>
+    <span class="token property" >position</span><span class="token punctuation" >:</span> absolute<span class="token punctuation" >;</span>
+    <span class="token property" >bottom</span><span class="token punctuation" >:</span> 100%<span class="token punctuation" >;</span>
+    <span class="token property" >margin-bottom</span><span class="token punctuation" >:</span> 1rem<span class="token punctuation" >;</span>
+    <span class="token property" >left</span><span class="token punctuation" >:</span> 0<span class="token punctuation" >;</span>
+    <span class="token property" >z-index</span><span class="token punctuation" >:</span> 9999<span class="token punctuation" >;</span>
+    <span class="token property" >box-shadow</span><span class="token punctuation" >:</span> 1px 0.1rem 0.3rem 0 #818181<span class="token punctuation" >;</span>
+    <span class="token property" >white-space</span><span class="token punctuation" >:</span> pre<span class="token punctuation" >;</span>
+    <span class="token property" >opacity</span><span class="token punctuation" >:</span> 0<span class="token punctuation" >;</span>
+    <span class="token property" >font-size</span><span class="token punctuation" >:</span> 0.8rem<span class="token punctuation" >;</span>
+<span class="token punctuation" >}</span>
+
+<span class="token comment" spellcheck="true">/*
+react to both mouse and keyboard focus
+*/</span>
+<span class="token selector" >#tooltip-sample [aria-describedby]:focus + [role=tooltip],
+#tooltip-sample [aria-describedby]:hover + [role=tooltip]</span> <span class="token punctuation" >{</span>
+    <span class="token property" >display</span><span class="token punctuation" >:</span> inline-block<span class="token punctuation" >;</span>
+    <span class="token property" >animation-name</span><span class="token punctuation" >:</span> show-tooltip<span class="token punctuation" >;</span>
+    <span class="token property" >animation-delay</span><span class="token punctuation" >:</span> 0.5s<span class="token punctuation" >;</span>
+    <span class="token property" >animation-duration</span><span class="token punctuation" >:</span> 0.4s<span class="token punctuation" >;</span>
+    <span class="token property" >animation-fill-mode</span><span class="token punctuation" >:</span> forwards<span class="token punctuation" >;</span>
+<span class="token punctuation" >}</span>
+
+<span class="token atrule" ><span class="token rule" >@keyframes</span> show-tooltip</span> <span class="token punctuation" >{</span>
+    <span class="token selector" >from</span> <span class="token punctuation" >{</span>
+        <span class="token property" >opacity</span><span class="token punctuation" >:</span> 0<span class="token punctuation" >;</span>
+    <span class="token punctuation" >}</span>
+    <span class="token selector" >to</span> <span class="token punctuation" >{</span>
+        <span class="token property" >opacity</span><span class="token punctuation" >:</span> 1<span class="token punctuation" >;</span>
+    <span class="token punctuation" >}</span>
+<span class="token punctuation" >}</span></code></pre></div></div></section><section><h2 id="script">Enhancement with Javascript</h2><p>By using lrtiste we simply add the recommended keyboard access (esc should dismiss the tooltip when focus is on the target element)</p><pre class="language-markup"><code class="language-markup"><span class="token keyword" >import</span> <span class="token punctuation" >{</span>tooltip<span class="token punctuation" >}</span> <span class="token keyword" >from</span> <span class="token string" >'../../../../components/tooltips'</span><span class="token punctuation" >;</span>
+
+<span class="token keyword" >const</span> factory <span class="token operator" >=</span> <span class="token function" >tooltip</span><span class="token punctuation" >(</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+<span class="token function" >factory</span><span class="token punctuation" >(</span><span class="token punctuation" >{</span>el<span class="token punctuation" >:</span> document<span class="token punctuation" >.</span><span class="token function" >querySelector</span><span class="token punctuation" >(</span><span class="token string" >'#tooltip-sample > [role=tooltip]'</span><span class="token punctuation" >)</span><span class="token punctuation" >}</span><span class="token punctuation" >)</span><span class="token punctuation" >;</span>
+
+</code></pre></section><script src="./tooltips.js"></script></main><footer>foo bar</footer><script src="../theme.js"></script></body></html>

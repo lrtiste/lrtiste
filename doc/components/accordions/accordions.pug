@@ -13,16 +13,32 @@ block content
         nav
             ul
                 +contentEntry('#keyboard', 'Keyboard interaction')
-                +contentEntry('#checkbox', 'Using a set of collapsing sections')
-                +contentEntry('#lrtiste','Give lrtiste control')
+                +contentEntry('#demo','Demo: accordion control using lrtiste')
                     ul
-                        +contentEntry('#demo','Demo: accordion control using lrtiste')
+                        +contentEntry('#supported-keyboard','Supported keyboard interactions')
+                +contentEntry('#checkbox', 'Method: using a set of collapsing sections')
+                +contentEntry('#lrtiste','Give lrtiste control')
     section
         h2#keyboard Keyboard interactions
         p The #[a(href="https://www.w3.org/TR/wai-aria-practices/#accordion") recommended keyboard interaction] is quite complex and you should probably refer to it for a better understanding. The idea is to be able to navigate through the content while keeping the TAB queue short and giving the ability to switch from one item to the other using arrows instead.
     section
-        h2#checkbox
-        p You could start by making your different sections expandable as shown in the #[a(href='#foo') expandable sections tutorial] and let a[href=('#lrtiste') lrtiste takes controls].
+        h2#demo Demo: accordion control using lrtiste
+        p Here is an example of the accordion group widget enhanced by #[strong lrtiste]. It has keyboard support and aria-states management as well.
+        include ./samples/accordions
+        h3#supported-keyboard Supported keyboard interactions
+        p Here arte the supported keyboard interactions
+        h4 When focus is on the header of an accordion
+        ul
+            li TAB key will select the next open accordion if any and put focus on the next focusable element within this accordion. If none is open, focus will leave the accordion group and go on the next focusable element in the page
+            li left arrow and up arrow will select previous accordion and put focus on previous accordion header
+            li right arrow and down arrow will select next accordion and put focus on next accordion header
+        h4 When focus is on any focusable element within an accordion
+        ul
+            li TAB key will select the next open accordion if any and put focus on the next focusable element within this accordion. If none is open, focus will leave the accordion group and go on the next focusable element in the page
+            li SHIFT + TAB will put focus on the accordion header
+    section
+        h2#checkbox Method: using a set of collapsing sections
+        p You could start by making your different sections expandable as shown in the #[a(href='#foo') expandable sections tutorial] and let #[a(href='#lrtiste') lrtiste take controls]
     section
         h2#lrtiste Give lrtiste control
         p The markup must be made of a container with the role #[code tablist]. It is recommended to add the #[code multiselect] attribute to make sure the assistive technologies understand they are dealing with an accordion rather than #[a(href='#sfdsf') regular tabs] (although it will be added by lrtiste if Javascript is available).
@@ -46,6 +62,4 @@ block content
                 h4(tabindex=0) index.js
                 +code('index.js')
                 p Just pass the dom element to the factory and lrtiste will do the rest: keyboar interaction and aria-states management.
-        h3#demo Demo: accordion control using lrtiste
-        include ./samples/accordions
     script(src='./accordions.js')

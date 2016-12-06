@@ -471,393 +471,50 @@ function ariaElement ({ariaRole, propertyName = 'el'}) {
   }));
 }
 
-function observable (...properties$$1) {
-  return init(function () {
-    const listeners = {};
-
-    if (!this.$onChange || !this.$on) {
-      this.$onChange = (prop, newVal) => {
-        const ls = listeners[prop] || [];
-        for (const cb of ls) {
-          cb(newVal);
-        }
-        return this;
-      };
-
-      this.$on = (property, cb)=> {
-        const listenersList = listeners[property] || [];
-        listenersList.push(cb);
-        listeners[property] = listenersList;
-        return this;
-      };
-    }
-
-    for (const prop of properties$$1) {
-      let value = this[prop];
-      Object.defineProperty(this, prop, {
-        get(){
-          return value;
-        },
-        set(val){
-          value = val;
-          this.$onChange(prop, val);
-        }
-      });
+const tooltipEventBindingStamp = init(function tooltipEventBinding () {
+  this.target.addEventListener('focus', this.show.bind(this));
+  this.target.addEventListener('keydown', event=> {
+    const {keyCode:k} =event;
+    if (k === 27) {
+      this.hide();
     }
   });
-}
+  this.target.addEventListener('blur', this.hide.bind(this));
+  this.target.addEventListener('mouseenter', this.show.bind(this));
+  this.target.addEventListener('mouseleave', this.hide.bind(this));
+});
 
-const mandatoryEl = element();
-
-function mapToAria (prop, ...attributes) {
-  const ariaAttributes = attributes.map(attr=>['aria', attr].join('-'));
+function tooltip () {
   return compose(
-    mandatoryEl,
-    observable(prop),
-    init(function () {
-      this.$on(prop, newVal => {
-          for (const att of ariaAttributes){
-            this.el.setAttribute(att,newVal);
-          }
-      });
-    })
-  );
-}
-
-function toggle (prop = 'isOpen') {
-  return methods({
-    toggle(){
-      this[prop] = !this[prop];
-    }
-  });
-}
-
-const abstractListMediatorStamp = init(function ({items = []}) {
-  Object.defineProperty(this, 'items', {value: items});
-})
-  .methods({
-    addItem(item){
-      this.items.push(item);
-    },
-    selectItem(item){
-      const index = this.items.indexOf(item);
-      if (index !== -1) {
-        for (const i of this.items) {
-          i.isSelected = i === item;
+    ariaElement({ariaRole: 'tooltip'}),
+    methods({
+      hide(){
+        if (document.getElementById(this.el.id)) {
+          this.el.remove();
         }
-      }
-    },
-    selectNextItem(item){
-      const index = this.items.indexOf(item);
-      if (index !== -1) {
-        const newIndex = index === this.items.length - 1 ? 0 : index + 1;
-        this.selectItem(this.items[newIndex]);
-      }
-    },
-    selectPreviousItem(item){
-      const index = this.items.indexOf(item);
-      if (index !== -1) {
-        const newIndex = index === 0 ? this.items.length - 1 : index - 1;
-        this.selectItem(this.items[newIndex]);
-      }
-    }
-  });
-
-const listItemStamp = init(function ({listMediator, isOpen}) {
-  if (!listMediator) {
-    throw new Error('you must provide a listMediator to the listItem');
-  }
-  this.isOpen = this.isOpen ? this.isOpen : isOpen === true;
-  Object.defineProperty(this, 'listMediator', {value: listMediator});
-  listMediator.addItem(this);
-})
-  .methods({
-    toggle(){
-      this.listMediator.toggleItem(this);
-    },
-    select(){
-      this.listMediator.selectItem(this);
-    },
-    selectPrevious(){
-      this.listMediator.selectPreviousItem(this);
-    },
-    selectNext(){
-      this.listMediator.selectNextItem(this);
-    },
-  });
-
-const multiSelectMediatorStamp = compose(abstractListMediatorStamp, methods({
-  toggleItem(item){
-    const index = this.items.indexOf(item);
-    if (index !== -1) {
-      item.isOpen = !item.isOpen;
-    }
-  }
-}));
-
-const listMediatorStamp = compose(abstractListMediatorStamp, methods({
-  toggleItem(item){
-    for (const i of this.items) {
-      i.isOpen = i === item ? !i.isOpen : false;
-    }
-    return this;
-  }
-}));
-
-const mandatoryElement = element();
-const menuElement = ariaElement({ariaRole: 'menu'});
-
-const abstractMenuItem = compose(
-  ariaElement({ariaRole: 'menuitem'}),
-  listItemStamp,
-  observable('isSelected'),
-  init(function () {
-    this.$on('isSelected', isSelected => {
-      this.el.setAttribute('tabindex', isSelected ? 0 : -1);
-      if (isSelected === true) {
-        this.el.focus();
-      }
-    });
-  })
-);
-
-const menuItemEvenBinding = init(function () {
-  this.el.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if (k === 37 || k === 38) {
-      this.selectPrevious();
-    } else if (k === 39 || k === 40) {
-      this.selectNext();
-    }
-    if (/\b37\b|\b38\b|\b39\b|\b40\b/.test(k)) {
-      event.preventDefault();
-    }
-  });
-});
-
-const menuItemStamp = compose(
-  abstractMenuItem,
-  menuItemEvenBinding
-);
-
-const subMenuItemEventBinding = init(function () {
-  this.el.addEventListener('keydown', event => {
-    const {keyCode:k} = event;
-    if (k === 38) {
-      this.selectPrevious();
-    } else if (k === 40) {
-      this.selectNext();
-    }
-
-    if (/\b38\b|\b40\b/.test(k)) {
-      event.preventDefault();
-    }
-  });
-});
-
-const subMenuItemStamp = compose(
-  abstractMenuItem,
-  subMenuItemEventBinding
-);
-
-const menuEventBinding = init(function () {
-  this.toggler.addEventListener('click', event => {
-    this.toggle();
-  });
-  this.toggler.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if (k === 13 || k === 32) {
-      if (!/button|a/i.test(target.tagName)) { //already handled by the click event
-        this.toggle();
-      }
-    } else if (k === 40 && !this.isOpen) {
-      this.toggle();
-    } else if (k === 38 && this.isOpen) {
-      this.toggle();
-    }
-
-    if (/\b38\b|\b40\b/.test(k)) {
-      event.preventDefault();
-    }
-  });
-
-  if (this.el !== this.toggler) {
-    this.el.addEventListener('keydown', event=> {
-      const {keyCode:k} = event;
-      if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
-        this.toggle();
-        if (k === 27) {
-          this.toggler.focus();
+      },
+      show(){
+        if (!document.getElementById(this.el.id)) {
+          this.target.insertAdjacentElement('afterend', this.el);
         }
+      },
+    }), init(function initializeTooltip () {
+      const id = this.el.getAttribute('id');
+      if (!id) {
+        console.log(this.el);
+        throw new Error('the above tooltip element must have an id');
       }
-    });
-  }
-});
-
-const subMenuEventBinding = init(function () {
-
-  const next = () => {
-    this.selectNext();
-    if (this.isOpen) {
-      this.toggle();
-    }
-  };
-
-  const previous = () => {
-    this.selectPrevious();
-    if (this.isOpen) {
-      this.toggle();
-    }
-  };
-
-  this.toggler.addEventListener('click', event => {
-    this.toggle();
-  });
-  this.toggler.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if (/\b13\b|\b32\b/.test(k) && target.tagName !== 'BUTTON' && target === this.toggler) {
-      this.toggle();
-    } else if (k === 39) {
-      next();
-    } else if (k === 37) {
-      previous();
-    } else if (k === 40 && target === this.toggler) {
-      if (!this.isOpen) {
-        this.toggle();
-      } else {
-        this.selectNext();
+      const target = document.querySelector(`[aria-describedby=${id}]`);
+      if (!target) {
+        console.warn('there is now target element described by the tooltip ' + id);
       }
-    } else if (k === 38 && target === this.toggler) {
-      if (this.isOpen) {
-        this.toggle();
-      } else {
-        this.selectPrevious();
-      }
-    }
+      Object.defineProperty(this, 'target', {value: target});
 
-    if (/\b37\b|\b38\b|\b39\b|\b40\b/.test(k)) {
-      event.preventDefault();
-    }
-
-  });
-
-  this.el.addEventListener('keydown', event => {
-    const {keyCode:k} = event;
-    if (k === 39) {
-      next();
-    } else if (k === 37) {
-      previous();
-    } else if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
-      this.toggle();
-      if (k === 27) {
-        this.toggler.focus();
-      }
-    }
-    if (/\b37\b|\b39\b/.test(k)) {
-      event.preventDefault();
-    }
-  });
-});
-
-function menuInitStamp ({menuItem = menuItemStamp}={}) {
-  return init(function () {
-    const menu = menuElement({el: this.el.querySelector('[role=menu]') || this.el});
-    const toggler = this.el.querySelector('[aria-haspopup]') || this.el;
-
-    Object.defineProperty(this, 'toggler', {value: toggler});
-    Object.defineProperty(this, 'menu', {value: menu});
-
-    for (const el of this.menu.el.querySelectorAll('[role="menuitem"]')) {
-      menuItem({listMediator: this, el});
-    }
-
-    this.$on('isOpen', isOpen => {
-      this.toggler.setAttribute('aria-expanded', isOpen);
-      this.menu.el.setAttribute('aria-hidden', !isOpen);
-      if (isOpen && this.items.length) {
-        this.selectItem(this.items[0]);
-      }
-    });
-    this.$on('isSelected', isSelected => {
-      this.toggler.setAttribute('tabindex', isSelected ? 0 : -1);
-      if (isSelected) {
-        this.toggler.focus();
-      }
-    });
-    this.isOpen = !!this.toggler.getAttribute('aria-expanded');
-  });
+      this.hide();
+    }), tooltipEventBindingStamp);
 }
 
-const abstractMenuStamp = compose(
-  mandatoryElement,
-  listMediatorStamp,
-  toggle(),
-  observable('isOpen')
-);
-
-
-
-function subMenu ({menuItem = subMenuItemStamp}={}) {
-  return compose(
-    listItemStamp,
-    abstractMenuStamp,
-    observable('isSelected'),
-    menuInitStamp({menuItem}),
-    subMenuEventBinding
-  );
-}
-
-const subMenuStamp = subMenu({menuItem: subMenuItemStamp});
-
-function menubar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) {
-  return compose(
-    ariaElement({ariaRole: 'menubar'}),
-    listMediatorStamp,
-    init(function () {
-      for (const item of findChildrenMenuItem(this.el)) {
-        if (item.querySelector('[role=menu]') !== null) {
-          subMenu({el: item, listMediator: this});
-        } else {
-          menuItem({listMediator: this, el: item});
-        }
-      }
-    })
-  );
-}
-
-
-
-
-
-const expandableStamp = compose(
-  element(),
-  toggle(),
-  mapToAria('isOpen', 'expanded'),
-  init(function () {
-    Object.defineProperty(this, 'toggler', {value: this.el});
-  }),
-  menuEventBinding
-);
-
-
-
-function findChildrenMenuItem (base) {
-  const items = [];
-  for (const c of base.children) {
-    const role = c.getAttribute('role');
-    if (role === 'menu') {
-      continue;
-    }
-    if (role === 'menuitem') {
-      items.push(c);
-    } else {
-      items.push(...findChildrenMenuItem(c));
-    }
-  }
-  return items;
-}
-
-const factory = menubar();
-factory({el: document.querySelector('[role=menubar]')});
+const factory = tooltip();
+factory({el: document.querySelector('#tooltip-sample > [role=tooltip]')});
 
 }());

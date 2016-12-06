@@ -1,0 +1,43 @@
+#tooltip-sample {
+    position: relative;
+    display: inline-block;
+    overflow: visible;
+}
+
+#tooltip-sample [role='tooltip'] {
+    display: none;
+    background: #3d3d3d;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 3px;
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 1rem;
+    left: 0;
+    z-index: 9999;
+    box-shadow: 1px 0.1rem 0.3rem 0 #818181;
+    white-space: pre;
+    opacity: 0;
+    font-size: 0.8rem;
+}
+
+/*
+react to both mouse and keyboard focus
+*/
+#tooltip-sample [aria-describedby]:focus + [role=tooltip],
+#tooltip-sample [aria-describedby]:hover + [role=tooltip] {
+    display: inline-block;
+    animation-name: show-tooltip;
+    animation-delay: 0.5s;
+    animation-duration: 0.4s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes show-tooltip {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
