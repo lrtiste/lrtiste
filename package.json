@@ -1,24 +1,19 @@
 {
-  "name": "lartiste",
+  "name": "lrtiste",
   "version": "1.0.0",
   "description": "widget library, behaviours driven",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "author": "Laurent Renard",
   "license": "MIT",
   "scripts": {
     "build": "rollup -c ./rollup.config.js",
     "build:test": "rollup -c ./test/rollup.config.js",
-    "test": "npm run build:test && node ./test/dist/index.js",
-    "clean:doc": "rm -r ./dist/doc",
-    "build:theme": "cp ./doc/theme.css ./dist/doc/theme.css && rollup -c ./doc/rollup.config.js",
-    "build:doc": "npm run clean:doc && mkdir -p ./dist/doc/components/ && npm run build:theme && node ./scripts/buildDoc.js"
+    "test": "npm run build:test && node ./test/dist/index.js"
   },
   "dependencies": {
     "stampit": "^3.0.6"
   },
   "devDependencies": {
-    "prismjs": "^1.5.1",
-    "pug": "^2.0.0-beta6",
     "rollup": "^0.36.3",
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0",

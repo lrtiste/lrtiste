@@ -1,5 +1,8 @@
-(function () {
-'use strict';
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+	typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	(factory((global.lrtiste = global.lrtiste || {})));
+}(this, (function (exports) { 'use strict';
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -698,7 +701,398 @@ function accordion () {
     }));
 }
 
-const accordionFactory = accordion();
-accordionFactory({el:document.getElementById('accordions-sample')});
+const mandatoryElement$1 = element();
+const tablist$1 = ariaElement({ariaRole: 'tablist'});
 
-}());
+const tabEventBinding = init(function () {
+  this.el.addEventListener('keydown', event=> {
+    const {keyCode:k} = event;
+    if (k === 37 || k === 38) {
+      this.selectPrevious();
+      event.preventDefault();
+    } else if (k === 39 || k === 40) {
+      this.selectNext();
+      event.preventDefault();
+    }
+  });
+
+  this.el.addEventListener('click', event => {
+    this.select();
+  });
+});
+
+const tabStamp = compose(
+  ariaElement({ariaRole: 'tab'}),
+  listItemStamp,
+  mapToAria('isSelected', 'selected'),
+  init(function initializeTab ({tabpanel}) {
+    Object.defineProperty(this, 'tabpanel', {value: tabpanel});
+
+    this.$on('isSelected', isSelected => {
+      this.el.setAttribute('tabindex', isSelected ? 0 : -1);
+      this.tabpanel.el.setAttribute('aria-hidden', !isSelected);
+      if (isSelected) {
+        this.el.focus();
+      }
+    });
+
+    this.isSelected = this.isSelected || !!this.el.getAttribute('aria-selected');
+  }),
+  tabEventBinding
+);
+
+
+const tabPanelStamp = compose(
+  ariaElement({ariaRole: 'tabpanel'})
+);
+
+
+
+
+
+function tabList ({tabpanelFactory = tabPanelStamp, tabFactory = tabStamp} = {}) {
+  return compose(
+    mandatoryElement$1,
+    listMediatorStamp,
+    init(function initializeTablist () {
+      Object.defineProperty(this, 'tablist', {value: tablist$1({el: this.el.querySelector('[role=tablist]') || this.el})});
+      for (let tab of this.tablist.el.querySelectorAll('[role=tab]')) {
+        const controlledId = tab.getAttribute('aria-controls');
+        if (!controlledId) {
+          console.log(tab);
+          throw new Error('for the tab element above, you must specify which tabpanel is controlled using aria-controls');
+        }
+        const tabpanelEl = this.el.querySelector(`#${controlledId}`);
+        if (!tabpanelEl) {
+          console.log(tab);
+          throw new Error(`for the tab element above, could not find the related tabpanel with the id ${controlledId}`)
+        }
+        const tabpanel = tabpanelFactory({el: tabpanelEl});
+        tabFactory({el: tab, listMediator: this, tabpanel});
+      }
+    })
+  );
+}
+
+function toggle (prop = 'isOpen') {
+  return methods({
+    toggle(){
+      this[prop] = !this[prop];
+    }
+  });
+}
+
+const mandatoryElement$2 = element();
+const menuElement = ariaElement({ariaRole: 'menu'});
+
+const abstractMenuItem = compose(
+  ariaElement({ariaRole: 'menuitem'}),
+  listItemStamp,
+  observable('isSelected'),
+  init(function () {
+    this.$on('isSelected', isSelected => {
+      this.el.setAttribute('tabindex', isSelected ? 0 : -1);
+      if (isSelected === true) {
+        this.el.focus();
+      }
+    });
+  })
+);
+
+const menuItemEvenBinding = init(function () {
+  this.el.addEventListener('keydown', event => {
+    const {keyCode:k, target} = event;
+    if (k === 37 || k === 38) {
+      this.selectPrevious();
+    } else if (k === 39 || k === 40) {
+      this.selectNext();
+    }
+    if (/\b37\b|\b38\b|\b39\b|\b40\b/.test(k)) {
+      event.preventDefault();
+    }
+  });
+});
+
+const menuItemStamp = compose(
+  abstractMenuItem,
+  menuItemEvenBinding
+);
+
+const subMenuItemEventBinding = init(function () {
+  this.el.addEventListener('keydown', event => {
+    const {keyCode:k} = event;
+    if (k === 38) {
+      this.selectPrevious();
+    } else if (k === 40) {
+      this.selectNext();
+    }
+
+    if (/\b38\b|\b40\b/.test(k)) {
+      event.preventDefault();
+    }
+  });
+});
+
+const subMenuItemStamp = compose(
+  abstractMenuItem,
+  subMenuItemEventBinding
+);
+
+const menuEventBinding = init(function () {
+  this.toggler.addEventListener('click', event => {
+    this.toggle();
+  });
+  this.toggler.addEventListener('keydown', event => {
+    const {keyCode:k, target} = event;
+    if (k === 13 || k === 32) {
+      if (!/button|a/i.test(target.tagName)) { //already handled by the click event
+        this.toggle();
+      }
+    } else if (k === 40 && !this.isOpen) {
+      this.toggle();
+    } else if (k === 38 && this.isOpen) {
+      this.toggle();
+    }
+
+    if (/\b38\b|\b40\b/.test(k)) {
+      event.preventDefault();
+    }
+  });
+
+  if (this.el !== this.toggler) {
+    this.el.addEventListener('keydown', event=> {
+      const {keyCode:k} = event;
+      if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
+        this.toggle();
+        if (k === 27) {
+          this.toggler.focus();
+        }
+      }
+    });
+  }
+});
+
+const subMenuEventBinding = init(function () {
+
+  const next = () => {
+    this.selectNext();
+    if (this.isOpen) {
+      this.toggle();
+    }
+  };
+
+  const previous = () => {
+    this.selectPrevious();
+    if (this.isOpen) {
+      this.toggle();
+    }
+  };
+
+  this.toggler.addEventListener('click', event => {
+    this.toggle();
+  });
+  this.toggler.addEventListener('keydown', event => {
+    const {keyCode:k, target} = event;
+    if (/\b13\b|\b32\b/.test(k) && target.tagName !== 'BUTTON' && target === this.toggler) {
+      this.toggle();
+    } else if (k === 39) {
+      next();
+    } else if (k === 37) {
+      previous();
+    } else if (k === 40 && target === this.toggler) {
+      if (!this.isOpen) {
+        this.toggle();
+      } else {
+        this.selectNext();
+      }
+    } else if (k === 38 && target === this.toggler) {
+      if (this.isOpen) {
+        this.toggle();
+      } else {
+        this.selectPrevious();
+      }
+    }
+
+    if (/\b37\b|\b38\b|\b39\b|\b40\b/.test(k)) {
+      event.preventDefault();
+    }
+
+  });
+
+  this.el.addEventListener('keydown', event => {
+    const {keyCode:k} = event;
+    if (k === 39) {
+      next();
+    } else if (k === 37) {
+      previous();
+    } else if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
+      this.toggle();
+      if (k === 27) {
+        this.toggler.focus();
+      }
+    }
+    if (/\b37\b|\b39\b/.test(k)) {
+      event.preventDefault();
+    }
+  });
+});
+
+function menuInitStamp ({menuItem = menuItemStamp}={}) {
+  return init(function () {
+    const menu = menuElement({el: this.el.querySelector('[role=menu]') || this.el});
+    const toggler = this.el.querySelector('[aria-haspopup]') || this.el;
+
+    Object.defineProperty(this, 'toggler', {value: toggler});
+    Object.defineProperty(this, 'menu', {value: menu});
+
+    for (const el of this.menu.el.querySelectorAll('[role="menuitem"]')) {
+      menuItem({listMediator: this, el});
+    }
+
+    this.$on('isOpen', isOpen => {
+      this.toggler.setAttribute('aria-expanded', isOpen);
+      this.menu.el.setAttribute('aria-hidden', !isOpen);
+      if (isOpen && this.items.length) {
+        this.selectItem(this.items[0]);
+      }
+    });
+    this.$on('isSelected', isSelected => {
+      this.toggler.setAttribute('tabindex', isSelected ? 0 : -1);
+      if (isSelected) {
+        this.toggler.focus();
+      }
+    });
+    this.isOpen = !!this.toggler.getAttribute('aria-expanded');
+  });
+}
+
+const abstractMenuStamp = compose(
+  mandatoryElement$2,
+  listMediatorStamp,
+  toggle(),
+  observable('isOpen')
+);
+
+function dropdown ({menuItem = menuItemStamp} ={}) {
+  return compose(
+    abstractMenuStamp,
+    menuInitStamp({menuItem}),
+    menuEventBinding
+  );
+}
+
+function subMenu ({menuItem = subMenuItemStamp}={}) {
+  return compose(
+    listItemStamp,
+    abstractMenuStamp,
+    observable('isSelected'),
+    menuInitStamp({menuItem}),
+    subMenuEventBinding
+  );
+}
+
+const subMenuStamp = subMenu({menuItem: subMenuItemStamp});
+
+function menubar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) {
+  return compose(
+    ariaElement({ariaRole: 'menubar'}),
+    listMediatorStamp,
+    init(function () {
+      for (const item of findChildrenMenuItem(this.el)) {
+        if (item.querySelector('[role=menu]') !== null) {
+          subMenu({el: item, listMediator: this});
+        } else {
+          menuItem({listMediator: this, el: item});
+        }
+      }
+    })
+  );
+}
+
+
+
+
+
+const expandableStamp = compose(
+  element(),
+  toggle(),
+  mapToAria('isOpen', 'expanded'),
+  init(function () {
+    Object.defineProperty(this, 'toggler', {value: this.el});
+  }),
+  menuEventBinding
+);
+
+function expandable () {
+  return compose(element(),
+    init(function () {
+      const toggler = this.el.querySelector('[aria-haspopup]');
+      if (!toggler) {
+        console.log(this.el);
+        throw new Error('the element above must contain a control with aria-haspopup attribute set to true');
+      }
+      Object.defineProperty(this, 'button', {value: expandableStamp({el: toggler})});
+
+      const controlledId = toggler.getAttribute('aria-controls');
+      if (!controlledId) {
+        console.log(toggler);
+        throw new Error('the toggler above must explicitly control a section via the aria-controls attribute');
+      }
+
+      const expandableSection = this.el.querySelector(`#${controlledId}`);
+      if (!expandableSection) {
+        throw new Error('Could not find the element referenced by id ' + controlledId);
+      }
+      Object.defineProperty(this, 'expandableSection', {value: expandableSection});
+
+      this.button.$on('isOpen', isExpanded => {
+        this.expandableSection.setAttribute('aria-hidden', !isExpanded);
+      });
+
+      this.button.isOpen = !!this.button.el.getAttribute('aria-expanded');
+    }));
+}
+
+function findChildrenMenuItem (base) {
+  const items = [];
+  for (const c of base.children) {
+    const role = c.getAttribute('role');
+    if (role === 'menu') {
+      continue;
+    }
+    if (role === 'menuitem') {
+      items.push(c);
+    } else {
+      items.push(...findChildrenMenuItem(c));
+    }
+  }
+  return items;
+}
+
+const components = {
+  accordion,
+  tabList,
+  dropdown,
+  menubar,
+  expandable
+  // slider,
+  // rangeSlider
+};
+
+const behaviours = {
+  element,
+  ariaElement,
+  listMediator: listMediatorStamp,
+  multiSelectListMediator: multiSelectMediatorStamp,
+  listItem: listItemStamp,
+  observable,
+  mapToAria,
+  toggle
+};
+
+exports.components = components;
+exports.behaviours = behaviours;
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+})));

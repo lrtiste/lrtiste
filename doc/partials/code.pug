@@ -1,6 +1,0 @@
-mixin code(sampleFile)
-    - const [name, extension] = sampleFile;
-    - const languageClass = extension === 'js' ? 'language-javascript' : ( extension === 'css' ? 'language-css' : 'language-markup');
-    pre(class=languageClass)
-        code(class=languageClass) !{highlight(sampleFile)}
-

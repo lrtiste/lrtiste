@@ -56,7 +56,7 @@ export function tab () {
   return tabStamp;
 }
 
-export function tabList () {
+export function tabList ({tabpanelFactory = tabPanelStamp, tabFactory = tabStamp} = {}) {
   return compose(
     mandatoryElement,
     listMediatorStamp,
@@ -73,8 +73,8 @@ export function tabList () {
           console.log(tab);
           throw new Error(`for the tab element above, could not find the related tabpanel with the id ${controlledId}`)
         }
-        const tabpanel = tabPanelStamp({el: tabpanelEl});
-        tabStamp({el: tab, listMediator: this, tabpanel});
+        const tabpanel = tabpanelFactory({el: tabpanelEl});
+        tabFactory({el: tab, listMediator: this, tabpanel});
       }
     })
   );

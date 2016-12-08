@@ -1,18 +1,32 @@
 import {accordion} from './components/accordions';
 import {tabList} from './components/tabs';
-import {dropdown,menuBar} from './components/menus';
-import {slider, rangeSlider} from './components/sliders';
-
+import {dropdown, menubar, expandable} from './components/menus';
+import {element, ariaElement} from './behaviours/elements';
+import {listMediatorStamp, multiSelectMediatorStamp, listItemStamp} from './behaviours/listMediators'
+import {observable, mapToAria} from './behaviours/observables'
+import {toggle} from './behaviours/toggle'
 
 const components = {
   accordion,
   tabList,
   dropdown,
-  menuBar,
-  slider,
-  rangeSlider
+  menubar,
+  expandable
+  // slider,
+  // rangeSlider
 };
 
-export {components};
+const behaviours = {
+  element,
+  ariaElement,
+  listMediator: listMediatorStamp,
+  multiSelectListMediator: multiSelectMediatorStamp,
+  listItem: listItemStamp,
+  observable,
+  mapToAria,
+  toggle
+};
+
+export {components, behaviours};
 
 
