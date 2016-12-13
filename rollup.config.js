@@ -3,7 +3,7 @@ const commonjs = require('rollup-plugin-commonjs');
 module.exports = {
   entry: './index.js',
   dest: './dist/index.js',
-  format: 'umd',
+  format: 'cjs',
   plugins: [node(), commonjs()],
   moduleName: 'lrtiste'
 };

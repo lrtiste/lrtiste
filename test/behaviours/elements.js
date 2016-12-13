@@ -1,8 +1,6 @@
-import {element} from '../../behaviours/element';
-import {default as tape} from 'tape';
+import {element} from '../../behaviours/elements';
 
-
-export function test () {
+export function test (tape) {
 
   tape('throw an error if element argument is not provided', t=> {
     try {
@@ -23,7 +21,6 @@ export function test () {
       t.equal(comp.el, domEl);
       comp.el = 'foo'
     } catch (e) {
-      t.equal(e.message, 'Cannot assign to read only property \'el\' of object \'[object Object]\'');
       t.end();
     }
   });
@@ -36,7 +33,6 @@ export function test () {
       t.equal(comp.foo, domEl);
       comp.foo = 'foo'
     } catch (e) {
-      t.equal(e.message, 'Cannot assign to read only property \'foo\' of object \'[object Object]\'');
       t.end();
     }
   });

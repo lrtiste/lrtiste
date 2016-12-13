@@ -1,6 +1,7 @@
 import {ariaElement, element} from '../behaviours/elements';
 import {compose, init, methods} from 'stampit';
 import {mapToAria} from '../behaviours/observables';
+import {toggle} from '../behaviours/toggle';
 import {multiSelectMediatorStamp, listItemStamp} from '../behaviours/listMediators';
 
 const mandatoryElement = element();
@@ -40,12 +41,14 @@ const accordionTabpanelEventBinding = init(function () {
 
 const accordionTabpanelStamp = compose(
   ariaElement({ariaRole: 'tabpanel'}),
+  toggle(),
   methods({
     hasFocus(){
       return this.el.querySelector(':focus') !== null;
     }
   }),
-  init(function initializeAccordionTabpanel({tab}) {
+  mapToAria('isOpen', '!hidden'),
+  init(function initializeAccordionTabpanel ({tab}) {
     Object.defineProperty(this, 'tab', {value: tab});
   }),
   accordionTabpanelEventBinding
@@ -54,13 +57,13 @@ const accordionTabpanelStamp = compose(
 const accordionTabStamp = compose(
   ariaElement({ariaRole: 'tab'}),
   listItemStamp,
-  mapToAria('isOpen','expanded'),
-  mapToAria('isSelected','selected'),
-  init(function initializeAccordionTab({tabpanelEl}) {
+  mapToAria('isOpen', 'expanded'),
+  mapToAria('isSelected', 'selected'),
+  init(function initializeAccordionTab ({tabpanelEl}) {
     const tabpanel = accordionTabpanelStamp({el: tabpanelEl, tab: this});
     Object.defineProperty(this, 'tabpanel', {value: tabpanel});
     this.$on('isOpen', isOpen => {
-      this.tabpanel.el.setAttribute('aria-hidden', !isOpen);
+      this.tabpanel.toggle();
     });
 
     this.$on('isSelected', isSelected=> {
@@ -70,7 +73,8 @@ const accordionTabStamp = compose(
       }
     });
 
-    this.isOpen = this.isOpen || !!this.el.getAttribute('aria-expanded');
+    this.isOpen = this.el.getAttribute('aria-expanded') === 'true';
+    this.tabpanel.isOpen = this.isOpen;
   }),
   accordionTabEventBinding
 );
@@ -86,7 +90,7 @@ export function accordionPanel () {
 export function accordion () {
   return compose(mandatoryElement,
     multiSelectMediatorStamp,
-    init(function initializeAccordionTablist() {
+    init(function initializeAccordionTablist () {
       Object.defineProperty(this, 'tablist', {
         value: tablist({
           el: this.el.querySelector('[role=tablist]') || this.el
@@ -95,12 +99,12 @@ export function accordion () {
       this.tablist.el.setAttribute('aria-multiselectable', true);
       for (const tab of this.tablist.el.querySelectorAll('[role=tab]')) {
         const controlledId = tab.getAttribute('aria-controls');
-        if(!controlledId){
+        if (!controlledId) {
           console.log(tab);
           throw new Error('for the accordion tab element above, you must specify which tabpanel is controlled using aria-controls');
         }
         const tabpanelEl = this.el.querySelector(`#${controlledId}`);
-        if(!tabpanelEl){
+        if (!tabpanelEl) {
           console.log(tab);
           throw new Error(`for the tab element above, could not find the related tabpanel with the id ${controlledId}`)
         }

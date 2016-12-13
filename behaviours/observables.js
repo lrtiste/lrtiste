@@ -29,8 +29,11 @@ export function observable (...properties) {
           return value;
         },
         set(val){
+          const isDifferent = val !== value;
           value = val;
-          this.$onChange(prop, val);
+          if (isDifferent) {
+            this.$onChange(prop, val);
+          }
         }
       });
     }
@@ -40,15 +43,20 @@ export function observable (...properties) {
 const mandatoryEl = element();
 
 export function mapToAria (prop, ...attributes) {
-  const ariaAttributes = attributes.map(attr=>['aria', attr].join('-'));
+  const ariaAttributes = attributes.map(attr=> {
+    const isNot = /^\!/.test(attr);
+    const att = isNot ? attr.substr(1) : attr;
+    const fn = isNot ? v => !v : v=>v;
+    return {attr: ['aria', att].join('-'), fn};
+  });
   return compose(
     mandatoryEl,
     observable(prop),
     init(function () {
       this.$on(prop, newVal => {
-          for (const att of ariaAttributes){
-            this.el.setAttribute(att,newVal);
-          }
+        for (const att of ariaAttributes) {
+          this.el.setAttribute(att.attr, att.fn(newVal));
+        }
       });
     })
   );

@@ -26,6 +26,7 @@ export function tooltip () {
       },
       show(){
         if (!document.getElementById(this.el.id)) {
+          //always reuse the same element
           this.target.insertAdjacentElement('afterend', this.el);
         }
       },

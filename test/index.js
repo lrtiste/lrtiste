@@ -1,3 +1,4 @@
-import {test as behaviours} from './behaviours/index'
+const test = require('./dist/index.js').test;
 
-behaviours();
+const tape = require('tape');
+test(tape);

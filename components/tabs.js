@@ -1,6 +1,7 @@
 import {ariaElement, element} from '../behaviours/elements';
 import {listMediatorStamp, listItemStamp} from '../behaviours/listMediators';
 import {compose, init} from 'stampit';
+import {toggle} from '../behaviours/toggle';
 import {mapToAria} from '../behaviours/observables';
 
 const mandatoryElement = element();
@@ -17,7 +18,6 @@ const tabEventBinding = init(function () {
       event.preventDefault();
     }
   });
-
   this.el.addEventListener('click', event => {
     this.select();
   });
@@ -32,20 +32,23 @@ const tabStamp = compose(
 
     this.$on('isSelected', isSelected => {
       this.el.setAttribute('tabindex', isSelected ? 0 : -1);
-      this.tabpanel.el.setAttribute('aria-hidden', !isSelected);
+      this.tabpanel.toggle();
       if (isSelected) {
         this.el.focus();
       }
     });
 
-    this.isSelected = this.isSelected || !!this.el.getAttribute('aria-selected');
+    this.isSelected = this.el.getAttribute('aria-selected') === 'true';
+    this.tabpanel.isOpen = this.isSelected;
   }),
   tabEventBinding
 );
 
 
 const tabPanelStamp = compose(
-  ariaElement({ariaRole: 'tabpanel'})
+  ariaElement({ariaRole: 'tabpanel'}),
+  toggle(),
+  mapToAria('isOpen', '!hidden')
 );
 
 export function tabPanel () {

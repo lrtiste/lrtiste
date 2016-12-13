@@ -1,8 +1,10 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.lrtiste = global.lrtiste || {})));
-}(this, (function (exports) { 'use strict';
+'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+function unwrapExports (x) {
+	return x && x.__esModule ? x['default'] : x;
+}
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -434,6 +436,7 @@ exports['default'] = stampit$1;
 module.exports = exports['default'];
 });
 
+var stampit_full$2 = unwrapExports(stampit_full$1);
 var compose = stampit_full$1.compose;
 
 
@@ -502,8 +505,11 @@ function observable (...properties$$1) {
           return value;
         },
         set(val){
+          const isDifferent = val !== value;
           value = val;
-          this.$onChange(prop, val);
+          if (isDifferent) {
+            this.$onChange(prop, val);
+          }
         }
       });
     }
@@ -513,18 +519,31 @@ function observable (...properties$$1) {
 const mandatoryEl = element();
 
 function mapToAria (prop, ...attributes) {
-  const ariaAttributes = attributes.map(attr=>['aria', attr].join('-'));
+  const ariaAttributes = attributes.map(attr=> {
+    const isNot = /^\!/.test(attr);
+    const att = isNot ? attr.substr(1) : attr;
+    const fn = isNot ? v => !v : v=>v;
+    return {attr: ['aria', att].join('-'), fn};
+  });
   return compose(
     mandatoryEl,
     observable(prop),
     init(function () {
       this.$on(prop, newVal => {
-          for (const att of ariaAttributes){
-            this.el.setAttribute(att,newVal);
-          }
+        for (const att of ariaAttributes) {
+          this.el.setAttribute(att.attr, att.fn(newVal));
+        }
       });
     })
   );
+}
+
+function toggle (prop = 'isOpen') {
+  return methods({
+    toggle(){
+      this[prop] = !this[prop];
+    }
+  });
 }
 
 const abstractListMediatorStamp = init(function ({items = []}) {
@@ -636,12 +655,14 @@ const accordionTabpanelEventBinding = init(function () {
 
 const accordionTabpanelStamp = compose(
   ariaElement({ariaRole: 'tabpanel'}),
+  toggle(),
   methods({
     hasFocus(){
       return this.el.querySelector(':focus') !== null;
     }
   }),
-  init(function initializeAccordionTabpanel({tab}) {
+  mapToAria('isOpen', '!hidden'),
+  init(function initializeAccordionTabpanel ({tab}) {
     Object.defineProperty(this, 'tab', {value: tab});
   }),
   accordionTabpanelEventBinding
@@ -650,13 +671,13 @@ const accordionTabpanelStamp = compose(
 const accordionTabStamp = compose(
   ariaElement({ariaRole: 'tab'}),
   listItemStamp,
-  mapToAria('isOpen','expanded'),
-  mapToAria('isSelected','selected'),
-  init(function initializeAccordionTab({tabpanelEl}) {
+  mapToAria('isOpen', 'expanded'),
+  mapToAria('isSelected', 'selected'),
+  init(function initializeAccordionTab ({tabpanelEl}) {
     const tabpanel = accordionTabpanelStamp({el: tabpanelEl, tab: this});
     Object.defineProperty(this, 'tabpanel', {value: tabpanel});
     this.$on('isOpen', isOpen => {
-      this.tabpanel.el.setAttribute('aria-hidden', !isOpen);
+      this.tabpanel.toggle();
     });
 
     this.$on('isSelected', isSelected=> {
@@ -666,19 +687,24 @@ const accordionTabStamp = compose(
       }
     });
 
-    this.isOpen = this.isOpen || !!this.el.getAttribute('aria-expanded');
+    this.isOpen = this.el.getAttribute('aria-expanded') === 'true';
+    this.tabpanel.isOpen = this.isOpen;
   }),
   accordionTabEventBinding
 );
 
+function accordionTab () {
+  return accordionTabStamp;
+}
 
-
-
+function accordionPanel () {
+  return accordionTabpanelStamp;
+}
 
 function accordion () {
   return compose(mandatoryElement,
     multiSelectMediatorStamp,
-    init(function initializeAccordionTablist() {
+    init(function initializeAccordionTablist () {
       Object.defineProperty(this, 'tablist', {
         value: tablist({
           el: this.el.querySelector('[role=tablist]') || this.el
@@ -687,12 +713,12 @@ function accordion () {
       this.tablist.el.setAttribute('aria-multiselectable', true);
       for (const tab of this.tablist.el.querySelectorAll('[role=tab]')) {
         const controlledId = tab.getAttribute('aria-controls');
-        if(!controlledId){
+        if (!controlledId) {
           console.log(tab);
           throw new Error('for the accordion tab element above, you must specify which tabpanel is controlled using aria-controls');
         }
         const tabpanelEl = this.el.querySelector(`#${controlledId}`);
-        if(!tabpanelEl){
+        if (!tabpanelEl) {
           console.log(tab);
           throw new Error(`for the tab element above, could not find the related tabpanel with the id ${controlledId}`)
         }
@@ -715,7 +741,6 @@ const tabEventBinding = init(function () {
       event.preventDefault();
     }
   });
-
   this.el.addEventListener('click', event => {
     this.select();
   });
@@ -730,25 +755,32 @@ const tabStamp = compose(
 
     this.$on('isSelected', isSelected => {
       this.el.setAttribute('tabindex', isSelected ? 0 : -1);
-      this.tabpanel.el.setAttribute('aria-hidden', !isSelected);
+      this.tabpanel.toggle();
       if (isSelected) {
         this.el.focus();
       }
     });
 
-    this.isSelected = this.isSelected || !!this.el.getAttribute('aria-selected');
+    this.isSelected = this.el.getAttribute('aria-selected') === 'true';
+    this.tabpanel.isOpen = this.isSelected;
   }),
   tabEventBinding
 );
 
 
 const tabPanelStamp = compose(
-  ariaElement({ariaRole: 'tabpanel'})
+  ariaElement({ariaRole: 'tabpanel'}),
+  toggle(),
+  mapToAria('isOpen', '!hidden')
 );
 
+function tabPanel () {
+  return tabPanelStamp;
+}
 
-
-
+function tab () {
+  return tabStamp;
+}
 
 function tabList ({tabpanelFactory = tabPanelStamp, tabFactory = tabStamp} = {}) {
   return compose(
@@ -772,14 +804,6 @@ function tabList ({tabpanelFactory = tabPanelStamp, tabFactory = tabStamp} = {})
       }
     })
   );
-}
-
-function toggle (prop = 'isOpen') {
-  return methods({
-    toggle(){
-      this[prop] = !this[prop];
-    }
-  });
 }
 
 const mandatoryElement$2 = element();
@@ -1070,8 +1094,12 @@ function findChildrenMenuItem (base) {
 }
 
 const components = {
+  accordionPanel,
+  accordionTab,
   accordion,
   tabList,
+  tab,
+  tabPanel,
   dropdown,
   menubar,
   expandable
@@ -1092,7 +1120,4 @@ const behaviours = {
 
 exports.components = components;
 exports.behaviours = behaviours;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
+exports.stampit = stampit_full$2;
