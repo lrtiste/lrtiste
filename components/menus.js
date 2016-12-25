@@ -65,33 +65,31 @@ const menuEventBinding = init(function () {
     this.toggle();
   });
   this.toggler.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if (k === 13 || k === 32) {
+    const {key:k,code, target} = event;
+    if (k === 'Enter' || code === 'Space') {
       if (!/button|a/i.test(target.tagName)) { //already handled by the click event
         this.toggle();
       }
-    } else if (k === 40 && !this.isOpen) {
+    } else if (k === 'ArrowDown' && !this.isOpen) {
       this.toggle();
-    } else if (k === 38 && this.isOpen) {
-      this.toggle();
-    }
-
-    if (/\b38\b|\b40\b/.test(k)) {
       event.preventDefault();
+    } else if (k === 'ArrowUp' && this.isOpen) {
+      event.preventDefault();
+      this.toggle();
     }
   });
-
-  if (this.el !== this.toggler) {
-    this.el.addEventListener('keydown', event=> {
-      const {keyCode:k} = event;
-      if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
-        this.toggle();
-        if (k === 27) {
-          this.toggler.focus();
-        }
-      }
-    })
-  }
+  //
+  // if (this.el !== this.toggler) {
+  //   this.el.addEventListener('keydown', event=> {
+  //     const {keyCode:k} = event;
+  //     if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
+  //       this.toggle();
+  //       if (k === 27) {
+  //         this.toggler.focus();
+  //       }
+  //     }
+  //   })
+  // }
 });
 
 const subMenuEventBinding = init(function () {

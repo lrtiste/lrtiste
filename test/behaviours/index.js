@@ -1,11 +1,11 @@
-import {test as elements} from './elements';
-import {test as observable} from './observable';
-import {test as toggle} from './toggle';
-import {test as list} from './listMediators';
+import  elements from './elements';
+import observable from './observable';
+import toggle from './toggle';
+import list from './listMediators';
+import zora from 'zora';
 
-export function test (tape) {
-  elements(tape);
-  observable(tape);
-  toggle(tape);
-  list(tape);
-}
+export default zora()
+  .test(elements)
+  .test(observable)
+  .test(toggle)
+  .test(list)

@@ -1,4 +1,9 @@
-const test = require('./dist/index.js').test;
+import behaviours from './behaviours';
+import components from './components';
+import zora from 'zora';
 
-const tape = require('tape');
-test(tape);
+zora()
+  .test(behaviours)
+  .test(components)
+  .run()
+  .catch(e=>console.log(e));

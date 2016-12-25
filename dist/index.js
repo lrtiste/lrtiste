@@ -484,7 +484,7 @@ function observable (...properties$$1) {
     if (!this.$onChange || !this.$on) {
       this.$onChange = (prop, newVal) => {
         const ls = listeners[prop] || [];
-        for (const cb of ls) {
+        for (let cb of ls) {
           cb(newVal);
         }
         return this;
@@ -498,18 +498,15 @@ function observable (...properties$$1) {
       };
     }
 
-    for (const prop of properties$$1) {
+    for (let prop of properties$$1) {
       let value = this[prop];
       Object.defineProperty(this, prop, {
         get(){
           return value;
         },
         set(val){
-          const isDifferent = val !== value;
           value = val;
-          if (isDifferent) {
-            this.$onChange(prop, val);
-          }
+          this.$onChange(prop, val);
         }
       });
     }
@@ -530,7 +527,7 @@ function mapToAria (prop, ...attributes) {
     observable(prop),
     init(function () {
       this.$on(prop, newVal => {
-        for (const att of ariaAttributes) {
+        for (let att of ariaAttributes) {
           this.el.setAttribute(att.attr, att.fn(newVal));
         }
       });
@@ -556,7 +553,7 @@ const abstractListMediatorStamp = init(function ({items = []}) {
     selectItem(item){
       const index = this.items.indexOf(item);
       if (index !== -1) {
-        for (const i of this.items) {
+        for (let i of this.items) {
           i.isSelected = i === item;
         }
       }
@@ -611,7 +608,7 @@ const multiSelectMediatorStamp = compose(abstractListMediatorStamp, methods({
 
 const listMediatorStamp = compose(abstractListMediatorStamp, methods({
   toggleItem(item){
-    for (const i of this.items) {
+    for (let i of this.items) {
       i.isOpen = i === item ? !i.isOpen : false;
     }
     return this;
@@ -628,17 +625,17 @@ const accordionTabEventBinding = init(function () {
   });
 
   this.el.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if (k === 13 || k === 32) {
+    const {key:k, code, target} = event;
+    if (k === 'Enter' || code === 'Space') {
       if (target.tagName !== 'BUTTON' || target.tagName === 'A') {
         this.toggle();
         this.select();
         event.preventDefault();
       }
-    } else if (k === 37 || k === 38) {
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp') {
       this.selectPrevious();
       event.preventDefault();
-    } else if (k === 39 || k === 40) {
+    } else if (k === 'ArrowRight' || k === 'ArrowDown') {
       this.selectNext();
       event.preventDefault();
     }
@@ -687,6 +684,7 @@ const accordionTabStamp = compose(
       }
     });
 
+    this.isSelected = this.el.getAttribute('aria-selected') == 'true' || this.el.getAttribute('tabindex') === '0';
     this.isOpen = this.el.getAttribute('aria-expanded') === 'true';
     this.tabpanel.isOpen = this.isOpen;
   }),
@@ -711,7 +709,7 @@ function accordion () {
         })
       });
       this.tablist.el.setAttribute('aria-multiselectable', true);
-      for (const tab of this.tablist.el.querySelectorAll('[role=tab]')) {
+      for (let tab of this.tablist.el.querySelectorAll('[role=tab]')) {
         const controlledId = tab.getAttribute('aria-controls');
         if (!controlledId) {
           console.log(tab);
@@ -732,11 +730,11 @@ const tablist$1 = ariaElement({ariaRole: 'tablist'});
 
 const tabEventBinding = init(function () {
   this.el.addEventListener('keydown', event=> {
-    const {keyCode:k} = event;
-    if (k === 37 || k === 38) {
+    const {key:k} = event;
+    if (k === 'ArrowLeft' || k === 'ArrowUp') {
       this.selectPrevious();
       event.preventDefault();
-    } else if (k === 39 || k === 40) {
+    } else if (k === 'ArrowDown' || k === 'ArrowRight') {
       this.selectNext();
       event.preventDefault();
     }
@@ -752,21 +750,20 @@ const tabStamp = compose(
   mapToAria('isSelected', 'selected'),
   init(function initializeTab ({tabpanel}) {
     Object.defineProperty(this, 'tabpanel', {value: tabpanel});
-
     this.$on('isSelected', isSelected => {
       this.el.setAttribute('tabindex', isSelected ? 0 : -1);
-      this.tabpanel.toggle();
+      if (isSelected !== this.tabpanel.isOpen) {
+        this.tabpanel.toggle();
+      }
       if (isSelected) {
         this.el.focus();
       }
     });
-
     this.isSelected = this.el.getAttribute('aria-selected') === 'true';
     this.tabpanel.isOpen = this.isSelected;
   }),
   tabEventBinding
 );
-
 
 const tabPanelStamp = compose(
   ariaElement({ariaRole: 'tabpanel'}),
@@ -867,33 +864,31 @@ const menuEventBinding = init(function () {
     this.toggle();
   });
   this.toggler.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if (k === 13 || k === 32) {
+    const {key:k,code, target} = event;
+    if (k === 'Enter' || code === 'Space') {
       if (!/button|a/i.test(target.tagName)) { //already handled by the click event
         this.toggle();
       }
-    } else if (k === 40 && !this.isOpen) {
+    } else if (k === 'ArrowDown' && !this.isOpen) {
       this.toggle();
-    } else if (k === 38 && this.isOpen) {
-      this.toggle();
-    }
-
-    if (/\b38\b|\b40\b/.test(k)) {
       event.preventDefault();
+    } else if (k === 'ArrowUp' && this.isOpen) {
+      event.preventDefault();
+      this.toggle();
     }
   });
-
-  if (this.el !== this.toggler) {
-    this.el.addEventListener('keydown', event=> {
-      const {keyCode:k} = event;
-      if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
-        this.toggle();
-        if (k === 27) {
-          this.toggler.focus();
-        }
-      }
-    });
-  }
+  //
+  // if (this.el !== this.toggler) {
+  //   this.el.addEventListener('keydown', event=> {
+  //     const {keyCode:k} = event;
+  //     if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
+  //       this.toggle();
+  //       if (k === 27) {
+  //         this.toggler.focus();
+  //       }
+  //     }
+  //   })
+  // }
 });
 
 const subMenuEventBinding = init(function () {

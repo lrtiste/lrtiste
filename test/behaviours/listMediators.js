@@ -1,16 +1,15 @@
 import {listMediatorStamp, multiSelectMediatorStamp} from '../../behaviours/listMediators';
+import zora from 'zora';
 
-export function test (tape) {
-  tape('list mediator: add item', t=> {
+export default zora()
+  .test('list mediator: add item', function * (t) {
     const instance = listMediatorStamp();
     t.equal(instance.items.length, 0);
     const item = {};
     instance.addItem(item);
     t.deepEqual(instance.items, [item]);
-    t.end();
-  });
-
-  tape('list mediator: open an item and close all others', t=> {
+  })
+  .test('list mediator: open an item and close all others', function * (t) {
     const instance = listMediatorStamp();
     const item = {isOpen: false};
     const item2 = {isOpen: false};
@@ -28,11 +27,8 @@ export function test (tape) {
     t.equal(item.isOpen, false);
     t.equal(item2.isOpen, false);
     t.equal(item3.isOpen, false);
-
-    t.end();
-  });
-
-  tape('select an item and unselect the others', t=> {
+  })
+  .test('select an item and unselect the others', function * (t) {
     const instance = listMediatorStamp();
     const item = {isSelected: false};
     const item2 = {isSelected: false};
@@ -45,10 +41,8 @@ export function test (tape) {
     t.equal(item.isSelected, false);
     t.equal(item2.isSelected, true);
     t.equal(item3.isSelected, false);
-    t.end();
-  });
-
-  tape('select the next item or loop back to the first', t=> {
+  })
+  .test('select the next item or loop back to the first', function * (t) {
     const instance = listMediatorStamp();
     const item = {isSelected: false};
     const item2 = {isSelected: true};
@@ -66,11 +60,8 @@ export function test (tape) {
     t.equal(item.isSelected, true);
     t.equal(item2.isSelected, false);
     t.equal(item3.isSelected, false);
-
-    t.end();
-  });
-
-  tape('select the previous item or loop back to the last', t=> {
+  })
+  .test('select the previous item or loop back to the last', function * (t) {
     const instance = listMediatorStamp();
     const item = {isSelected: false};
     const item2 = {isSelected: true};
@@ -88,11 +79,8 @@ export function test (tape) {
     t.equal(item.isSelected, false);
     t.equal(item2.isSelected, false);
     t.equal(item3.isSelected, true);
-
-    t.end();
-  });
-
-  tape('multiselect list mediator: toggle any item', t=> {
+  })
+  .test('multiselect list mediator: toggle any item', function * (t) {
     const instance = multiSelectMediatorStamp();
     const item = {isOpen: false};
     const item2 = {isOpen: false};
@@ -106,6 +94,4 @@ export function test (tape) {
     t.equal(item.isOpen, true);
     t.equal(item2.isOpen, false);
     t.equal(item3.isOpen, true);
-    t.end();
   });
-}

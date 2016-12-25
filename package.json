@@ -8,21 +8,20 @@
   "scripts": {
     "build": "rollup -c ./rollup.config.js",
     "build:test": "rollup -c ./test/rollup.config.js",
-    "test:node": "npm run build:test && node ./test/index.js",
-    "test": "npm run build:test && node ./test/dist/index.js",
-    "test:browsers": "npm run build:test && node ./node_modules/browserify/bin/cmd.js ./test/index.js > ./test/dist/browsers.js"
+    "test": "npm run build:test && cat ./test/dist/index.js | tape-run",
+    "dev": "node ./scripts/dev.js"
   },
   "dependencies": {
     "stampit": "^3.0.6"
   },
   "devDependencies": {
+    "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-es2015-rollup": "^3.0.0",
-    "browserify": "^13.1.1",
-    "jquery": "^3.1.1",
-    "rollup": "^0.36.3",
+    "rollup": "^0.37.2",
     "rollup-plugin-babel": "^2.7.0",
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0",
-    "tape": "^4.6.2"
+    "tape-run": "^2.1.4",
+    "zora": "^0.2.1"
   }
 }

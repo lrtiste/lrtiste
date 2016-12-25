@@ -8,7 +8,7 @@ export function observable (...properties) {
     if (!this.$onChange || !this.$on) {
       this.$onChange = (prop, newVal) => {
         const ls = listeners[prop] || [];
-        for (const cb of ls) {
+        for (let cb of ls) {
           cb(newVal);
         }
         return this;
@@ -22,18 +22,15 @@ export function observable (...properties) {
       };
     }
 
-    for (const prop of properties) {
+    for (let prop of properties) {
       let value = this[prop];
       Object.defineProperty(this, prop, {
         get(){
           return value;
         },
         set(val){
-          const isDifferent = val !== value;
           value = val;
-          if (isDifferent) {
-            this.$onChange(prop, val);
-          }
+          this.$onChange(prop, val);
         }
       });
     }
@@ -54,7 +51,7 @@ export function mapToAria (prop, ...attributes) {
     observable(prop),
     init(function () {
       this.$on(prop, newVal => {
-        for (const att of ariaAttributes) {
+        for (let att of ariaAttributes) {
           this.el.setAttribute(att.attr, att.fn(newVal));
         }
       });

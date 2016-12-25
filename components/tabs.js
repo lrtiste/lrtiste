@@ -9,11 +9,11 @@ const tablist = ariaElement({ariaRole: 'tablist'});
 
 const tabEventBinding = init(function () {
   this.el.addEventListener('keydown', event=> {
-    const {keyCode:k} = event;
-    if (k === 37 || k === 38) {
+    const {key:k} = event;
+    if (k === 'ArrowLeft' || k === 'ArrowUp') {
       this.selectPrevious();
       event.preventDefault();
-    } else if (k === 39 || k === 40) {
+    } else if (k === 'ArrowDown' || k === 'ArrowRight') {
       this.selectNext();
       event.preventDefault();
     }
@@ -29,21 +29,20 @@ const tabStamp = compose(
   mapToAria('isSelected', 'selected'),
   init(function initializeTab ({tabpanel}) {
     Object.defineProperty(this, 'tabpanel', {value: tabpanel});
-
     this.$on('isSelected', isSelected => {
       this.el.setAttribute('tabindex', isSelected ? 0 : -1);
-      this.tabpanel.toggle();
+      if (isSelected !== this.tabpanel.isOpen) {
+        this.tabpanel.toggle();
+      }
       if (isSelected) {
         this.el.focus();
       }
     });
-
     this.isSelected = this.el.getAttribute('aria-selected') === 'true';
     this.tabpanel.isOpen = this.isSelected;
   }),
   tabEventBinding
 );
-
 
 const tabPanelStamp = compose(
   ariaElement({ariaRole: 'tabpanel'}),

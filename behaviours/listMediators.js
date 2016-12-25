@@ -10,7 +10,7 @@ const abstractListMediatorStamp = init(function ({items = []}) {
     selectItem(item){
       const index = this.items.indexOf(item);
       if (index !== -1) {
-        for (const i of this.items) {
+        for (let i of this.items) {
           i.isSelected = i === item;
         }
       }
@@ -65,7 +65,7 @@ const multiSelectMediatorStamp = compose(abstractListMediatorStamp, methods({
 
 const listMediatorStamp = compose(abstractListMediatorStamp, methods({
   toggleItem(item){
-    for (const i of this.items) {
+    for (let i of this.items) {
       i.isOpen = i === item ? !i.isOpen : false;
     }
     return this;

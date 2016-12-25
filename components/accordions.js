@@ -14,17 +14,17 @@ const accordionTabEventBinding = init(function () {
   });
 
   this.el.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if (k === 13 || k === 32) {
+    const {key:k, code, target} = event;
+    if (k === 'Enter' || code === 'Space') {
       if (target.tagName !== 'BUTTON' || target.tagName === 'A') {
         this.toggle();
         this.select();
         event.preventDefault();
       }
-    } else if (k === 37 || k === 38) {
+    } else if (k === 'ArrowLeft' || k === 'ArrowUp') {
       this.selectPrevious();
       event.preventDefault();
-    } else if (k === 39 || k === 40) {
+    } else if (k === 'ArrowRight' || k === 'ArrowDown') {
       this.selectNext();
       event.preventDefault();
     }
@@ -73,6 +73,7 @@ const accordionTabStamp = compose(
       }
     });
 
+    this.isSelected = this.el.getAttribute('aria-selected') == 'true' || this.el.getAttribute('tabindex') === '0';
     this.isOpen = this.el.getAttribute('aria-expanded') === 'true';
     this.tabpanel.isOpen = this.isOpen;
   }),
@@ -97,7 +98,7 @@ export function accordion () {
         })
       });
       this.tablist.el.setAttribute('aria-multiselectable', true);
-      for (const tab of this.tablist.el.querySelectorAll('[role=tab]')) {
+      for (let tab of this.tablist.el.querySelectorAll('[role=tab]')) {
         const controlledId = tab.getAttribute('aria-controls');
         if (!controlledId) {
           console.log(tab);
