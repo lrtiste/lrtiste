@@ -5,8 +5,8 @@ import {init, compose, methods} from 'stampit';
 const tooltipEventBindingStamp = init(function tooltipEventBinding () {
   this.target.addEventListener('focus', this.show.bind(this));
   this.target.addEventListener('keydown', event=> {
-    const {keyCode:k} =event;
-    if (k === 27) {
+    const {key:k} =event;
+    if (k === 'Escape') {
       this.hide();
     }
   });
@@ -38,7 +38,7 @@ export function tooltip () {
       }
       const target = document.querySelector(`[aria-describedby=${id}]`);
       if (!target) {
-        console.warn('there is now target element described by the tooltip ' + id);
+        console.warn('there is no target element described by the tooltip ' + id);
       }
       Object.defineProperty(this, 'target', {value: target});
 

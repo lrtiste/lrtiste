@@ -5,7 +5,6 @@ import {click, keydown} from '../helpers';
 const factory = accordion();
 
 function createAccordion () {
-
   const container = document.createElement('div');
   container.setAttribute('role', 'tablist');
   container.innerHTML = `
@@ -36,6 +35,7 @@ function testTabPanels (accordion, expected, t) {
     }
   }
 }
+
 
 export default zora()
   .test('accordion: set up initial states ', function * (t) {
@@ -464,8 +464,3 @@ export default zora()
       'aria-hidden': 'true'
     }], t);
   })
-
-
-
-
-

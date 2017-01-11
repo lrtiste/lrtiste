@@ -2894,7 +2894,6 @@ function keydown(el) {
 var factory = accordion();
 
 function createAccordion() {
-
   var container = document.createElement('div');
   container.setAttribute('role', 'tablist');
   container.innerHTML = '\n  <h4 id="tab1" tabindex="0" role="tab" aria-controls="tabpanel1">Header one</h4>\n  <p id="tabpanel1" aria-labelledby="tab1" role="tabpanel">Content of section 1 with a <a href="#foo">focusable element</a></p>\n  <h4 id="tab2" role="tab" aria-controls="tabpanel2"><span class="adorner" aria-hidden="true"></span>Header two</h4>\n  <p id="tabpanel2" aria-labelledby="tab2" role="tabpanel">Content of section 2 with a <a href="#foo">focusable element</a></p>\n  <h4 id="tab3" role="tab" aria-controls="tabpanel3"><span class="adorner" aria-hidden="true"></span>Header three</h4>\n  <p id="tabpanel3" aria-labelledby="tab3" role="tabpanel">Content of section 3 with a <a href="#foo">focusable element</a></p>\n';
@@ -4974,7 +4973,119 @@ var menubar$1 = zora().test('menubars: init states', index.mark(function _callee
   }, _callee9, this);
 }));
 
-var components = zora().test(accordions).test(tabs).test(exp).test(dropdown$1).test(menubar$1);
+var tooltipEventBindingStamp = init(function tooltipEventBinding() {
+  var _this = this;
+
+  this.target.addEventListener('focus', this.show.bind(this));
+  this.target.addEventListener('keydown', function (event) {
+    var k = event.key;
+
+    if (k === 'Escape') {
+      _this.hide();
+    }
+  });
+  this.target.addEventListener('blur', this.hide.bind(this));
+  this.target.addEventListener('mouseenter', this.show.bind(this));
+  this.target.addEventListener('mouseleave', this.hide.bind(this));
+});
+
+function tooltip$1() {
+  return compose(ariaElement({ ariaRole: 'tooltip' }), methods({
+    hide: function hide() {
+      if (document.getElementById(this.el.id)) {
+        this.el.remove();
+      }
+    },
+    show: function show() {
+      if (!document.getElementById(this.el.id)) {
+        //always reuse the same element
+        this.target.insertAdjacentElement('afterend', this.el);
+      }
+    }
+  }), init(function initializeTooltip() {
+    var id = this.el.getAttribute('id');
+    if (!id) {
+      console.log(this.el);
+      throw new Error('the above tooltip element must have an id');
+    }
+    var target = document.querySelector('[aria-describedby=' + id + ']');
+    if (!target) {
+      console.warn('there is no target element described by the tooltip ' + id);
+    }
+    Object.defineProperty(this, 'target', { value: target });
+
+    this.hide();
+  }), tooltipEventBindingStamp);
+}
+
+var factory$5 = tooltip$1();
+
+function createContent() {
+  document.body = document.body || document.createElement('body');
+  var contentString = '<div id="container">\n      <a aria-describedby="tooltip" href="#"> some link</a>\n      <p role="tooltip" id="tooltip">I am the tooltip</p>\n    </div>';
+  document.body.innerHTML = contentString;
+}
+
+var tooltip$$1 = zora().test('tooltip: hide by default', index.mark(function _callee(t) {
+  var tt;
+  return index.wrap(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          createContent();
+          tt = factory$5({ el: document.getElementById('tooltip') });
+
+          t.equal(document.getElementById('tooltip'), null);
+
+        case 3:
+        case 'end':
+          return _context.stop();
+      }
+    }
+  }, _callee, this);
+})).test('tooltip: show tooltip', index.mark(function _callee2(t) {
+  var tt;
+  return index.wrap(function _callee2$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          createContent();
+          tt = factory$5({ el: document.getElementById('tooltip') });
+
+          t.equal(document.getElementById('tooltip'), null);
+          tt.show();
+          t.equal(document.getElementById('tooltip'), tt.el);
+
+        case 5:
+        case 'end':
+          return _context2.stop();
+      }
+    }
+  }, _callee2, this);
+})).test('tooltip hide tooltip', index.mark(function _callee3(t) {
+  var tt;
+  return index.wrap(function _callee3$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          createContent();
+          tt = factory$5({ el: document.getElementById('tooltip') });
+
+          t.equal(document.getElementById('tooltip'), null);
+          tt.show();
+          t.equal(document.getElementById('tooltip'), tt.el);
+          tt.hide();
+          t.equal(document.getElementById('tooltip'), null);
+
+        case 7:
+        case 'end':
+          return _context3.stop();
+      }
+    }
+  }, _callee3, this);
+}));
+
+var components = zora().test(accordions).test(tabs).test(exp).test(dropdown$1).test(menubar$1).test(tooltip$$1);
 
 zora().test(behaviours).test(components).run().catch(function (e) {
   return console.log(e);
