@@ -3820,15 +3820,13 @@ var menuItemEvenBinding = init(function () {
   var _this2 = this;
 
   this.el.addEventListener('keydown', function (event) {
-    var k = event.keyCode,
-        target = event.target;
+    var k = event.key;
 
-    if (k === 37 || k === 38) {
+    if (k === 'ArrowLeft' || k === 'ArrowUp') {
       _this2.selectPrevious();
-    } else if (k === 39 || k === 40) {
+      event.preventDefault();
+    } else if (k === 'ArrowRight' || k === 'ArrowDown') {
       _this2.selectNext();
-    }
-    if (/\b37\b|\b38\b|\b39\b|\b40\b/.test(k)) {
       event.preventDefault();
     }
   });
@@ -3840,15 +3838,13 @@ var subMenuItemEventBinding = init(function () {
   var _this3 = this;
 
   this.el.addEventListener('keydown', function (event) {
-    var k = event.keyCode;
+    var k = event.key;
 
-    if (k === 38) {
+    if (k === 'ArrowUp') {
       _this3.selectPrevious();
-    } else if (k === 40) {
+      event.preventDefault();
+    } else if (k === 'ArrowDown') {
       _this3.selectNext();
-    }
-
-    if (/\b38\b|\b40\b/.test(k)) {
       event.preventDefault();
     }
   });
@@ -3859,78 +3855,80 @@ var subMenuItemStamp = compose(abstractMenuItem, subMenuItemEventBinding);
 var menuEventBinding = init(function () {
   var _this4 = this;
 
-  this.toggler.addEventListener('click', function (event) {
+  this.toggler.addEventListener('click', function () {
     _this4.toggle();
+  });
+  this.toggler.addEventListener('keydown', function (event) {
+    var k = event.key,
+        code = event.code;
+
+    var toggle$$1 = function toggle$$1(ev) {
+      _this4.toggle();
+      ev.preventDefault();
+    };
+    if (k === 'Enter' || code === 'Space') {
+      toggle$$1(event);
+    } else if (k === 'ArrowDown' && !_this4.isOpen) {
+      toggle$$1(event);
+    } else if (k === 'ArrowUp' && _this4.isOpen) {
+      toggle$$1(event);
+    }
+  });
+
+  this.el.addEventListener('keydown', function (event) {
+    var k = event.key;
+
+    if (k === 'Escape' && _this4.isOpen) {
+      _this4.toggle();
+      _this4.toggler.focus();
+    } else if (k == 'Tab') {
+      if (_this4.el.querySelector(':focus') !== null && _this4.isOpen) {
+        _this4.toggle();
+      }
+    }
+  });
+});
+
+var subMenuEventBinding = init(function () {
+  var _this5 = this;
+
+  var next = function next(ev) {
+    _this5.selectNext();
+    if (_this5.isOpen) {
+      _this5.toggle();
+    }
+    ev.preventDefault();
+  };
+
+  var previous = function previous(ev) {
+    _this5.selectPrevious();
+    if (_this5.isOpen) {
+      _this5.toggle();
+    }
+    ev.preventDefault();
+  };
+
+  this.toggler.addEventListener('click', function () {
+    _this5.toggle();
   });
   this.toggler.addEventListener('keydown', function (event) {
     var k = event.key,
         code = event.code,
         target = event.target;
 
-    if (k === 'Enter' || code === 'Space') {
-      if (!/button|a/i.test(target.tagName)) {
-        //already handled by the click event
-        _this4.toggle();
-      }
-    } else if (k === 'ArrowDown' && !_this4.isOpen) {
-      _this4.toggle();
-      event.preventDefault();
-    } else if (k === 'ArrowUp' && _this4.isOpen) {
-      event.preventDefault();
-      _this4.toggle();
-    }
-  });
-  //
-  // if (this.el !== this.toggler) {
-  //   this.el.addEventListener('keydown', event=> {
-  //     const {keyCode:k} = event;
-  //     if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
-  //       this.toggle();
-  //       if (k === 27) {
-  //         this.toggler.focus();
-  //       }
-  //     }
-  //   })
-  // }
-});
-
-var subMenuEventBinding = init(function () {
-  var _this5 = this;
-
-  var next = function next() {
-    _this5.selectNext();
-    if (_this5.isOpen) {
+    if ((k === 'Enter' || code === 'Space') && target === _this5.toggler) {
       _this5.toggle();
-    }
-  };
-
-  var previous = function previous() {
-    _this5.selectPrevious();
-    if (_this5.isOpen) {
-      _this5.toggle();
-    }
-  };
-
-  this.toggler.addEventListener('click', function (event) {
-    _this5.toggle();
-  });
-  this.toggler.addEventListener('keydown', function (event) {
-    var k = event.keyCode,
-        target = event.target;
-
-    if (/\b13\b|\b32\b/.test(k) && target.tagName !== 'BUTTON' && target === _this5.toggler) {
-      _this5.toggle();
-    } else if (k === 39) {
-      next();
-    } else if (k === 37) {
-      previous();
-    } else if (k === 40 && target === _this5.toggler) {
+    } else if (k === 'ArrowRight') {
+      next(event);
+    } else if (k === 'ArrowLeft') {
+      previous(event);
+    } else if (k === 'ArrowDown' && target === _this5.toggler) {
       if (!_this5.isOpen) {
         _this5.toggle();
       } else {
         _this5.selectNext();
       }
-    } else if (k === 38 && target === _this5.toggler) {
+    } else if (k === 'ArrowUp' && target === _this5.toggler) {
       if (_this5.isOpen) {
         _this5.toggle();
       } else {
@@ -3938,26 +3936,27 @@ var subMenuEventBinding = init(function () {
       }
     }
 
-    if (/\b37\b|\b38\b|\b39\b|\b40\b/.test(k)) {
+    if (['ArrowDown', 'ArrowUp', 'Enter'].indexOf(k) !== -1 || code === 'Space') {
       event.preventDefault();
     }
   });
 
   this.el.addEventListener('keydown', function (event) {
-    var k = event.keyCode;
+    var k = event.key;
 
-    if (k === 39) {
-      next();
-    } else if (k === 37) {
-      previous();
-    } else if (/\b9\b|\b27\b/.test(k) && _this5.isOpen) {
+    if (k === 'ArrowRight') {
+      next(event);
+    } else if (k === 'ArrowLeft') {
+      previous(event);
+    } else if (k === 'Escape' && _this5.isOpen) {
       _this5.toggle();
-      if (k === 27) {
+      if (k === 'Escape') {
         _this5.toggler.focus();
       }
-    }
-    if (/\b37\b|\b39\b/.test(k)) {
-      event.preventDefault();
+    } else if (k == 'Tab') {
+      if (_this5.el.querySelector(':focus') !== null && _this5.isOpen) {
+        _this5.toggle();
+      }
     }
   });
 });
@@ -4020,7 +4019,13 @@ function menuInitStamp() {
 
 var abstractMenuStamp = compose(mandatoryElement$2, listMediatorStamp, toggle$2(), observable$1('isOpen'));
 
+function dropdown() {
+  var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      _ref2$menuItem = _ref2.menuItem,
+      menuItem = _ref2$menuItem === undefined ? menuItemStamp : _ref2$menuItem;
 
+  return compose(abstractMenuStamp, menuInitStamp({ menuItem: menuItem }), menuEventBinding);
+}
 
 function subMenu() {
   var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
@@ -4032,7 +4037,44 @@ function subMenu() {
 
 var subMenuStamp = subMenu({ menuItem: subMenuItemStamp });
 
+function menubar() {
+  var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      _ref4$menuItem = _ref4.menuItem,
+      menuItem = _ref4$menuItem === undefined ? menuItemStamp : _ref4$menuItem,
+      _ref4$subMenu = _ref4.subMenu,
+      subMenu = _ref4$subMenu === undefined ? subMenuStamp : _ref4$subMenu;
 
+  return compose(ariaElement({ ariaRole: 'menubar' }), listMediatorStamp, init(function () {
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+      for (var _iterator2 = findChildrenMenuItem(this.el)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        var item = _step2.value;
+
+        if (item.querySelector('[role=menu]') !== null) {
+          subMenu({ el: item, listMediator: this });
+        } else {
+          menuItem({ listMediator: this, el: item });
+        }
+      }
+    } catch (err) {
+      _didIteratorError2 = true;
+      _iteratorError2 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+          _iterator2.return();
+        }
+      } finally {
+        if (_didIteratorError2) {
+          throw _iteratorError2;
+        }
+      }
+    }
+  }));
+}
 
 
 
@@ -4071,6 +4113,44 @@ function expandable() {
 
     this.button.isOpen = !!this.button.el.getAttribute('aria-expanded');
   }));
+}
+
+function findChildrenMenuItem(base) {
+  var items = [];
+  var _iteratorNormalCompletion3 = true;
+  var _didIteratorError3 = false;
+  var _iteratorError3 = undefined;
+
+  try {
+    for (var _iterator3 = base.children[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+      var c = _step3.value;
+
+      var role = c.getAttribute('role');
+      if (role === 'menu') {
+        continue;
+      }
+      if (role === 'menuitem') {
+        items.push(c);
+      } else {
+        items.push.apply(items, toConsumableArray(findChildrenMenuItem(c)));
+      }
+    }
+  } catch (err) {
+    _didIteratorError3 = true;
+    _iteratorError3 = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion3 && _iterator3.return) {
+        _iterator3.return();
+      }
+    } finally {
+      if (_didIteratorError3) {
+        throw _iteratorError3;
+      }
+    }
+  }
+
+  return items;
 }
 
 var factory$2 = expandable();
@@ -4201,7 +4281,700 @@ var exp = zora().test('expandable init states', index.mark(function _callee(t) {
   }, _callee5, this);
 }));
 
-var components = zora().test(accordions).test(tabs).test(exp);
+var factory$3 = dropdown();
+
+function createDropdown() {
+  var container = document.createElement('DIV');
+  container.innerHTML = '\n      <button aria-controls="menu-sample" type="button" aria-haspopup="true">Actions</button>\n      <ul id="menu-sample" role="menu">\n        <li role="menuitem">action 1</li>\n        <li role="menuitem">action 2</li>\n        <li role="menuitem">action 3</li>\n      </ul>\n    ';
+  return container;
+}
+
+function testMenuItems(dropdown$$1, expected, t) {
+  var tabs = dropdown$$1.querySelectorAll('[role=menuitem]');
+  for (var i = 0; i < expected.length; i++) {
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+      for (var _iterator = Object.keys(expected[i])[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var attr = _step.value;
+
+        t.equal(tabs[i].getAttribute(attr), expected[i][attr], 'menuitem[' + i + '] attribute ' + attr + ' should equal ' + expected[i][attr]);
+      }
+    } catch (err) {
+      _didIteratorError = true;
+      _iteratorError = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion && _iterator.return) {
+          _iterator.return();
+        }
+      } finally {
+        if (_didIteratorError) {
+          throw _iteratorError;
+        }
+      }
+    }
+  }
+}
+
+var dropdown$1 = zora().test('dropdown: init states', index.mark(function _callee(t) {
+  var el, dropDown, button, menu;
+  return index.wrap(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+
+        case 6:
+        case 'end':
+          return _context.stop();
+      }
+    }
+  }, _callee, this);
+})).test('dropdown: open on click', index.mark(function _callee2(t) {
+  var el, dropDown, button, menu;
+  return index.wrap(function _callee2$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          click(button);
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+
+        case 10:
+        case 'end':
+          return _context2.stop();
+      }
+    }
+  }, _callee2, this);
+})).test('dropdown: close on click', index.mark(function _callee3(t) {
+  var el, dropDown, button, menu;
+  return index.wrap(function _callee3$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          click(button);
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+          click(button);
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+
+        case 13:
+        case 'end':
+          return _context3.stop();
+      }
+    }
+  }, _callee3, this);
+})).test('dropdown: open menu on arrow down', index.mark(function _callee4(t) {
+  var el, dropDown, button, menu;
+  return index.wrap(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          keydown(button, { key: 'ArrowDown' });
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+
+        case 10:
+        case 'end':
+          return _context4.stop();
+      }
+    }
+  }, _callee4, this);
+})).test('dropdown: open menu on Enter', index.mark(function _callee5(t) {
+  var el, dropDown, button, menu;
+  return index.wrap(function _callee5$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          keydown(button, { key: 'Enter' });
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+
+        case 10:
+        case 'end':
+          return _context5.stop();
+      }
+    }
+  }, _callee5, this);
+})).test('dropdown: open menu on Space', index.mark(function _callee6(t) {
+  var el, dropDown, button, menu;
+  return index.wrap(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          keydown(button, { code: 'Space' });
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+
+        case 10:
+        case 'end':
+          return _context6.stop();
+      }
+    }
+  }, _callee6, this);
+})).test('dropdown: close menu on arrow up', index.mark(function _callee7(t) {
+  var el, dropDown, button, menu;
+  return index.wrap(function _callee7$(_context7) {
+    while (1) {
+      switch (_context7.prev = _context7.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          keydown(button, { key: 'ArrowDown' });
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+          keydown(button, { key: 'ArrowUp' });
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+
+        case 13:
+        case 'end':
+          return _context7.stop();
+      }
+    }
+  }, _callee7, this);
+})).test('dropdown: select previous item with left arrow', index.mark(function _callee8(t) {
+  var el, dropDown, button, menu, _el$querySelectorAll, _el$querySelectorAll2, item1, item2, item3;
+
+  return index.wrap(function _callee8$(_context8) {
+    while (1) {
+      switch (_context8.prev = _context8.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          click(button);
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+          _el$querySelectorAll = el.querySelectorAll('[role=menuitem]'), _el$querySelectorAll2 = slicedToArray(_el$querySelectorAll, 3), item1 = _el$querySelectorAll2[0], item2 = _el$querySelectorAll2[1], item3 = _el$querySelectorAll2[2];
+
+          keydown(item1, { key: 'ArrowLeft' });
+          testMenuItems(el, [{ tabindex: '-1' }, { tabindex: '-1' }, { tabindex: '0' }], t);
+          keydown(item3, { key: 'ArrowLeft' });
+          testMenuItems(el, [{ tabindex: '-1' }, { tabindex: '0' }, { tabindex: '-1' }], t);
+
+        case 15:
+        case 'end':
+          return _context8.stop();
+      }
+    }
+  }, _callee8, this);
+})).test('dropdown: select previous item with up arrow', index.mark(function _callee9(t) {
+  var el, dropDown, button, menu, _el$querySelectorAll3, _el$querySelectorAll4, item1, item2, item3;
+
+  return index.wrap(function _callee9$(_context9) {
+    while (1) {
+      switch (_context9.prev = _context9.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          click(button);
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+          _el$querySelectorAll3 = el.querySelectorAll('[role=menuitem]'), _el$querySelectorAll4 = slicedToArray(_el$querySelectorAll3, 3), item1 = _el$querySelectorAll4[0], item2 = _el$querySelectorAll4[1], item3 = _el$querySelectorAll4[2];
+
+          keydown(item1, { key: 'ArrowUp' });
+          testMenuItems(el, [{ tabindex: '-1' }, { tabindex: '-1' }, { tabindex: '0' }], t);
+          keydown(item3, { key: 'ArrowUp' });
+          testMenuItems(el, [{ tabindex: '-1' }, { tabindex: '0' }, { tabindex: '-1' }], t);
+
+        case 15:
+        case 'end':
+          return _context9.stop();
+      }
+    }
+  }, _callee9, this);
+})).test('dropdown: select next item with right arrow', index.mark(function _callee10(t) {
+  var el, dropDown, button, menu, _el$querySelectorAll5, _el$querySelectorAll6, item1, item2, item3;
+
+  return index.wrap(function _callee10$(_context10) {
+    while (1) {
+      switch (_context10.prev = _context10.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          click(button);
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+          _el$querySelectorAll5 = el.querySelectorAll('[role=menuitem]'), _el$querySelectorAll6 = slicedToArray(_el$querySelectorAll5, 3), item1 = _el$querySelectorAll6[0], item2 = _el$querySelectorAll6[1], item3 = _el$querySelectorAll6[2];
+
+          keydown(item1, { key: 'ArrowRight' });
+          testMenuItems(el, [{ tabindex: '-1' }, { tabindex: '0' }, { tabindex: '-1' }], t);
+          keydown(item2, { key: 'ArrowRight' });
+          testMenuItems(el, [{ tabindex: '-1' }, { tabindex: '-1' }, { tabindex: '0' }], t);
+          keydown(item3, { key: 'ArrowRight' });
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+
+        case 17:
+        case 'end':
+          return _context10.stop();
+      }
+    }
+  }, _callee10, this);
+})).test('dropdown: select next item with down arrow', index.mark(function _callee11(t) {
+  var el, dropDown, button, menu, _el$querySelectorAll7, _el$querySelectorAll8, item1, item2, item3;
+
+  return index.wrap(function _callee11$(_context11) {
+    while (1) {
+      switch (_context11.prev = _context11.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          click(button);
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+          _el$querySelectorAll7 = el.querySelectorAll('[role=menuitem]'), _el$querySelectorAll8 = slicedToArray(_el$querySelectorAll7, 3), item1 = _el$querySelectorAll8[0], item2 = _el$querySelectorAll8[1], item3 = _el$querySelectorAll8[2];
+
+          keydown(item1, { key: 'ArrowDown' });
+          testMenuItems(el, [{ tabindex: '-1' }, { tabindex: '0' }, { tabindex: '-1' }], t);
+          keydown(item2, { key: 'ArrowDown' });
+          testMenuItems(el, [{ tabindex: '-1' }, { tabindex: '-1' }, { tabindex: '0' }], t);
+          keydown(item3, { key: 'ArrowDown' });
+          testMenuItems(el, [{ tabindex: '0' }, { tabindex: '-1' }, { tabindex: '-1' }], t);
+
+        case 17:
+        case 'end':
+          return _context11.stop();
+      }
+    }
+  }, _callee11, this);
+})).test('dropdown: close menu on escape keydown', index.mark(function _callee12(t) {
+  var el, dropDown, button, menu, _el$querySelectorAll9, _el$querySelectorAll10, item1, item2, item3;
+
+  return index.wrap(function _callee12$(_context12) {
+    while (1) {
+      switch (_context12.prev = _context12.next) {
+        case 0:
+          el = createDropdown();
+          dropDown = factory$3({ el: el });
+          button = el.querySelector('button');
+          menu = el.querySelector('#menu-sample');
+
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+          click(button);
+          t.equal(button.getAttribute('aria-expanded'), 'true');
+          t.equal(menu.getAttribute('aria-hidden'), 'false');
+          _el$querySelectorAll9 = el.querySelectorAll('[role=menuitem]'), _el$querySelectorAll10 = slicedToArray(_el$querySelectorAll9, 3), item1 = _el$querySelectorAll10[0], item2 = _el$querySelectorAll10[1], item3 = _el$querySelectorAll10[2];
+
+          keydown(item1, { key: 'Escape' });
+          t.equal(button.getAttribute('aria-expanded'), 'false');
+          t.equal(menu.getAttribute('aria-hidden'), 'true');
+
+        case 13:
+        case 'end':
+          return _context12.stop();
+      }
+    }
+  }, _callee12, this);
+}));
+
+var factory$4 = menubar();
+
+function createMenubar() {
+  var menuBar = document.createElement('UL');
+  menuBar.setAttribute('role', 'menubar');
+  menuBar.innerHTML = '\n        <li role="menuitem">\n          <button id="b1" type="button" aria-haspopup="true" tabindex="0" aria-controls="submenu1">Menu 1</button>\n          <ul id="submenu1" aria-labelledby="b1" role="menu">\n            <li role="menuitem">sub action 1.1</li>\n            <li role="menuitem">sub action 1.2</li>\n            <li role="menuitem">sub action 1.3</li>\n            <li role="menuitem">sub action 1.4</li>\n          </ul>\n        </li>\n        <li role="menuitem">\n          <button id="b2" type="button" aria-haspopup="true" tabindex="-1" aria-controls="submenu2">Menu 2</button>\n          <ul id="submenu2" aria-labelledby="b2" role="menu">\n            <li role="menuitem">sub action 2.1</li>\n            <li role="menuitem">sub action 2.2</li>\n            <li role="menuitem">sub action 2.3</li>\n          </ul>\n        </li>\n        <li role="menuitem"><span>Some single action</span></li>\n        <li role="menuitem">\n          <button id="b4" type="button" aria-haspopup="true" tabindex="-1" aria-controls="submenu4">Menu 3</button>\n          <ul id="submenu4" aria-labelledby="b4" role="menu">\n            <li role="menuitem">sub action 4.1</li>\n            <li role="menuitem">sub action 4.2</li>\n          </ul>\n        </li>\n';
+  return menuBar;
+}
+
+var menubar$1 = zora().test('menubars: init states', index.mark(function _callee(t) {
+  var el, mb, _el$querySelectorAll, _el$querySelectorAll2, b1, b2, b3, _el$querySelectorAll3, _el$querySelectorAll4, m1, m2, m3;
+
+  return index.wrap(function _callee$(_context) {
+    while (1) {
+      switch (_context.prev = _context.next) {
+        case 0:
+          el = createMenubar();
+          mb = factory$4({ el: el });
+          _el$querySelectorAll = el.querySelectorAll('button[aria-haspopup=true]'), _el$querySelectorAll2 = slicedToArray(_el$querySelectorAll, 3), b1 = _el$querySelectorAll2[0], b2 = _el$querySelectorAll2[1], b3 = _el$querySelectorAll2[2];
+          _el$querySelectorAll3 = el.querySelectorAll('ul[role=menu]'), _el$querySelectorAll4 = slicedToArray(_el$querySelectorAll3, 3), m1 = _el$querySelectorAll4[0], m2 = _el$querySelectorAll4[1], m3 = _el$querySelectorAll4[2];
+
+          t.equal(b1.getAttribute('aria-expanded'), 'false');
+          t.equal(b1.getAttribute('tabindex'), '0');
+          t.equal(b2.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('tabindex'), '-1');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(b3.getAttribute('tabindex'), '-1');
+          t.equal(m1.getAttribute('aria-hidden'), 'true');
+          t.equal(m2.getAttribute('aria-hidden'), 'true');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+
+        case 13:
+        case 'end':
+          return _context.stop();
+      }
+    }
+  }, _callee, this);
+})).test('menubars: open sub menu on click', index.mark(function _callee2(t) {
+  var el, mb, _el$querySelectorAll5, _el$querySelectorAll6, b1, b2, b3, _el$querySelectorAll7, _el$querySelectorAll8, m1, m2, m3, items;
+
+  return index.wrap(function _callee2$(_context2) {
+    while (1) {
+      switch (_context2.prev = _context2.next) {
+        case 0:
+          el = createMenubar();
+          mb = factory$4({ el: el });
+          _el$querySelectorAll5 = el.querySelectorAll('button[aria-haspopup=true]'), _el$querySelectorAll6 = slicedToArray(_el$querySelectorAll5, 3), b1 = _el$querySelectorAll6[0], b2 = _el$querySelectorAll6[1], b3 = _el$querySelectorAll6[2];
+          _el$querySelectorAll7 = el.querySelectorAll('ul[role=menu]'), _el$querySelectorAll8 = slicedToArray(_el$querySelectorAll7, 3), m1 = _el$querySelectorAll8[0], m2 = _el$querySelectorAll8[1], m3 = _el$querySelectorAll8[2];
+          items = m2.querySelectorAll('li[role=menuitem]');
+
+          click(b2);
+          t.equal(b1.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('aria-expanded'), 'true');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(m1.getAttribute('aria-hidden'), 'true');
+          t.equal(m2.getAttribute('aria-hidden'), 'false');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+
+        case 12:
+        case 'end':
+          return _context2.stop();
+      }
+    }
+  }, _callee2, this);
+})).test('menubars: open sub menu with keydown', index.mark(function _callee3(t) {
+  var el, mb, _el$querySelectorAll9, _el$querySelectorAll10, b1, b2, b3, _el$querySelectorAll11, _el$querySelectorAll12, m1, m2, m3;
+
+  return index.wrap(function _callee3$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          el = createMenubar();
+          mb = factory$4({ el: el });
+          _el$querySelectorAll9 = el.querySelectorAll('button[aria-haspopup=true]'), _el$querySelectorAll10 = slicedToArray(_el$querySelectorAll9, 3), b1 = _el$querySelectorAll10[0], b2 = _el$querySelectorAll10[1], b3 = _el$querySelectorAll10[2];
+          _el$querySelectorAll11 = el.querySelectorAll('ul[role=menu]'), _el$querySelectorAll12 = slicedToArray(_el$querySelectorAll11, 3), m1 = _el$querySelectorAll12[0], m2 = _el$querySelectorAll12[1], m3 = _el$querySelectorAll12[2];
+
+          keydown(b2, { key: 'ArrowDown' });
+          t.equal(b1.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('aria-expanded'), 'true');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(m1.getAttribute('aria-hidden'), 'true');
+          t.equal(m2.getAttribute('aria-hidden'), 'false');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+
+        case 11:
+        case 'end':
+          return _context3.stop();
+      }
+    }
+  }, _callee3, this);
+})).test('menubars: open sub menu with Enter', index.mark(function _callee4(t) {
+  var el, mb, _el$querySelectorAll13, _el$querySelectorAll14, b1, b2, b3, _el$querySelectorAll15, _el$querySelectorAll16, m1, m2, m3;
+
+  return index.wrap(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          el = createMenubar();
+          mb = factory$4({ el: el });
+          _el$querySelectorAll13 = el.querySelectorAll('button[aria-haspopup=true]'), _el$querySelectorAll14 = slicedToArray(_el$querySelectorAll13, 3), b1 = _el$querySelectorAll14[0], b2 = _el$querySelectorAll14[1], b3 = _el$querySelectorAll14[2];
+          _el$querySelectorAll15 = el.querySelectorAll('ul[role=menu]'), _el$querySelectorAll16 = slicedToArray(_el$querySelectorAll15, 3), m1 = _el$querySelectorAll16[0], m2 = _el$querySelectorAll16[1], m3 = _el$querySelectorAll16[2];
+
+          keydown(b2, { key: 'Enter' });
+          t.equal(b1.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('aria-expanded'), 'true');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(m1.getAttribute('aria-hidden'), 'true');
+          t.equal(m2.getAttribute('aria-hidden'), 'false');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+
+        case 11:
+        case 'end':
+          return _context4.stop();
+      }
+    }
+  }, _callee4, this);
+})).test('menubars: open sub menu with Space', index.mark(function _callee5(t) {
+  var el, mb, _el$querySelectorAll17, _el$querySelectorAll18, b1, b2, b3, _el$querySelectorAll19, _el$querySelectorAll20, m1, m2, m3;
+
+  return index.wrap(function _callee5$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          el = createMenubar();
+          mb = factory$4({ el: el });
+          _el$querySelectorAll17 = el.querySelectorAll('button[aria-haspopup=true]'), _el$querySelectorAll18 = slicedToArray(_el$querySelectorAll17, 3), b1 = _el$querySelectorAll18[0], b2 = _el$querySelectorAll18[1], b3 = _el$querySelectorAll18[2];
+          _el$querySelectorAll19 = el.querySelectorAll('ul[role=menu]'), _el$querySelectorAll20 = slicedToArray(_el$querySelectorAll19, 3), m1 = _el$querySelectorAll20[0], m2 = _el$querySelectorAll20[1], m3 = _el$querySelectorAll20[2];
+
+          keydown(b2, { code: 'Space' });
+          t.equal(b1.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('aria-expanded'), 'true');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(m1.getAttribute('aria-hidden'), 'true');
+          t.equal(m2.getAttribute('aria-hidden'), 'false');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+
+        case 11:
+        case 'end':
+          return _context5.stop();
+      }
+    }
+  }, _callee5, this);
+})).test('menubars: navigate to next menu with right arrow', index.mark(function _callee6(t) {
+  var el, mb, _el$querySelectorAll21, _el$querySelectorAll22, b1, b2, b3, _el$querySelectorAll23, _el$querySelectorAll24, m1, m2, m3;
+
+  return index.wrap(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          el = createMenubar();
+          mb = factory$4({ el: el });
+          _el$querySelectorAll21 = el.querySelectorAll('button[aria-haspopup=true]'), _el$querySelectorAll22 = slicedToArray(_el$querySelectorAll21, 3), b1 = _el$querySelectorAll22[0], b2 = _el$querySelectorAll22[1], b3 = _el$querySelectorAll22[2];
+          _el$querySelectorAll23 = el.querySelectorAll('ul[role=menu]'), _el$querySelectorAll24 = slicedToArray(_el$querySelectorAll23, 3), m1 = _el$querySelectorAll24[0], m2 = _el$querySelectorAll24[1], m3 = _el$querySelectorAll24[2];
+
+          keydown(b1, { key: 'ArrowRight' });
+          t.equal(b1.getAttribute('aria-expanded'), 'false');
+          t.equal(b1.getAttribute('tabindex'), '-1');
+          t.equal(b2.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('tabindex'), '0');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(b3.getAttribute('tabindex'), '-1');
+          t.equal(m1.getAttribute('aria-hidden'), 'true');
+          t.equal(m2.getAttribute('aria-hidden'), 'true');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+          keydown(b3, { key: 'ArrowRight' });
+          t.equal(b1.getAttribute('aria-expanded'), 'false');
+          t.equal(b1.getAttribute('tabindex'), '0');
+          t.equal(b2.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('tabindex'), '-1');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(b3.getAttribute('tabindex'), '-1');
+          t.equal(m1.getAttribute('aria-hidden'), 'true');
+          t.equal(m2.getAttribute('aria-hidden'), 'true');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+
+        case 24:
+        case 'end':
+          return _context6.stop();
+      }
+    }
+  }, _callee6, this);
+})).test('menubars: select previous menu item with left arrow', index.mark(function _callee7(t) {
+  var el, mb, _el$querySelectorAll25, _el$querySelectorAll26, b1, b2, b3, _el$querySelectorAll27, _el$querySelectorAll28, m1, m2, m3;
+
+  return index.wrap(function _callee7$(_context7) {
+    while (1) {
+      switch (_context7.prev = _context7.next) {
+        case 0:
+          el = createMenubar();
+          mb = factory$4({ el: el });
+          _el$querySelectorAll25 = el.querySelectorAll('button[aria-haspopup=true]'), _el$querySelectorAll26 = slicedToArray(_el$querySelectorAll25, 3), b1 = _el$querySelectorAll26[0], b2 = _el$querySelectorAll26[1], b3 = _el$querySelectorAll26[2];
+          _el$querySelectorAll27 = el.querySelectorAll('ul[role=menu]'), _el$querySelectorAll28 = slicedToArray(_el$querySelectorAll27, 3), m1 = _el$querySelectorAll28[0], m2 = _el$querySelectorAll28[1], m3 = _el$querySelectorAll28[2];
+
+          keydown(b1, { key: 'ArrowLeft' });
+          t.equal(b1.getAttribute('aria-expanded'), 'false');
+          t.equal(b1.getAttribute('tabindex'), '-1');
+          t.equal(b2.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('tabindex'), '-1');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(b3.getAttribute('tabindex'), '0');
+          t.equal(m1.getAttribute('aria-hidden'), 'true');
+          t.equal(m2.getAttribute('aria-hidden'), 'true');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+          keydown(b2, { key: 'ArrowLeft' });
+          t.equal(b1.getAttribute('aria-expanded'), 'false');
+          t.equal(b1.getAttribute('tabindex'), '0');
+          t.equal(b2.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('tabindex'), '-1');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(b3.getAttribute('tabindex'), '-1');
+          t.equal(m1.getAttribute('aria-hidden'), 'true');
+          t.equal(m2.getAttribute('aria-hidden'), 'true');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+
+        case 24:
+        case 'end':
+          return _context7.stop();
+      }
+    }
+  }, _callee7, this);
+})).test('submenu: select previous menu item using up arrow', index.mark(function _callee8(t) {
+  var el, mb, _el$querySelectorAll29, _el$querySelectorAll30, b1, b2, b3, _el$querySelectorAll31, _el$querySelectorAll32, m1, m2, m3, _m1$querySelectorAll, _m1$querySelectorAll2, si1, si2, si3, si4;
+
+  return index.wrap(function _callee8$(_context8) {
+    while (1) {
+      switch (_context8.prev = _context8.next) {
+        case 0:
+          el = createMenubar();
+          mb = factory$4({ el: el });
+          _el$querySelectorAll29 = el.querySelectorAll('button[aria-haspopup=true]'), _el$querySelectorAll30 = slicedToArray(_el$querySelectorAll29, 3), b1 = _el$querySelectorAll30[0], b2 = _el$querySelectorAll30[1], b3 = _el$querySelectorAll30[2];
+          _el$querySelectorAll31 = el.querySelectorAll('ul[role=menu]'), _el$querySelectorAll32 = slicedToArray(_el$querySelectorAll31, 3), m1 = _el$querySelectorAll32[0], m2 = _el$querySelectorAll32[1], m3 = _el$querySelectorAll32[2];
+
+          t.equal(b1.getAttribute('aria-expanded'), 'false');
+          t.equal(b1.getAttribute('tabindex'), '0');
+          t.equal(b2.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('tabindex'), '-1');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(b3.getAttribute('tabindex'), '-1');
+          t.equal(m1.getAttribute('aria-hidden'), 'true');
+          t.equal(m2.getAttribute('aria-hidden'), 'true');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+
+          //open menu
+          keydown(b1, { key: 'ArrowDown' });
+          t.equal(b1.getAttribute('aria-expanded'), 'true');
+          t.equal(b1.getAttribute('tabindex'), '0');
+          t.equal(b2.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('tabindex'), '-1');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(b3.getAttribute('tabindex'), '-1');
+          t.equal(m1.getAttribute('aria-hidden'), 'false');
+          t.equal(m2.getAttribute('aria-hidden'), 'true');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+
+          _m1$querySelectorAll = m1.querySelectorAll('[role=menuitem]'), _m1$querySelectorAll2 = slicedToArray(_m1$querySelectorAll, 4), si1 = _m1$querySelectorAll2[0], si2 = _m1$querySelectorAll2[1], si3 = _m1$querySelectorAll2[2], si4 = _m1$querySelectorAll2[3];
+
+          t.equal(si1.getAttribute('tabindex'), '0');
+          t.equal(si2.getAttribute('tabindex'), '-1');
+          t.equal(si3.getAttribute('tabindex'), '-1');
+          t.equal(si4.getAttribute('tabindex'), '-1');
+          keydown(si1, { key: 'ArrowUp' });
+          t.equal(si1.getAttribute('tabindex'), '-1');
+          t.equal(si2.getAttribute('tabindex'), '-1');
+          t.equal(si3.getAttribute('tabindex'), '-1');
+          t.equal(si4.getAttribute('tabindex'), '0');
+          keydown(si4, { key: 'ArrowUp' });
+          t.equal(si1.getAttribute('tabindex'), '-1');
+          t.equal(si2.getAttribute('tabindex'), '-1');
+          t.equal(si3.getAttribute('tabindex'), '0');
+          t.equal(si4.getAttribute('tabindex'), '-1');
+
+        case 38:
+        case 'end':
+          return _context8.stop();
+      }
+    }
+  }, _callee8, this);
+})).test('submenu: select next menu item using down arrow', index.mark(function _callee9(t) {
+  var el, mb, _el$querySelectorAll33, _el$querySelectorAll34, b1, b2, b3, _el$querySelectorAll35, _el$querySelectorAll36, m1, m2, m3, _m1$querySelectorAll3, _m1$querySelectorAll4, si1, si2, si3, si4;
+
+  return index.wrap(function _callee9$(_context9) {
+    while (1) {
+      switch (_context9.prev = _context9.next) {
+        case 0:
+          el = createMenubar();
+          mb = factory$4({ el: el });
+          _el$querySelectorAll33 = el.querySelectorAll('button[aria-haspopup=true]'), _el$querySelectorAll34 = slicedToArray(_el$querySelectorAll33, 3), b1 = _el$querySelectorAll34[0], b2 = _el$querySelectorAll34[1], b3 = _el$querySelectorAll34[2];
+          _el$querySelectorAll35 = el.querySelectorAll('ul[role=menu]'), _el$querySelectorAll36 = slicedToArray(_el$querySelectorAll35, 3), m1 = _el$querySelectorAll36[0], m2 = _el$querySelectorAll36[1], m3 = _el$querySelectorAll36[2];
+          //open menu
+
+          keydown(b1, { key: 'ArrowDown' });
+          t.equal(b1.getAttribute('aria-expanded'), 'true');
+          t.equal(b1.getAttribute('tabindex'), '0');
+          t.equal(b2.getAttribute('aria-expanded'), 'false');
+          t.equal(b2.getAttribute('tabindex'), '-1');
+          t.equal(b3.getAttribute('aria-expanded'), 'false');
+          t.equal(b3.getAttribute('tabindex'), '-1');
+          t.equal(m1.getAttribute('aria-hidden'), 'false');
+          t.equal(m2.getAttribute('aria-hidden'), 'true');
+          t.equal(m3.getAttribute('aria-hidden'), 'true');
+
+          _m1$querySelectorAll3 = m1.querySelectorAll('[role=menuitem]'), _m1$querySelectorAll4 = slicedToArray(_m1$querySelectorAll3, 4), si1 = _m1$querySelectorAll4[0], si2 = _m1$querySelectorAll4[1], si3 = _m1$querySelectorAll4[2], si4 = _m1$querySelectorAll4[3];
+
+          t.equal(si1.getAttribute('tabindex'), '0');
+          t.equal(si2.getAttribute('tabindex'), '-1');
+          t.equal(si3.getAttribute('tabindex'), '-1');
+          t.equal(si4.getAttribute('tabindex'), '-1');
+          keydown(si1, { key: 'ArrowDown' });
+          t.equal(si1.getAttribute('tabindex'), '-1');
+          t.equal(si2.getAttribute('tabindex'), '0');
+          t.equal(si3.getAttribute('tabindex'), '-1');
+          t.equal(si4.getAttribute('tabindex'), '-1');
+          keydown(si4, { key: 'ArrowDown' });
+          t.equal(si1.getAttribute('tabindex'), '0');
+          t.equal(si2.getAttribute('tabindex'), '-1');
+          t.equal(si3.getAttribute('tabindex'), '-1');
+          t.equal(si4.getAttribute('tabindex'), '-1');
+
+        case 29:
+        case 'end':
+          return _context9.stop();
+      }
+    }
+  }, _callee9, this);
+}));
+
+var components = zora().test(accordions).test(tabs).test(exp).test(dropdown$1).test(menubar$1);
 
 zora().test(behaviours).test(components).run().catch(function (e) {
   return console.log(e);

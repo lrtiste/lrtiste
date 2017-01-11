@@ -1,0 +1,25 @@
+Hello Peter and best wishes for the coming year !
+
+I lately created zora: "A less than 200 lines of code javascript test harness for nodejs and the browser".
+
+I have been using Tape for a while as it fits almost perfectly my needs:
+1) TAP producer (so can be read/transformed easily and in a consistent way).
+2) Run as a javascript program: I liked the the fact that you don't need runner but just write your test code as any regular node module and run "node ./mytest.js"
+
+My problem came when I wanted to use it to test code in the browser as it requires Browserify to mock core nodejs modules used by Tape. It is not a big deal, but I used Rollup to bundle my code and did not want to use yet another bundler tool for no reason. I also wanted to run my tests in parallel which was not that easy with Tape and wanted a different approach for async testing.
+
+Before that, I was using Mocha, but I gave up on big frameworks that do a lot of different things and rely on configuration files which often makes it more complex to master. Anyway, it is just a matter of taste I guess.
+
+So you'll find:
+- zora repo
+- a repo to run speed comparisons with AVA, TAPE, MOCHA, JEST
+- a codepen to play
+
+I am also working on a project related to accessibility. I may share it with you later but I don't often see links related to that topic on the newsletters so I am not sure that is something which interests your communities.
+
+Best regards,
+
+Laurent R.
+
+PS: can you please acknowledge the reception of this email, I live in Cuba and well ... sometimes "shits" happen :)
+

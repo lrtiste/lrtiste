@@ -23,13 +23,12 @@ const abstractMenuItem = compose(
 
 const menuItemEvenBinding = init(function () {
   this.el.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if (k === 37 || k === 38) {
+    const {key:k} = event;
+    if (k === 'ArrowLeft' || k === 'ArrowUp') {
       this.selectPrevious();
-    } else if (k === 39 || k === 40) {
+      event.preventDefault();
+    } else if (k === 'ArrowRight' || k === 'ArrowDown') {
       this.selectNext();
-    }
-    if (/\b37\b|\b38\b|\b39\b|\b40\b/.test(k)) {
       event.preventDefault();
     }
   });
@@ -42,14 +41,12 @@ const menuItemStamp = compose(
 
 const subMenuItemEventBinding = init(function () {
   this.el.addEventListener('keydown', event => {
-    const {keyCode:k} = event;
-    if (k === 38) {
+    const {key:k} = event;
+    if (k === 'ArrowUp') {
       this.selectPrevious();
-    } else if (k === 40) {
+      event.preventDefault();
+    } else if (k === 'ArrowDown') {
       this.selectNext();
-    }
-
-    if (/\b38\b|\b40\b/.test(k)) {
       event.preventDefault();
     }
   });
@@ -61,71 +58,73 @@ const subMenuItemStamp = compose(
 );
 
 const menuEventBinding = init(function () {
-  this.toggler.addEventListener('click', event => {
+  this.toggler.addEventListener('click', () => {
     this.toggle();
   });
   this.toggler.addEventListener('keydown', event => {
-    const {key:k,code, target} = event;
+    const {key:k, code} = event;
+    const toggle = (ev) => {
+      this.toggle();
+      ev.preventDefault();
+    };
     if (k === 'Enter' || code === 'Space') {
-      if (!/button|a/i.test(target.tagName)) { //already handled by the click event
-        this.toggle();
-      }
+      toggle(event)
     } else if (k === 'ArrowDown' && !this.isOpen) {
-      this.toggle();
-      event.preventDefault();
+      toggle(event);
     } else if (k === 'ArrowUp' && this.isOpen) {
-      event.preventDefault();
-      this.toggle();
+      toggle(event);
     }
   });
-  //
-  // if (this.el !== this.toggler) {
-  //   this.el.addEventListener('keydown', event=> {
-  //     const {keyCode:k} = event;
-  //     if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
-  //       this.toggle();
-  //       if (k === 27) {
-  //         this.toggler.focus();
-  //       }
-  //     }
-  //   })
-  // }
+
+  this.el.addEventListener('keydown', event => {
+    const {key:k} = event;
+    if (k === 'Escape' && this.isOpen) {
+      this.toggle();
+      this.toggler.focus();
+    } else if (k == 'Tab') {
+      if (this.el.querySelector(':focus') !== null && this.isOpen) {
+        this.toggle();
+      }
+    }
+  })
 });
 
 const subMenuEventBinding = init(function () {
 
-  const next = () => {
+  const next = (ev) => {
     this.selectNext();
     if (this.isOpen) {
       this.toggle();
     }
+    ev.preventDefault();
   };
 
-  const previous = () => {
+  const previous = (ev) => {
     this.selectPrevious();
     if (this.isOpen) {
       this.toggle();
     }
+    ev.preventDefault();
   };
 
-  this.toggler.addEventListener('click', event => {
+  this.toggler.addEventListener('click', () => {
     this.toggle();
   });
   this.toggler.addEventListener('keydown', event => {
-    const {keyCode:k, target} = event;
-    if (/\b13\b|\b32\b/.test(k) && target.tagName !== 'BUTTON' && target === this.toggler) {
+    const {key:k, code, target} = event;
+    if ((k === 'Enter' || code === 'Space') && target === this.toggler) {
       this.toggle();
-    } else if (k === 39) {
-      next();
-    } else if (k === 37) {
-      previous();
-    } else if (k === 40 && target === this.toggler) {
+    } else if (k === 'ArrowRight') {
+      next(event);
+    } else if (k === 'ArrowLeft') {
+      previous(event);
+    } else if (k === 'ArrowDown' && target === this.toggler) {
       if (!this.isOpen) {
         this.toggle();
       } else {
         this.selectNext();
       }
-    } else if (k === 38 && target === this.toggler) {
+    } else if (k === 'ArrowUp' && target === this.toggler) {
       if (this.isOpen) {
         this.toggle();
       } else {
@@ -133,26 +132,26 @@ const subMenuEventBinding = init(function () {
       }
     }
 
-    if (/\b37\b|\b38\b|\b39\b|\b40\b/.test(k)) {
+    if (['ArrowDown', 'ArrowUp', 'Enter'].indexOf(k) !== -1 || code === 'Space') {
       event.preventDefault();
     }
-
   });
 
   this.el.addEventListener('keydown', event => {
-    const {keyCode:k} = event;
-    if (k === 39) {
-      next();
-    } else if (k === 37) {
-      previous();
-    } else if (/\b9\b|\b27\b/.test(k) && this.isOpen) {
+    const {key:k} = event;
+    if (k === 'ArrowRight') {
+      next(event);
+    } else if (k === 'ArrowLeft') {
+      previous(event);
+    } else if ((k === 'Escape') && this.isOpen) {
       this.toggle();
-      if (k === 27) {
+      if (k === 'Escape') {
         this.toggler.focus();
       }
-    }
-    if (/\b37\b|\b39\b/.test(k)) {
-      event.preventDefault();
+    } else if (k == 'Tab') {
+      if (this.el.querySelector(':focus') !== null && this.isOpen) {
+        this.toggle();
+      }
     }
   });
 });
