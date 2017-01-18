@@ -2,7 +2,7 @@
   "name": "lrtiste",
   "version": "0.1.0",
   "description": "accessible widgets library, behaviours driven",
-  "main": "./dist/index.js",
+  "main": "./dist/lrtiste.js",
   "js:next": "./dist/lrtiste.es.js",
   "keywords": [
     "ui",
