@@ -236,4 +236,3 @@ export default zora()
     t.equal(si4.getAttribute('tabindex'),'-1');
   })
 ;
-

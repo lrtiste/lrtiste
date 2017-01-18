@@ -7,9 +7,9 @@ import menubar from './menubars';
 import tooltip from './tooltips';
 
 export default zora()
-  .test(accordions)
   .test(tabs)
+  .test(accordions)
   .test(exp)
   .test(dropdown)
   .test(menubar)
-  .test(tooltip);
+  .test(tooltip)

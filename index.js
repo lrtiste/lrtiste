@@ -1,11 +1,12 @@
-import {accordion, accordionTab, accordionPanel} from './components/accordions';
-import {tabList, tab, tabPanel} from './components/tabs';
-import {dropdown, menubar, expandable} from './components/menus';
-import {element, ariaElement} from './behaviours/elements';
-import {listMediatorStamp, multiSelectMediatorStamp, listItemStamp} from './behaviours/listMediators'
-import {observable, mapToAria} from './behaviours/observables'
-import {toggle} from './behaviours/toggle'
-import {default as stampit} from 'stampit';
+import { accordion, accordionTab, accordionPanel } from './components/accordions';
+import { tabList, tab, tabPanel } from './components/tabs';
+import { dropdown, menubar, expandable } from './components/menus';
+import { tooltip } from './components/tooltips';
+import { element, ariaElement } from './behaviours/elements';
+import { listMediatorStamp, multiSelectMediatorStamp, listItemStamp } from './behaviours/listMediators';
+import { observable, mapToAria } from './behaviours/observables';
+import { toggle } from './behaviours/toggle';
+import { default as stampit } from 'stampit';
 
 const components = {
   accordionPanel,
@@ -16,9 +17,10 @@ const components = {
   tabPanel,
   dropdown,
   menubar,
-  expandable
+  tooltip,
   // slider,
   // rangeSlider
+  expandable
 };
 
 const behaviours = {
@@ -32,6 +34,4 @@ const behaviours = {
   toggle
 };
 
-export {components, behaviours, stampit};
-
-
+export { components, behaviours, stampit };

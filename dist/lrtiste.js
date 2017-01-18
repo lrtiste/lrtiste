@@ -1,19 +1,8 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-function unwrapExports (x) {
-	return x && x.__esModule ? x['default'] : x;
-}
-
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
-
-var stampit_full$1 = createCommonjsModule(function (module, exports) {
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  (factory((global.lrtiste = global.lrtiste || {})));
+}(this, (function (exports) { 'use strict';
 
 function isObject(obj) {
   var type = typeof obj;
@@ -413,52 +402,8 @@ stampit.compose = exportedCompose;
 // Setting up the shortcut functions
 var stampit$1 = assign(stampit, allUtilities);
 
-exports.methods = methods;
-exports.properties = properties;
-exports.refs = properties;
-exports.props = properties;
-exports.initializers = initializers;
-exports.init = initializers;
-exports.deepProperties = deepProperties;
-exports.deepProps = deepProperties;
-exports.staticProperties = staticProperties;
-exports.statics = staticProperties;
-exports.staticDeepProperties = staticDeepProperties;
-exports.deepStatics = staticDeepProperties;
-exports.configuration = configuration;
-exports.conf = configuration;
-exports.deepConfiguration = deepConfiguration;
-exports.deepConf = deepConfiguration;
-exports.propertyDescriptors = propertyDescriptors;
-exports.staticPropertyDescriptors = staticPropertyDescriptors;
-exports.compose = exportedCompose;
-exports['default'] = stampit$1;
-module.exports = exports['default'];
-});
-
-var stampit_full$2 = unwrapExports(stampit_full$1);
-var compose = stampit_full$1.compose;
-
-
-
-
-
-
-
-
-
-
-
-
-var init = stampit_full$1.init;
-
-
-
-
-var methods = stampit_full$1.methods;
-
 function element ({propertyName = 'el'}={propertyName: 'el'}) {
-  return init(function assertElement(opts = {}) {
+  return initializers(function assertElement(opts = {}) {
     const el = opts[propertyName];
     if (!el) {
       throw new Error(`You must provide a dom element as "${propertyName}" property`);
@@ -469,7 +414,7 @@ function element ({propertyName = 'el'}={propertyName: 'el'}) {
 
 function ariaElement ({ariaRole, propertyName = 'el'}) {
   const elStamp = element({propertyName});
-  return compose(elStamp, init(function assertAriaRole() {
+  return exportedCompose(elStamp, initializers(function assertAriaRole() {
     const role = this.el.getAttribute('role');
     if (role !== ariaRole) {
       throw new Error(`the element used to create the component is expected to have the aria role ${ariaRole}`);
@@ -478,7 +423,7 @@ function ariaElement ({ariaRole, propertyName = 'el'}) {
 }
 
 function observable (...properties$$1) {
-  return init(function () {
+  return initializers(function () {
     const listeners = {};
 
     if (!this.$onChange || !this.$on) {
@@ -522,10 +467,10 @@ function mapToAria (prop, ...attributes) {
     const fn = isNot ? v => !v : v=>v;
     return {attr: ['aria', att].join('-'), fn};
   });
-  return compose(
+  return exportedCompose(
     mandatoryEl,
     observable(prop),
-    init(function () {
+    initializers(function () {
       this.$on(prop, newVal => {
         for (let att of ariaAttributes) {
           this.el.setAttribute(att.attr, att.fn(newVal));
@@ -543,7 +488,7 @@ function toggle (prop = 'isOpen') {
   });
 }
 
-const abstractListMediatorStamp = init(function ({items = []}) {
+const abstractListMediatorStamp = initializers(function ({items = []}) {
   Object.defineProperty(this, 'items', {value: items});
 })
   .methods({
@@ -574,7 +519,7 @@ const abstractListMediatorStamp = init(function ({items = []}) {
     }
   });
 
-const listItemStamp = init(function ({listMediator, isOpen}) {
+const listItemStamp = initializers(function ({listMediator, isOpen}) {
   if (!listMediator) {
     throw new Error('you must provide a listMediator to the listItem');
   }
@@ -597,7 +542,7 @@ const listItemStamp = init(function ({listMediator, isOpen}) {
     },
   });
 
-const multiSelectMediatorStamp = compose(abstractListMediatorStamp, methods({
+const multiSelectMediatorStamp = exportedCompose(abstractListMediatorStamp, methods({
   toggleItem(item){
     const index = this.items.indexOf(item);
     if (index !== -1) {
@@ -606,7 +551,7 @@ const multiSelectMediatorStamp = compose(abstractListMediatorStamp, methods({
   }
 }));
 
-const listMediatorStamp = compose(abstractListMediatorStamp, methods({
+const listMediatorStamp = exportedCompose(abstractListMediatorStamp, methods({
   toggleItem(item){
     for (let i of this.items) {
       i.isOpen = i === item ? !i.isOpen : false;
@@ -618,7 +563,7 @@ const listMediatorStamp = compose(abstractListMediatorStamp, methods({
 const mandatoryElement = element();
 const tablist = ariaElement({ariaRole: 'tablist'});
 
-const accordionTabEventBinding = init(function () {
+const accordionTabEventBinding = initializers(function () {
   this.el.addEventListener('click', event=> {
     this.toggle();
     this.select();
@@ -641,7 +586,7 @@ const accordionTabEventBinding = init(function () {
     }
   });
 });
-const accordionTabpanelEventBinding = init(function () {
+const accordionTabpanelEventBinding = initializers(function () {
   this.el.addEventListener('focusin', event => {
     this.tab.select();
   });
@@ -650,7 +595,7 @@ const accordionTabpanelEventBinding = init(function () {
   });
 });
 
-const accordionTabpanelStamp = compose(
+const accordionTabpanelStamp = exportedCompose(
   ariaElement({ariaRole: 'tabpanel'}),
   toggle(),
   methods({
@@ -659,18 +604,18 @@ const accordionTabpanelStamp = compose(
     }
   }),
   mapToAria('isOpen', '!hidden'),
-  init(function initializeAccordionTabpanel ({tab}) {
+  initializers(function initializeAccordionTabpanel ({tab}) {
     Object.defineProperty(this, 'tab', {value: tab});
   }),
   accordionTabpanelEventBinding
 );
 
-const accordionTabStamp = compose(
+const accordionTabStamp = exportedCompose(
   ariaElement({ariaRole: 'tab'}),
   listItemStamp,
   mapToAria('isOpen', 'expanded'),
   mapToAria('isSelected', 'selected'),
-  init(function initializeAccordionTab ({tabpanelEl}) {
+  initializers(function initializeAccordionTab ({tabpanelEl}) {
     const tabpanel = accordionTabpanelStamp({el: tabpanelEl, tab: this});
     Object.defineProperty(this, 'tabpanel', {value: tabpanel});
     this.$on('isOpen', isOpen => {
@@ -700,9 +645,9 @@ function accordionPanel () {
 }
 
 function accordion () {
-  return compose(mandatoryElement,
+  return exportedCompose(mandatoryElement,
     multiSelectMediatorStamp,
-    init(function initializeAccordionTablist () {
+    initializers(function initializeAccordionTablist () {
       Object.defineProperty(this, 'tablist', {
         value: tablist({
           el: this.el.querySelector('[role=tablist]') || this.el
@@ -728,13 +673,13 @@ function accordion () {
 const mandatoryElement$1 = element();
 const tablist$1 = ariaElement({ ariaRole: 'tablist' });
 
-const tabEventBinding = init(function() {
+const tabEventBinding = initializers(function() {
   this.el.addEventListener('keydown', event => {
     const { key: k } = event;
     if (k === 'ArrowLeft' || k === 'ArrowUp') {
       this.selectPrevious();
       event.preventDefault();
-    } else if (k === 'Arro`wDown' || k === 'ArrowRight') {
+    } else if (k === 'ArrowDown' || k === 'ArrowRight') {
       this.selectNext();
       event.preventDefault();
     }
@@ -744,11 +689,11 @@ const tabEventBinding = init(function() {
   });
 });
 
-const tabStamp = compose(
+const tabStamp = exportedCompose(
   ariaElement({ ariaRole: 'tab' }),
   listItemStamp,
   mapToAria('isSelected', 'selected'),
-  init(function initializeTab({ tabpanel }) {
+  initializers(function initializeTab({ tabpanel }) {
     Object.defineProperty(this, 'tabpanel', { value: tabpanel });
     this.$on('isSelected', isSelected => {
       this.el.setAttribute('tabindex', isSelected ? 0 : -1);
@@ -765,7 +710,7 @@ const tabStamp = compose(
   tabEventBinding
 );
 
-const tabPanelStamp = compose(
+const tabPanelStamp = exportedCompose(
   ariaElement({ ariaRole: 'tabpanel' }),
   toggle(),
   mapToAria('isOpen', '!hidden')
@@ -782,10 +727,10 @@ function tab() {
 function tabList(
   { tabpanelFactory = tabPanelStamp, tabFactory = tabStamp } = {}
 ) {
-  return compose(
+  return exportedCompose(
     mandatoryElement$1,
     listMediatorStamp,
-    init(function initializeTablist() {
+    initializers(function initializeTablist() {
       Object.defineProperty(this, 'tablist', {
         value: tablist$1({
           el: this.el.querySelector('[role=tablist]') || this.el
@@ -816,11 +761,11 @@ function tabList(
 const mandatoryElement$2 = element();
 const menuElement = ariaElement({ariaRole: 'menu'});
 
-const abstractMenuItem = compose(
+const abstractMenuItem = exportedCompose(
   ariaElement({ariaRole: 'menuitem'}),
   listItemStamp,
   observable('isSelected'),
-  init(function () {
+  initializers(function () {
     this.$on('isSelected', isSelected => {
       this.el.setAttribute('tabindex', isSelected ? 0 : -1);
       if (isSelected === true) {
@@ -830,7 +775,7 @@ const abstractMenuItem = compose(
   })
 );
 
-const menuItemEvenBinding = init(function () {
+const menuItemEvenBinding = initializers(function () {
   this.el.addEventListener('keydown', event => {
     const {key:k} = event;
     if (k === 'ArrowLeft' || k === 'ArrowUp') {
@@ -843,12 +788,12 @@ const menuItemEvenBinding = init(function () {
   });
 });
 
-const menuItemStamp = compose(
+const menuItemStamp = exportedCompose(
   abstractMenuItem,
   menuItemEvenBinding
 );
 
-const subMenuItemEventBinding = init(function () {
+const subMenuItemEventBinding = initializers(function () {
   this.el.addEventListener('keydown', event => {
     const {key:k} = event;
     if (k === 'ArrowUp') {
@@ -861,12 +806,12 @@ const subMenuItemEventBinding = init(function () {
   });
 });
 
-const subMenuItemStamp = compose(
+const subMenuItemStamp = exportedCompose(
   abstractMenuItem,
   subMenuItemEventBinding
 );
 
-const menuEventBinding = init(function () {
+const menuEventBinding = initializers(function () {
   this.toggler.addEventListener('click', () => {
     this.toggle();
   });
@@ -898,7 +843,7 @@ const menuEventBinding = init(function () {
   });
 });
 
-const subMenuEventBinding = init(function () {
+const subMenuEventBinding = initializers(function () {
 
   const next = (ev) => {
     this.selectNext();
@@ -966,7 +911,7 @@ const subMenuEventBinding = init(function () {
 });
 
 function menuInitStamp ({menuItem = menuItemStamp}={}) {
-  return init(function () {
+  return initializers(function () {
     const menu = menuElement({el: this.el.querySelector('[role=menu]') || this.el});
     const toggler = this.el.querySelector('[aria-haspopup]') || this.el;
 
@@ -994,7 +939,7 @@ function menuInitStamp ({menuItem = menuItemStamp}={}) {
   });
 }
 
-const abstractMenuStamp = compose(
+const abstractMenuStamp = exportedCompose(
   mandatoryElement$2,
   listMediatorStamp,
   toggle(),
@@ -1002,7 +947,7 @@ const abstractMenuStamp = compose(
 );
 
 function dropdown ({menuItem = menuItemStamp} ={}) {
-  return compose(
+  return exportedCompose(
     abstractMenuStamp,
     menuInitStamp({menuItem}),
     menuEventBinding
@@ -1010,7 +955,7 @@ function dropdown ({menuItem = menuItemStamp} ={}) {
 }
 
 function subMenu ({menuItem = subMenuItemStamp}={}) {
-  return compose(
+  return exportedCompose(
     listItemStamp,
     abstractMenuStamp,
     observable('isSelected'),
@@ -1022,10 +967,10 @@ function subMenu ({menuItem = subMenuItemStamp}={}) {
 const subMenuStamp = subMenu({menuItem: subMenuItemStamp});
 
 function menubar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) {
-  return compose(
+  return exportedCompose(
     ariaElement({ariaRole: 'menubar'}),
     listMediatorStamp,
-    init(function () {
+    initializers(function () {
       for (const item of findChildrenMenuItem(this.el)) {
         if (item.querySelector('[role=menu]') !== null) {
           subMenu({el: item, listMediator: this});
@@ -1041,19 +986,19 @@ function menubar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) {
 
 
 
-const expandableStamp = compose(
+const expandableStamp = exportedCompose(
   element(),
   toggle(),
   mapToAria('isOpen', 'expanded'),
-  init(function () {
+  initializers(function () {
     Object.defineProperty(this, 'toggler', {value: this.el});
   }),
   menuEventBinding
 );
 
 function expandable () {
-  return compose(element(),
-    init(function () {
+  return exportedCompose(element(),
+    initializers(function () {
       const toggler = this.el.querySelector('[aria-haspopup]');
       if (!toggler) {
         console.log(this.el);
@@ -1097,7 +1042,7 @@ function findChildrenMenuItem (base) {
   return items;
 }
 
-const tooltipEventBindingStamp = init(function tooltipEventBinding() {
+const tooltipEventBindingStamp = initializers(function tooltipEventBinding() {
   this.target.addEventListener('focus', this.show.bind(this));
   this.target.addEventListener('keydown', event => {
     const { key: k } = event;
@@ -1111,7 +1056,7 @@ const tooltipEventBindingStamp = init(function tooltipEventBinding() {
 });
 
 function tooltip() {
-  return compose(
+  return exportedCompose(
     ariaElement({ ariaRole: 'tooltip' }),
     observable('isOpen'),
     methods({
@@ -1129,7 +1074,7 @@ function tooltip() {
         this.isOpen = true;
       }
     }),
-    init(function initializeTooltip() {
+    initializers(function initializeTooltip() {
       const id = this.el.getAttribute('id');
       if (!id) {
         console.log(this.el);
@@ -1176,4 +1121,8 @@ const behaviours = {
 
 exports.components = components;
 exports.behaviours = behaviours;
-exports.stampit = stampit_full$2;
+exports.stampit = stampit$1;
+
+Object.defineProperty(exports, '__esModule', { value: true });
+
+})));

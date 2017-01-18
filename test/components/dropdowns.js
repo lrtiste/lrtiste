@@ -281,4 +281,3 @@ export default zora()
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
   });
-

@@ -3532,7 +3532,11 @@ function tabList() {
       tabFactory = _ref2$tabFactory === undefined ? tabStamp : _ref2$tabFactory;
 
   return compose(mandatoryElement$1, listMediatorStamp, init(function initializeTablist() {
-    Object.defineProperty(this, 'tablist', { value: tablist$1({ el: this.el.querySelector('[role=tablist]') || this.el }) });
+    Object.defineProperty(this, 'tablist', {
+      value: tablist$1({
+        el: this.el.querySelector('[role=tablist]') || this.el
+      })
+    });
     var _iteratorNormalCompletion = true;
     var _didIteratorError = false;
     var _iteratorError = undefined;
@@ -3777,9 +3781,6 @@ var tabs = zora().test('tabs: set up initial states', index.mark(function _calle
         case 0:
           el = createTablist();
           tabList$$1 = factory$1({ el: el });
-
-          testTab$1(tabList$$1.el, [{ 'aria-selected': 'true', 'tabindex': '0' }, { 'aria-selected': 'false', 'tabindex': '-1' }, { 'aria-selected': 'false', 'tabindex': '-1' }], t);
-          testTabPanels$1(tabList$$1.el, [{ 'aria-hidden': 'false' }, { 'aria-hidden': 'true' }, { 'aria-hidden': 'true' }], t);
           _el$querySelectorAll9 = el.querySelectorAll('[role=tab]'), _el$querySelectorAll10 = slicedToArray(_el$querySelectorAll9, 3), tab1 = _el$querySelectorAll10[0], tab2 = _el$querySelectorAll10[1], tab3 = _el$querySelectorAll10[2];
 
           tab1.focus();
@@ -3793,7 +3794,7 @@ var tabs = zora().test('tabs: set up initial states', index.mark(function _calle
           testTab$1(tabList$$1.el, [{ 'aria-selected': 'true', 'tabindex': '0' }, { 'aria-selected': 'false', 'tabindex': '-1' }, { 'aria-selected': 'false', 'tabindex': '-1' }], t);
           testTabPanels$1(tabList$$1.el, [{ 'aria-hidden': 'false' }, { 'aria-hidden': 'true' }, { 'aria-hidden': 'true' }], t);
 
-        case 15:
+        case 13:
         case 'end':
           return _context6.stop();
       }
@@ -4990,17 +4991,19 @@ var tooltipEventBindingStamp = init(function tooltipEventBinding() {
 });
 
 function tooltip$1() {
-  return compose(ariaElement({ ariaRole: 'tooltip' }), methods({
+  return compose(ariaElement({ ariaRole: 'tooltip' }), observable$1('isOpen'), methods({
     hide: function hide() {
-      if (document.getElementById(this.el.id)) {
+      if (this.el.parentNode !== null) {
         this.el.remove();
       }
+      this.isOpen = false;
     },
     show: function show() {
-      if (!document.getElementById(this.el.id)) {
+      if (this.el.parentNode === null) {
         //always reuse the same element
         this.target.insertAdjacentElement('afterend', this.el);
       }
+      this.isOpen = true;
     }
   }), init(function initializeTooltip() {
     var id = this.el.getAttribute('id');
@@ -5008,12 +5011,11 @@ function tooltip$1() {
       console.log(this.el);
       throw new Error('the above tooltip element must have an id');
     }
-    var target = document.querySelector('[aria-describedby=' + id + ']');
-    if (!target) {
+    var targetElement = document.querySelector('[aria-describedby=' + id + ']');
+    if (!targetElement) {
       console.warn('there is no target element described by the tooltip ' + id);
     }
-    Object.defineProperty(this, 'target', { value: target });
-
+    Object.defineProperty(this, 'target', { value: targetElement });
     this.hide();
   }), tooltipEventBindingStamp);
 }
@@ -5085,11 +5087,9 @@ var tooltip$$1 = zora().test('tooltip: hide by default', index.mark(function _ca
   }, _callee3, this);
 }));
 
-var components = zora().test(accordions).test(tabs).test(exp).test(dropdown$1).test(menubar$1).test(tooltip$$1);
+var components = zora().test(tabs).test(accordions).test(exp).test(dropdown$1).test(menubar$1).test(tooltip$$1);
 
-zora().test(behaviours).test(components).run().catch(function (e) {
-  return console.log(e);
-});
+zora().test(behaviours).test(components).run();
 
 }());
 //# sourceMappingURL=index.js.map

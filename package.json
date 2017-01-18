@@ -1,12 +1,22 @@
 {
   "name": "lrtiste",
-  "version": "1.0.0",
-  "description": "widget library, behaviours driven",
+  "version": "0.1.0",
+  "description": "accessible widget library, behaviours driven",
   "main": "./dist/index.js",
+  "keywords":[
+    "ui",
+    "browsers",
+    "ux",
+    "widget",
+    "components",
+    "a11y",
+    "accessibility"
+  ],
+  "jsnext:main":"./dist/lrtiste.es.js",
   "author": "Laurent Renard",
   "license": "MIT",
   "scripts": {
-    "build": "rollup -c ./rollup.config.js",
+    "build": "node ./scripts/build.js ",
     "build:test": "rollup -c ./test/rollup.config.js",
     "test": "npm run build:test && cat ./test/dist/index.js | tape-run",
     "dev": "node ./scripts/dev.js"
@@ -15,10 +25,7 @@
     "stampit": "^3.0.6"
   },
   "devDependencies": {
-    "babel-plugin-transform-runtime": "^6.15.0",
-    "babel-preset-es2015-rollup": "^3.0.0",
     "rollup": "^0.37.2",
-    "rollup-plugin-babel": "^2.7.0",
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0",
     "tape-run": "^2.1.4",
