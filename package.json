@@ -1,10 +1,10 @@
 {
   "name": "lrtiste",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "accessible widgets library, behaviours driven",
   "main": "./dist/index.js",
-  "js:next":"./dist/lrtiste.es.js",
-  "keywords":[
+  "js:next": "./dist/lrtiste.es.js",
+  "keywords": [
     "ui",
     "browser",
     "ux",
@@ -14,7 +14,7 @@
     "accessibility",
     "accessible"
   ],
-  "jsnext:main":"./dist/lrtiste.es.js",
+  "jsnext:main": "./dist/lrtiste.es.js",
   "author": "Laurent Renard",
   "license": "MIT",
   "scripts": {
