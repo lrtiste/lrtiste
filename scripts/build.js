@@ -9,11 +9,18 @@ rollup
   })
   .then(function(bundle) {
     return Promise.all(
-      [ bundle.write({ format: 'es', dest: './dist/lrtiste.es.js' }) ],
+      [
+        bundle.write({
+          format: 'es',
+          dest: './dist/lrtiste.es.js',
+          sourceMap: true
+        })
+      ],
       bundle.write({
         format: 'umd',
         dest: './dist/lrtiste.js',
-        moduleName: 'lrtiste'
+        moduleName: 'lrtiste',
+        sourceMap: true
       })
     );
   });
