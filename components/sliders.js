@@ -20,16 +20,16 @@ const sliderLinking = init(function () {
   this.maxValue = +(this.el.getAttribute('aria-valuemax'));
   this.currentValue = +(this.el.getAttribute('aria-valuenow'));
 
-  this.$on('currentValue', val=> {
+  this.$on('currentValue', val => {
     this.el.setAttribute('aria-valuenow', val);
     this.el.setAttribute('aria-valuetext', this.valueText);
   });
 
-  this.$on('minValue',value=>{
-    this.el.setAttribute('aria-valuemin',value);
+  this.$on('minValue', value => {
+    this.el.setAttribute('aria-valuemin', value);
   });
-  this.$on('maxValue',value=>{
-    this.el.setAttribute('aria-valuemax',value);
+  this.$on('maxValue', value => {
+    this.el.setAttribute('aria-valuemax', value);
   });
 });
 
@@ -37,13 +37,13 @@ const sliderLinking = init(function () {
 export function slider () {
   return compose(
     ariaElement({ariaRole: 'slider'}),
-    observable('minValue','maxValue'),
+    observable('minValue', 'maxValue'),
     sliderLinking,
     sliderStamp,
     sliderEventBinding
   );
 }
 
-export function rangeSlider(){
+export function rangeSlider () {
 
 }

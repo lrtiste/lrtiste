@@ -1,11 +1,11 @@
-import { ariaElement } from '../behaviours/elements';
-import { observable } from '../behaviours/observables';
-import { init, compose, methods } from 'stampit';
+import {ariaElement} from '../behaviours/elements';
+import {observable} from '../behaviours/observables';
+import {init, compose, methods} from 'stampit';
 
-const tooltipEventBindingStamp = init(function tooltipEventBinding() {
+const tooltipEventBindingStamp = init(function tooltipEventBinding () {
   this.target.addEventListener('focus', this.show.bind(this));
   this.target.addEventListener('keydown', event => {
-    const { key: k } = event;
+    const {key: k} = event;
     if (k === 'Escape') {
       this.hide();
     }
@@ -15,9 +15,9 @@ const tooltipEventBindingStamp = init(function tooltipEventBinding() {
   this.target.addEventListener('mouseleave', this.hide.bind(this));
 });
 
-export function tooltip() {
+export function tooltip () {
   return compose(
-    ariaElement({ ariaRole: 'tooltip' }),
+    ariaElement({ariaRole: 'tooltip'}),
     observable('isOpen'),
     methods({
       hide() {
@@ -34,7 +34,7 @@ export function tooltip() {
         this.isOpen = true;
       }
     }),
-    init(function initializeTooltip() {
+    init(function initializeTooltip () {
       const id = this.el.getAttribute('id');
       if (!id) {
         console.log(this.el);
@@ -46,7 +46,7 @@ export function tooltip() {
           'there is no target element described by the tooltip ' + id
         );
       }
-      Object.defineProperty(this, 'target', { value: targetElement });
+      Object.defineProperty(this, 'target', {value: targetElement});
       this.hide();
     }),
     tooltipEventBindingStamp

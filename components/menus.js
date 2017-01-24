@@ -1,15 +1,15 @@
 import {ariaElement, element} from '../behaviours/elements';
 import {compose, init} from 'stampit';
-import{observable, mapToAria} from '../behaviours/observables';
+import {observable, mapToAria} from '../behaviours/observables';
 import {toggle} from '../behaviours/toggle';
-import {listMediatorStamp, listItemStamp} from '../behaviours/listMediators';
+import {listMediator, listItem} from '../behaviours/listMediators';
 
 const mandatoryElement = element();
 const menuElement = ariaElement({ariaRole: 'menu'});
 
 const abstractMenuItem = compose(
   ariaElement({ariaRole: 'menuitem'}),
-  listItemStamp,
+  listItem,
   observable('isSelected'),
   init(function () {
     this.$on('isSelected', isSelected => {
@@ -23,7 +23,7 @@ const abstractMenuItem = compose(
 
 const menuItemEvenBinding = init(function () {
   this.el.addEventListener('keydown', event => {
-    const {key:k} = event;
+    const {key: k} = event;
     if (k === 'ArrowLeft' || k === 'ArrowUp') {
       this.selectPrevious();
       event.preventDefault();
@@ -34,14 +34,11 @@ const menuItemEvenBinding = init(function () {
   });
 });
 
-const menuItemStamp = compose(
-  abstractMenuItem,
-  menuItemEvenBinding
-);
+const menuItemStamp = compose(abstractMenuItem, menuItemEvenBinding);
 
 const subMenuItemEventBinding = init(function () {
   this.el.addEventListener('keydown', event => {
-    const {key:k} = event;
+    const {key: k} = event;
     if (k === 'ArrowUp') {
       this.selectPrevious();
       event.preventDefault();
@@ -52,23 +49,20 @@ const subMenuItemEventBinding = init(function () {
   });
 });
 
-const subMenuItemStamp = compose(
-  abstractMenuItem,
-  subMenuItemEventBinding
-);
+const subMenuItemStamp = compose(abstractMenuItem, subMenuItemEventBinding);
 
 const menuEventBinding = init(function () {
   this.toggler.addEventListener('click', () => {
     this.toggle();
   });
   this.toggler.addEventListener('keydown', event => {
-    const {key:k, code} = event;
-    const toggle = (ev) => {
+    const {key: k, code} = event;
+    const toggle = ev => {
       this.toggle();
       ev.preventDefault();
     };
     if (k === 'Enter' || code === 'Space') {
-      toggle(event)
+      toggle(event);
     } else if (k === 'ArrowDown' && !this.isOpen) {
       toggle(event);
     } else if (k === 'ArrowUp' && this.isOpen) {
@@ -77,7 +71,7 @@ const menuEventBinding = init(function () {
   });
 
   this.el.addEventListener('keydown', event => {
-    const {key:k} = event;
+    const {key: k} = event;
     if (k === 'Escape' && this.isOpen) {
       this.toggle();
       this.toggler.focus();
@@ -86,12 +80,11 @@ const menuEventBinding = init(function () {
         this.toggle();
       }
     }
-  })
+  });
 });
 
 const subMenuEventBinding = init(function () {
-
-  const next = (ev) => {
+  const next = ev => {
     this.selectNext();
     if (this.isOpen) {
       this.toggle();
@@ -99,7 +92,7 @@ const subMenuEventBinding = init(function () {
     ev.preventDefault();
   };
 
-  const previous = (ev) => {
+  const previous = ev => {
     this.selectPrevious();
     if (this.isOpen) {
       this.toggle();
@@ -111,7 +104,7 @@ const subMenuEventBinding = init(function () {
     this.toggle();
   });
   this.toggler.addEventListener('keydown', event => {
-    const {key:k, code, target} = event;
+    const {key: k, code, target} = event;
     if ((k === 'Enter' || code === 'Space') && target === this.toggler) {
       this.toggle();
     } else if (k === 'ArrowRight') {
@@ -132,18 +125,20 @@ const subMenuEventBinding = init(function () {
       }
     }
 
-    if (['ArrowDown', 'ArrowUp', 'Enter'].indexOf(k) !== -1 || code === 'Space') {
+    if (
+      ['ArrowDown', 'ArrowUp', 'Enter'].indexOf(k) !== -1 || code === 'Space'
+    ) {
       event.preventDefault();
     }
   });
 
   this.el.addEventListener('keydown', event => {
-    const {key:k} = event;
+    const {key: k} = event;
     if (k === 'ArrowRight') {
       next(event);
     } else if (k === 'ArrowLeft') {
       previous(event);
-    } else if ((k === 'Escape') && this.isOpen) {
+    } else if (k === 'Escape' && this.isOpen) {
       this.toggle();
       if (k === 'Escape') {
         this.toggler.focus();
@@ -156,9 +151,11 @@ const subMenuEventBinding = init(function () {
   });
 });
 
-function menuInitStamp ({menuItem = menuItemStamp}={}) {
+function menuInitStamp ({menuItem = menuItemStamp} = {}) {
   return init(function () {
-    const menu = menuElement({el: this.el.querySelector('[role=menu]') || this.el});
+    const menu = menuElement({
+      el: this.el.querySelector('[role=menu]') || this.el
+    });
     const toggler = this.el.querySelector('[aria-haspopup]') || this.el;
 
     Object.defineProperty(this, 'toggler', {value: toggler});
@@ -187,12 +184,12 @@ function menuInitStamp ({menuItem = menuItemStamp}={}) {
 
 const abstractMenuStamp = compose(
   mandatoryElement,
-  listMediatorStamp,
+  listMediator,
   toggle(),
   observable('isOpen')
 );
 
-export function dropdown ({menuItem = menuItemStamp} ={}) {
+export function dropdown ({menuItem = menuItemStamp} = {}) {
   return compose(
     abstractMenuStamp,
     menuInitStamp({menuItem}),
@@ -200,9 +197,9 @@ export function dropdown ({menuItem = menuItemStamp} ={}) {
   );
 }
 
-export function subMenu ({menuItem = subMenuItemStamp}={}) {
+export function subMenu ({menuItem = subMenuItemStamp} = {}) {
   return compose(
-    listItemStamp,
+    listItem,
     abstractMenuStamp,
     observable('isSelected'),
     menuInitStamp({menuItem}),
@@ -212,10 +209,10 @@ export function subMenu ({menuItem = subMenuItemStamp}={}) {
 
 const subMenuStamp = subMenu({menuItem: subMenuItemStamp});
 
-export function menubar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) {
+export function menubar ({menuItem = menuItemStamp, subMenu = subMenuStamp} = {}) {
   return compose(
     ariaElement({ariaRole: 'menubar'}),
-    listMediatorStamp,
+    listMediator,
     init(function () {
       for (const item of findChildrenMenuItem(this.el)) {
         if (item.querySelector('[role=menu]') !== null) {
@@ -236,46 +233,30 @@ export function subMenuItem () {
   return subMenuItemStamp;
 }
 
-const expandableStamp = compose(
-  element(),
-  toggle(),
-  mapToAria('isOpen', 'expanded'),
-  init(function () {
-    Object.defineProperty(this, 'toggler', {value: this.el});
-  }),
-  menuEventBinding
-);
 
 export function expandable () {
-  return compose(element(),
+  return compose(
+    element(),
+    toggle(),
+    observable('isOpen'),
     init(function () {
-      const toggler = this.el.querySelector('[aria-haspopup]');
-      if (!toggler) {
-        console.log(this.el);
-        throw new Error('the element above must contain a control with aria-haspopup attribute set to true');
-      }
-      Object.defineProperty(this, 'button', {value: expandableStamp({el: toggler})});
-
+      const toggler = this.el.querySelector('[aria-haspopup=true]');
       const controlledId = toggler.getAttribute('aria-controls');
-      if (!controlledId) {
-        console.log(toggler);
-        throw new Error('the toggler above must explicitly control a section via the aria-controls attribute');
-      }
+      const section = this.el.querySelector(`#${controlledId}`);
+      Object.defineProperty(this, 'section', {value: section});
+      Object.defineProperty(this, 'toggler', {value: toggler});
 
-      const expandableSection = this.el.querySelector(`#${controlledId}`);
-      if (!expandableSection) {
-        throw new Error('Could not find the element referenced by id ' + controlledId);
-      }
-      Object.defineProperty(this, 'expandableSection', {value: expandableSection});
-
-      this.button.$on('isOpen', isExpanded => {
-        this.expandableSection.setAttribute('aria-hidden', !isExpanded);
+      this.$on('isOpen', isOpen => {
+        this.section.setAttribute('aria-hidden', !isOpen);
+        this.toggler.setAttribute('aria-expanded', isOpen);
       });
 
-      this.button.isOpen = !!this.button.el.getAttribute('aria-expanded');
-    }));
-}
+      this.isOpen = Boolean(this.toggler.getAttribute('aria-expanded'));
 
+    }),
+    menuEventBinding
+  );
+}
 function findChildrenMenuItem (base) {
   const items = [];
   for (const c of base.children) {

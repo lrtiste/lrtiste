@@ -597,6 +597,26 @@ var stampit_full$1 = createCommonjsModule(function (module, exports) {
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
+function isObject(obj) {
+  var type = typeof obj;
+  return !!obj && (type === 'object' || type === 'function');
+}
+
+function isFunction(obj) {
+  return typeof obj === 'function';
+}
+
+var concat = Array.prototype.concat;
+var extractFunctions = function () {
+  var fns = concat.apply([], arguments).filter(isFunction);
+  return fns.length === 0 ? undefined : fns;
+};
+
+function isPlainObject(value) {
+  return !!value && typeof value === 'object' &&
+    Object.getPrototypeOf(value) === Object.prototype;
+}
+
 /**
  * The 'src' argument plays the command role.
  * The returned values is always of the same type as the 'src'.
@@ -609,7 +629,7 @@ function mergeOne(dst, src) {
 
   // According to specification arrays must be concatenated.
   // Also, the '.concat' creates a new array instance. Overrides the 'dst'.
-  if (isArray(src)) { return (isArray(dst) ? dst : []).concat(src); }
+  if (Array.isArray(src)) { return (Array.isArray(dst) ? dst : []).concat(src); }
 
   // Now deal with non plain 'src' object. 'src' overrides 'dst'
   // Note that functions are also assigned! We do not deep merge functions.
@@ -627,7 +647,7 @@ function mergeOne(dst, src) {
     if (srcValue !== undefined) {
       var dstValue = returnValue[key];
       // Recursive calls to mergeOne() must allow only plain objects or arrays in dst
-      var newDst = isPlainObject(dstValue) || isArray(srcValue) ? dstValue : {};
+      var newDst = isPlainObject(dstValue) || Array.isArray(srcValue) ? dstValue : {};
 
       // deep merge each property. Recursion!
       returnValue[key] = mergeOne(newDst, srcValue);
@@ -644,57 +664,7 @@ var merge = function (dst) {
   return srcs.reduce(mergeOne, dst);
 };
 
-var assign = Object.assign;
-var isArray = Array.isArray;
-
-function isFunction(obj) {
-  return typeof obj === 'function';
-}
-
-function isObject(obj) {
-  var type = typeof obj;
-  return !!obj && (type === 'object' || type === 'function');
-}
-
-function isPlainObject(value) {
-  return !!value && typeof value === 'object' &&
-    Object.getPrototypeOf(value) === Object.prototype;
-}
-
-
-var concat = Array.prototype.concat;
-function extractFunctions() {
-  var fns = concat.apply([], arguments).filter(isFunction);
-  return fns.length === 0 ? undefined : fns;
-}
-
-function concatAssignFunctions(dstObject, srcArray, propName) {
-  if (!isArray(srcArray)) { return; }
-
-  var length = srcArray.length;
-  var dstArray = dstObject[propName] || [];
-  dstObject[propName] = dstArray;
-  for (var i = 0; i < length; i += 1) {
-    var fn = srcArray[i];
-    if (isFunction(fn) && dstArray.indexOf(fn) < 0) {
-      dstArray.push(fn);
-    }
-  }
-}
-
-
-function combineProperties(dstObject, srcObject, propName, action) {
-  if (!isObject(srcObject[propName])) { return; }
-  if (!isObject(dstObject[propName])) { dstObject[propName] = {}; }
-  action(dstObject[propName], srcObject[propName]);
-}
-
-function deepMergeAssign(dstObject, srcObject, propName) {
-  combineProperties(dstObject, srcObject, propName, merge);
-}
-function mergeAssign(dstObject, srcObject, propName) {
-  combineProperties(dstObject, srcObject, propName, assign);
-}
+var assign$1 = Object.assign;
 
 /**
  * Converts stampit extended descriptor to a standard one.
@@ -716,7 +686,6 @@ function mergeAssign(dstObject, srcObject, propName) {
  * @param [conf]
  * @param [deepConfiguration]
  * @param [deepConf]
- * @param [composers]
  * @returns {Descriptor}
  */
 var standardiseDescriptor = function (ref) {
@@ -727,7 +696,6 @@ var standardiseDescriptor = function (ref) {
   var refs = ref.refs;
   var initializers = ref.initializers;
   var init = ref.init;
-  var composers = ref.composers;
   var deepProperties = ref.deepProperties;
   var deepProps = ref.deepProps;
   var propertyDescriptors = ref.propertyDescriptors;
@@ -742,46 +710,38 @@ var standardiseDescriptor = function (ref) {
   var deepConf = ref.deepConf;
 
   var p = isObject(props) || isObject(refs) || isObject(properties) ?
-    assign({}, props, refs, properties) : undefined;
+    assign$1({}, props, refs, properties) : undefined;
 
   var dp = isObject(deepProps) ? merge({}, deepProps) : undefined;
   dp = isObject(deepProperties) ? merge(dp, deepProperties) : dp;
 
   var sp = isObject(statics) || isObject(staticProperties) ?
-    assign({}, statics, staticProperties) : undefined;
+    assign$1({}, statics, staticProperties) : undefined;
 
   var dsp = isObject(deepStatics) ? merge({}, deepStatics) : undefined;
   dsp = isObject(staticDeepProperties) ? merge(dsp, staticDeepProperties) : dsp;
 
   var c = isObject(conf) || isObject(configuration) ?
-    assign({}, conf, configuration) : undefined;
+    assign$1({}, conf, configuration) : undefined;
 
   var dc = isObject(deepConf) ? merge({}, deepConf) : undefined;
   dc = isObject(deepConfiguration) ? merge(dc, deepConfiguration) : dc;
 
-  var ii = extractFunctions(init, initializers);
-
-  var composerFunctions = extractFunctions(composers);
-  if (composerFunctions) {
-    dc = dc || {};
-    concatAssignFunctions(dc, composerFunctions, 'composers');
-  }
-
-  var descriptor = {};
-  if (methods) { descriptor.methods = methods; }
-  if (p) { descriptor.properties = p; }
-  if (ii) { descriptor.initializers = ii; }
-  if (dp) { descriptor.deepProperties = dp; }
-  if (sp) { descriptor.staticProperties = sp; }
-  if (methods) { descriptor.methods = methods; }
-  if (dsp) { descriptor.staticDeepProperties = dsp; }
-  if (propertyDescriptors) { descriptor.propertyDescriptors = propertyDescriptors; }
-  if (staticPropertyDescriptors) { descriptor.staticPropertyDescriptors = staticPropertyDescriptors; }
-  if (c) { descriptor.configuration = c; }
-  if (dc) { descriptor.deepConfiguration = dc; }
-
-  return descriptor;
+  return {
+    methods: methods,
+    properties: p,
+    initializers: extractFunctions(init, initializers),
+    deepProperties: dp,
+    staticProperties: sp,
+    staticDeepProperties: dsp,
+    propertyDescriptors: propertyDescriptors,
+    staticPropertyDescriptors: staticPropertyDescriptors,
+    configuration: c,
+    deepConfiguration: dc
+  };
 };
+
+var assign$2 = Object.assign;
 
 /**
  * Creates new factory instance.
@@ -797,24 +757,17 @@ function createFactory(descriptor) {
     var obj = Object.create(descriptor.methods || null);
 
     merge(obj, descriptor.deepProperties);
-    assign(obj, descriptor.properties);
+    assign$2(obj, descriptor.properties);
     Object.defineProperties(obj, descriptor.propertyDescriptors || {});
 
     if (!descriptor.initializers || descriptor.initializers.length === 0) { return obj; }
 
     if (options === undefined) { options = {}; }
-    var inits = descriptor.initializers;
-    var length = inits.length;
-    for (var i = 0; i < length; i += 1) {
-      var initializer = inits[i];
-      if (isFunction(initializer)) {
-        var returnedValue = initializer.call(obj, options,
-          {instance: obj, stamp: Stamp, args: [options].concat(args)});
-        obj = returnedValue === undefined ? obj : returnedValue;
-      }
-    }
-
-    return obj;
+    return descriptor.initializers.filter(isFunction).reduce(function (resultingObj, initializer) {
+      var returnedValue = initializer.call(resultingObj, options,
+        {instance: resultingObj, stamp: Stamp, args: [options].concat(args)});
+      return returnedValue === undefined ? resultingObj : returnedValue;
+    }, obj);
   };
 }
 
@@ -828,7 +781,7 @@ function createStamp(descriptor, composeFunction) {
   var Stamp = createFactory(descriptor);
 
   merge(Stamp, descriptor.staticDeepProperties);
-  assign(Stamp, descriptor.staticProperties);
+  assign$2(Stamp, descriptor.staticProperties);
   Object.defineProperties(Stamp, descriptor.staticPropertyDescriptors || {});
 
   var composeImplementation = isFunction(Stamp.compose) ? Stamp.compose : composeFunction;
@@ -838,7 +791,7 @@ function createStamp(descriptor, composeFunction) {
 
     return composeImplementation.apply(this, args);
   };
-  assign(Stamp.compose, descriptor);
+  assign$2(Stamp.compose, descriptor);
 
   return Stamp;
 }
@@ -854,16 +807,29 @@ function mergeComposable(dstDescriptor, srcComposable) {
   var srcDescriptor = (srcComposable && srcComposable.compose) || srcComposable;
   if (!isObject(srcDescriptor)) { return dstDescriptor; }
 
-  mergeAssign(dstDescriptor, srcDescriptor, 'methods');
-  mergeAssign(dstDescriptor, srcDescriptor, 'properties');
-  deepMergeAssign(dstDescriptor, srcDescriptor, 'deepProperties');
-  mergeAssign(dstDescriptor, srcDescriptor, 'propertyDescriptors');
-  mergeAssign(dstDescriptor, srcDescriptor, 'staticProperties');
-  deepMergeAssign(dstDescriptor, srcDescriptor, 'staticDeepProperties');
-  mergeAssign(dstDescriptor, srcDescriptor, 'staticPropertyDescriptors');
-  mergeAssign(dstDescriptor, srcDescriptor, 'configuration');
-  deepMergeAssign(dstDescriptor, srcDescriptor, 'deepConfiguration');
-  concatAssignFunctions(dstDescriptor, srcDescriptor.initializers, 'initializers');
+  var combineProperty = function (propName, action) {
+    if (!isObject(srcDescriptor[propName])) { return; }
+    if (!isObject(dstDescriptor[propName])) { dstDescriptor[propName] = {}; }
+    action(dstDescriptor[propName], srcDescriptor[propName]);
+  };
+
+  combineProperty('methods', assign$2);
+  combineProperty('properties', assign$2);
+  combineProperty('deepProperties', merge);
+  combineProperty('propertyDescriptors', assign$2);
+  combineProperty('staticProperties', assign$2);
+  combineProperty('staticDeepProperties', merge);
+  combineProperty('staticPropertyDescriptors', assign$2);
+  combineProperty('configuration', assign$2);
+  combineProperty('deepConfiguration', merge);
+  if (Array.isArray(srcDescriptor.initializers)) {
+    dstDescriptor.initializers = srcDescriptor.initializers.reduce(function (result, init) {
+      if (isFunction(init) && result.indexOf(init) < 0) {
+        result.push(init);
+      }
+      return result;
+    }, Array.isArray(dstDescriptor.initializers) ? dstDescriptor.initializers : []);
+  }
 
   return dstDescriptor;
 }
@@ -924,13 +890,16 @@ function isStamp(obj) {
   return isFunction(obj) && isFunction(obj.compose);
 }
 
+var assign = Object.assign;
+
 function createUtilityFunction(propName, action) {
   return function composeUtil() {
     var i = arguments.length, argsArray = Array(i);
     while ( i-- ) argsArray[i] = arguments[i];
 
-    return ((this && this.compose) || stampit).call(this, ( obj = {}, obj[propName] = action.apply(void 0, [ {} ].concat( argsArray )), obj ));
-    var obj;
+    var descriptor = {};
+    descriptor[propName] = action.apply(void 0, [ {} ].concat( argsArray ));
+    return ((this && this.compose) || stampit).call(this, descriptor);
   };
 }
 
@@ -945,15 +914,6 @@ function initializers() {
     initializers: extractFunctions.apply(void 0, args)
   });
 }
-function composers() {
-  var args = [], len = arguments.length;
-  while ( len-- ) args[ len ] = arguments[ len ];
-
-  return ((this && this.compose) || stampit).call(this, {
-    composers: extractFunctions.apply(void 0, args)
-  });
-}
-
 var deepProperties = createUtilityFunction('deepProperties', merge);
 var staticProperties = createUtilityFunction('staticProperties', assign);
 var staticDeepProperties = createUtilityFunction('staticDeepProperties', merge);
@@ -972,8 +932,6 @@ var allUtilities = {
 
   initializers: initializers,
   init: initializers,
-
-  composers: composers,
 
   deepProperties: deepProperties,
   deepProps: deepProperties,
@@ -1024,24 +982,11 @@ function stampit() {
   var args = [], len = arguments.length;
   while ( len-- ) args[ len ] = arguments[ len ];
 
-  var composables = args.filter(isObject)
+  args = args.filter(isObject)
     .map(function (arg) { return isStamp(arg) ? arg : standardiseDescriptor(arg); });
 
   // Calling the standard pure compose function here.
-  var stamp = compose.apply(this || baseStampit, composables);
-
-  var composerFunctions = stamp.compose.deepConfiguration &&
-    stamp.compose.deepConfiguration.composers;
-  if (isArray(composerFunctions)) {
-    for (var i = 0; i < composerFunctions.length; i += 1) {
-      if (isFunction(composerFunctions[i])) {
-        var returnedValue = composerFunctions[i]({stamp: stamp, composables: composables});
-        stamp = isStamp(returnedValue) ? returnedValue : stamp;
-      }
-    }
-  }
-
-  return stamp;
+  return compose.apply(this || baseStampit, args);
 }
 
 var exportedCompose = stampit.bind(); // bind to 'undefined'
@@ -1056,7 +1001,6 @@ exports.refs = properties;
 exports.props = properties;
 exports.initializers = initializers;
 exports.init = initializers;
-exports.composers = composers;
 exports.deepProperties = deepProperties;
 exports.deepProps = deepProperties;
 exports.staticProperties = staticProperties;
@@ -1072,10 +1016,10 @@ exports.staticPropertyDescriptors = staticPropertyDescriptors;
 exports.compose = exportedCompose;
 exports['default'] = stampit$1;
 module.exports = exports['default'];
+
 });
 
 var compose = stampit_full$1.compose;
-
 
 
 
@@ -1329,172 +1273,170 @@ var toggle$$1 = zora()
     t.equal(inst.foo, true);
   });
 
-const abstractListMediatorStamp = init(function ({items = []}) {
-  Object.defineProperty(this, 'items', {value: items});
-})
-  .methods({
-    addItem(item){
-      this.items.push(item);
-    },
-    selectItem(item){
-      const index = this.items.indexOf(item);
-      if (index !== -1) {
-        for (let i of this.items) {
-          i.isSelected = i === item;
-        }
-      }
-    },
-    selectNextItem(item){
-      const index = this.items.indexOf(item);
-      if (index !== -1) {
-        const newIndex = index === this.items.length - 1 ? 0 : index + 1;
-        this.selectItem(this.items[newIndex]);
-      }
-    },
-    selectPreviousItem(item){
-      const index = this.items.indexOf(item);
-      if (index !== -1) {
-        const newIndex = index === 0 ? this.items.length - 1 : index - 1;
-        this.selectItem(this.items[newIndex]);
+const abstractListMediatorStamp = init(function({ items = [] }) {
+  Object.defineProperty(this, 'items', { value: items });
+}).methods({
+  addItem(item) {
+    this.items.push(item);
+  },
+  selectItem(item) {
+    const index = this.items.indexOf(item);
+    if (index !== -1) {
+      for (let i of this.items) {
+        i.isSelected = i === item;
       }
     }
-  });
+  },
+  selectNextItem(item) {
+    const index = this.items.indexOf(item);
+    if (index !== -1) {
+      const newIndex = index === this.items.length - 1 ? 0 : index + 1;
+      this.selectItem(this.items[newIndex]);
+    }
+  },
+  selectPreviousItem(item) {
+    const index = this.items.indexOf(item);
+    if (index !== -1) {
+      const newIndex = index === 0 ? this.items.length - 1 : index - 1;
+      this.selectItem(this.items[newIndex]);
+    }
+  }
+});
 
-const listItemStamp = init(function ({listMediator, isOpen}) {
+const listItem = init(function({ listMediator, isOpen }) {
   if (!listMediator) {
     throw new Error('you must provide a listMediator to the listItem');
   }
   this.isOpen = this.isOpen ? this.isOpen : isOpen === true;
-  Object.defineProperty(this, 'listMediator', {value: listMediator});
+  Object.defineProperty(this, 'listMediator', { value: listMediator });
   listMediator.addItem(this);
-})
-  .methods({
-    toggle(){
-      this.listMediator.toggleItem(this);
-    },
-    select(){
-      this.listMediator.selectItem(this);
-    },
-    selectPrevious(){
-      this.listMediator.selectPreviousItem(this);
-    },
-    selectNext(){
-      this.listMediator.selectNextItem(this);
-    },
-  });
-
-const multiSelectMediatorStamp = compose(abstractListMediatorStamp, methods({
-  toggleItem(item){
-    const index = this.items.indexOf(item);
-    if (index !== -1) {
-      item.isOpen = !item.isOpen;
-    }
+}).methods({
+  toggle() {
+    this.listMediator.toggleItem(this);
+  },
+  select() {
+    this.listMediator.selectItem(this);
+  },
+  selectPrevious() {
+    this.listMediator.selectPreviousItem(this);
+  },
+  selectNext() {
+    this.listMediator.selectNextItem(this);
   }
-}));
+});
 
-const listMediatorStamp = compose(abstractListMediatorStamp, methods({
-  toggleItem(item){
-    for (let i of this.items) {
-      i.isOpen = i === item ? !i.isOpen : false;
+const multiSelectListMediator = compose(
+  abstractListMediatorStamp,
+  methods({
+    toggleItem(item) {
+      const index = this.items.indexOf(item);
+      if (index !== -1) {
+        item.isOpen = !item.isOpen;
+      }
     }
-    return this;
-  }
-}));
-
-var list = zora()
-  .test('list mediator: add item', function * (t) {
-    const instance = listMediatorStamp();
-    t.equal(instance.items.length, 0);
-    const item = {};
-    instance.addItem(item);
-    t.deepEqual(instance.items, [item]);
   })
-  .test('list mediator: open an item and close all others', function * (t) {
-    const instance = listMediatorStamp();
-    const item = {isOpen: false};
-    const item2 = {isOpen: false};
-    const item3 = {isOpen: true};
-    instance.addItem(item);
-    instance.addItem(item2);
-    instance.addItem(item3);
+);
 
-    instance.toggleItem(item2);
-    t.equal(item.isOpen, false);
-    t.equal(item2.isOpen, true);
-    t.equal(item3.isOpen, false);
-
-    instance.toggleItem(item2);
-    t.equal(item.isOpen, false);
-    t.equal(item2.isOpen, false);
-    t.equal(item3.isOpen, false);
+const listMediator = compose(
+  abstractListMediatorStamp,
+  methods({
+    toggleItem(item) {
+      for (let i of this.items) {
+        i.isOpen = i === item ? !i.isOpen : false;
+      }
+      return this;
+    }
   })
-  .test('select an item and unselect the others', function * (t) {
-    const instance = listMediatorStamp();
-    const item = {isSelected: false};
-    const item2 = {isSelected: false};
-    const item3 = {isSelected: true};
-    instance.addItem(item);
-    instance.addItem(item2);
-    instance.addItem(item3);
+);
 
-    instance.selectItem(item2);
-    t.equal(item.isSelected, false);
-    t.equal(item2.isSelected, true);
-    t.equal(item3.isSelected, false);
-  })
-  .test('select the next item or loop back to the first', function * (t) {
-    const instance = listMediatorStamp();
-    const item = {isSelected: false};
-    const item2 = {isSelected: true};
-    const item3 = {isSelected: false};
-    instance.addItem(item);
-    instance.addItem(item2);
-    instance.addItem(item3);
+var list = zora().test('list mediator: add item', function*(t) {
+  const instance = listMediator();
+  t.equal(instance.items.length, 0);
+  const item = {};
+  instance.addItem(item);
+  t.deepEqual(instance.items, [ item ]);
+}).test('list mediator: open an item and close all others', function*(t) {
+  const instance = listMediator();
+  const item = { isOpen: false };
+  const item2 = { isOpen: false };
+  const item3 = { isOpen: true };
+  instance.addItem(item);
+  instance.addItem(item2);
+  instance.addItem(item3);
 
-    instance.selectNextItem(item2);
-    t.equal(item.isSelected, false);
-    t.equal(item2.isSelected, false);
-    t.equal(item3.isSelected, true);
+  instance.toggleItem(item2);
+  t.equal(item.isOpen, false);
+  t.equal(item2.isOpen, true);
+  t.equal(item3.isOpen, false);
 
-    instance.selectNextItem(item3);
-    t.equal(item.isSelected, true);
-    t.equal(item2.isSelected, false);
-    t.equal(item3.isSelected, false);
-  })
-  .test('select the previous item or loop back to the last', function * (t) {
-    const instance = listMediatorStamp();
-    const item = {isSelected: false};
-    const item2 = {isSelected: true};
-    const item3 = {isSelected: false};
-    instance.addItem(item);
-    instance.addItem(item2);
-    instance.addItem(item3);
+  instance.toggleItem(item2);
+  t.equal(item.isOpen, false);
+  t.equal(item2.isOpen, false);
+  t.equal(item3.isOpen, false);
+}).test('select an item and unselect the others', function*(t) {
+  const instance = listMediator();
+  const item = { isSelected: false };
+  const item2 = { isSelected: false };
+  const item3 = { isSelected: true };
+  instance.addItem(item);
+  instance.addItem(item2);
+  instance.addItem(item3);
 
-    instance.selectPreviousItem(item2);
-    t.equal(item.isSelected, true);
-    t.equal(item2.isSelected, false);
-    t.equal(item3.isSelected, false);
+  instance.selectItem(item2);
+  t.equal(item.isSelected, false);
+  t.equal(item2.isSelected, true);
+  t.equal(item3.isSelected, false);
+}).test('select the next item or loop back to the first', function*(t) {
+  const instance = listMediator();
+  const item = { isSelected: false };
+  const item2 = { isSelected: true };
+  const item3 = { isSelected: false };
+  instance.addItem(item);
+  instance.addItem(item2);
+  instance.addItem(item3);
 
-    instance.selectPreviousItem(item);
-    t.equal(item.isSelected, false);
-    t.equal(item2.isSelected, false);
-    t.equal(item3.isSelected, true);
-  })
-  .test('multiselect list mediator: toggle any item', function * (t) {
-    const instance = multiSelectMediatorStamp();
-    const item = {isOpen: false};
-    const item2 = {isOpen: false};
-    const item3 = {isOpen: true};
-    instance.addItem(item);
-    instance.addItem(item2);
-    instance.addItem(item3);
+  instance.selectNextItem(item2);
+  t.equal(item.isSelected, false);
+  t.equal(item2.isSelected, false);
+  t.equal(item3.isSelected, true);
 
-    instance.toggleItem(item);
+  instance.selectNextItem(item3);
+  t.equal(item.isSelected, true);
+  t.equal(item2.isSelected, false);
+  t.equal(item3.isSelected, false);
+}).test('select the previous item or loop back to the last', function*(t) {
+  const instance = listMediator();
+  const item = { isSelected: false };
+  const item2 = { isSelected: true };
+  const item3 = { isSelected: false };
+  instance.addItem(item);
+  instance.addItem(item2);
+  instance.addItem(item3);
 
-    t.equal(item.isOpen, true);
-    t.equal(item2.isOpen, false);
-    t.equal(item3.isOpen, true);
-  });
+  instance.selectPreviousItem(item2);
+  t.equal(item.isSelected, true);
+  t.equal(item2.isSelected, false);
+  t.equal(item3.isSelected, false);
+
+  instance.selectPreviousItem(item);
+  t.equal(item.isSelected, false);
+  t.equal(item2.isSelected, false);
+  t.equal(item3.isSelected, true);
+}).test('multiselect list mediator: toggle any item', function*(t) {
+  const instance = multiSelectListMediator();
+  const item = { isOpen: false };
+  const item2 = { isOpen: false };
+  const item3 = { isOpen: true };
+  instance.addItem(item);
+  instance.addItem(item2);
+  instance.addItem(item3);
+
+  instance.toggleItem(item);
+
+  t.equal(item.isOpen, true);
+  t.equal(item2.isOpen, false);
+  t.equal(item3.isOpen, true);
+});
 
 var behaviours = zora()
   .test(elements)
@@ -1506,13 +1448,13 @@ const mandatoryElement = element();
 const tablist = ariaElement({ariaRole: 'tablist'});
 
 const accordionTabEventBinding = init(function () {
-  this.el.addEventListener('click', event=> {
+  this.el.addEventListener('click', event => {
     this.toggle();
     this.select();
   });
 
   this.el.addEventListener('keydown', event => {
-    const {key:k, code, target} = event;
+    const {key: k, code, target} = event;
     if (k === 'Enter' || code === 'Space') {
       if (target.tagName !== 'BUTTON' || target.tagName === 'A') {
         this.toggle();
@@ -1532,7 +1474,7 @@ const accordionTabpanelEventBinding = init(function () {
   this.el.addEventListener('focusin', event => {
     this.tab.select();
   });
-  this.el.addEventListener('click', event=> {
+  this.el.addEventListener('click', event => {
     this.tab.select();
   });
 });
@@ -1541,7 +1483,7 @@ const accordionTabpanelStamp = compose(
   ariaElement({ariaRole: 'tabpanel'}),
   toggle$1(),
   methods({
-    hasFocus(){
+    hasFocus() {
       return this.el.querySelector(':focus') !== null;
     }
   }),
@@ -1554,7 +1496,7 @@ const accordionTabpanelStamp = compose(
 
 const accordionTabStamp = compose(
   ariaElement({ariaRole: 'tab'}),
-  listItemStamp,
+  listItem,
   mapToAria('isOpen', 'expanded'),
   mapToAria('isSelected', 'selected'),
   init(function initializeAccordionTab ({tabpanelEl}) {
@@ -1564,14 +1506,15 @@ const accordionTabStamp = compose(
       this.tabpanel.toggle();
     });
 
-    this.$on('isSelected', isSelected=> {
+    this.$on('isSelected', isSelected => {
       this.el.setAttribute('tabindex', isSelected ? 0 : -1);
       if (isSelected && !this.tabpanel.hasFocus()) {
         this.el.focus();
       }
     });
 
-    this.isSelected = this.el.getAttribute('aria-selected') == 'true' || this.el.getAttribute('tabindex') === '0';
+    this.isSelected = this.el.getAttribute('aria-selected') == 'true' ||
+      this.el.getAttribute('tabindex') === '0';
     this.isOpen = this.el.getAttribute('aria-expanded') === 'true';
     this.tabpanel.isOpen = this.isOpen;
   }),
@@ -1583,8 +1526,9 @@ const accordionTabStamp = compose(
 
 
 function accordion () {
-  return compose(mandatoryElement,
-    multiSelectMediatorStamp,
+  return compose(
+    mandatoryElement,
+    multiSelectListMediator,
     init(function initializeAccordionTablist () {
       Object.defineProperty(this, 'tablist', {
         value: tablist({
@@ -1596,16 +1540,21 @@ function accordion () {
         const controlledId = tab.getAttribute('aria-controls');
         if (!controlledId) {
           console.log(tab);
-          throw new Error('for the accordion tab element above, you must specify which tabpanel is controlled using aria-controls');
+          throw new Error(
+            'for the accordion tab element above, you must specify which tabpanel is controlled using aria-controls'
+          );
         }
         const tabpanelEl = this.el.querySelector(`#${controlledId}`);
         if (!tabpanelEl) {
           console.log(tab);
-          throw new Error(`for the tab element above, could not find the related tabpanel with the id ${controlledId}`)
+          throw new Error(
+            `for the tab element above, could not find the related tabpanel with the id ${controlledId}`
+          );
         }
         accordionTabStamp({tabpanelEl, el: tab, listMediator: this});
       }
-    }));
+    })
+  );
 }
 
 function click (el, opts = {bubbles: true, cancelable: true}) {
@@ -2084,11 +2033,11 @@ var accordions = zora()
   });
 
 const mandatoryElement$1 = element();
-const tablist$1 = ariaElement({ ariaRole: 'tablist' });
+const tablist$1 = ariaElement({ariaRole: 'tablist'});
 
-const tabEventBinding = init(function() {
+const tabEventBinding = init(function () {
   this.el.addEventListener('keydown', event => {
-    const { key: k } = event;
+    const {key: k} = event;
     if (k === 'ArrowLeft' || k === 'ArrowUp') {
       this.selectPrevious();
       event.preventDefault();
@@ -2103,11 +2052,11 @@ const tabEventBinding = init(function() {
 });
 
 const tabStamp = compose(
-  ariaElement({ ariaRole: 'tab' }),
-  listItemStamp,
+  ariaElement({ariaRole: 'tab'}),
+  listItem,
   mapToAria('isSelected', 'selected'),
-  init(function initializeTab({ tabpanel }) {
-    Object.defineProperty(this, 'tabpanel', { value: tabpanel });
+  init(function initializeTab ({tabpanel}) {
+    Object.defineProperty(this, 'tabpanel', {value: tabpanel});
     this.$on('isSelected', isSelected => {
       this.el.setAttribute('tabindex', isSelected ? 0 : -1);
       if (isSelected !== this.tabpanel.isOpen) {
@@ -2124,7 +2073,7 @@ const tabStamp = compose(
 );
 
 const tabPanelStamp = compose(
-  ariaElement({ ariaRole: 'tabpanel' }),
+  ariaElement({ariaRole: 'tabpanel'}),
   toggle$1(),
   mapToAria('isOpen', '!hidden')
 );
@@ -2133,13 +2082,11 @@ const tabPanelStamp = compose(
 
 
 
-function tabList(
-  { tabpanelFactory = tabPanelStamp, tabFactory = tabStamp } = {}
-) {
+function tabList ({tabpanelFactory = tabPanelStamp, tabFactory = tabStamp} = {}) {
   return compose(
     mandatoryElement$1,
-    listMediatorStamp,
-    init(function initializeTablist() {
+    listMediator,
+    init(function initializeTablist () {
       Object.defineProperty(this, 'tablist', {
         value: tablist$1({
           el: this.el.querySelector('[role=tablist]') || this.el
@@ -2160,8 +2107,8 @@ function tabList(
             `for the tab element above, could not find the related tabpanel with the id ${controlledId}`
           );
         }
-        const tabpanel = tabpanelFactory({ el: tabpanelEl });
-        tabFactory({ el: tab, listMediator: this, tabpanel });
+        const tabpanel = tabpanelFactory({el: tabpanelEl});
+        tabFactory({el: tab, listMediator: this, tabpanel});
       }
     })
   );
@@ -2555,7 +2502,7 @@ const menuElement = ariaElement({ariaRole: 'menu'});
 
 const abstractMenuItem = compose(
   ariaElement({ariaRole: 'menuitem'}),
-  listItemStamp,
+  listItem,
   observable$1('isSelected'),
   init(function () {
     this.$on('isSelected', isSelected => {
@@ -2569,7 +2516,7 @@ const abstractMenuItem = compose(
 
 const menuItemEvenBinding = init(function () {
   this.el.addEventListener('keydown', event => {
-    const {key:k} = event;
+    const {key: k} = event;
     if (k === 'ArrowLeft' || k === 'ArrowUp') {
       this.selectPrevious();
       event.preventDefault();
@@ -2580,14 +2527,11 @@ const menuItemEvenBinding = init(function () {
   });
 });
 
-const menuItemStamp = compose(
-  abstractMenuItem,
-  menuItemEvenBinding
-);
+const menuItemStamp = compose(abstractMenuItem, menuItemEvenBinding);
 
 const subMenuItemEventBinding = init(function () {
   this.el.addEventListener('keydown', event => {
-    const {key:k} = event;
+    const {key: k} = event;
     if (k === 'ArrowUp') {
       this.selectPrevious();
       event.preventDefault();
@@ -2598,18 +2542,15 @@ const subMenuItemEventBinding = init(function () {
   });
 });
 
-const subMenuItemStamp = compose(
-  abstractMenuItem,
-  subMenuItemEventBinding
-);
+const subMenuItemStamp = compose(abstractMenuItem, subMenuItemEventBinding);
 
 const menuEventBinding = init(function () {
   this.toggler.addEventListener('click', () => {
     this.toggle();
   });
   this.toggler.addEventListener('keydown', event => {
-    const {key:k, code} = event;
-    const toggle$$1 = (ev) => {
+    const {key: k, code} = event;
+    const toggle$$1 = ev => {
       this.toggle();
       ev.preventDefault();
     };
@@ -2623,7 +2564,7 @@ const menuEventBinding = init(function () {
   });
 
   this.el.addEventListener('keydown', event => {
-    const {key:k} = event;
+    const {key: k} = event;
     if (k === 'Escape' && this.isOpen) {
       this.toggle();
       this.toggler.focus();
@@ -2636,8 +2577,7 @@ const menuEventBinding = init(function () {
 });
 
 const subMenuEventBinding = init(function () {
-
-  const next = (ev) => {
+  const next = ev => {
     this.selectNext();
     if (this.isOpen) {
       this.toggle();
@@ -2645,7 +2585,7 @@ const subMenuEventBinding = init(function () {
     ev.preventDefault();
   };
 
-  const previous = (ev) => {
+  const previous = ev => {
     this.selectPrevious();
     if (this.isOpen) {
       this.toggle();
@@ -2657,7 +2597,7 @@ const subMenuEventBinding = init(function () {
     this.toggle();
   });
   this.toggler.addEventListener('keydown', event => {
-    const {key:k, code, target} = event;
+    const {key: k, code, target} = event;
     if ((k === 'Enter' || code === 'Space') && target === this.toggler) {
       this.toggle();
     } else if (k === 'ArrowRight') {
@@ -2678,18 +2618,20 @@ const subMenuEventBinding = init(function () {
       }
     }
 
-    if (['ArrowDown', 'ArrowUp', 'Enter'].indexOf(k) !== -1 || code === 'Space') {
+    if (
+      ['ArrowDown', 'ArrowUp', 'Enter'].indexOf(k) !== -1 || code === 'Space'
+    ) {
       event.preventDefault();
     }
   });
 
   this.el.addEventListener('keydown', event => {
-    const {key:k} = event;
+    const {key: k} = event;
     if (k === 'ArrowRight') {
       next(event);
     } else if (k === 'ArrowLeft') {
       previous(event);
-    } else if ((k === 'Escape') && this.isOpen) {
+    } else if (k === 'Escape' && this.isOpen) {
       this.toggle();
       if (k === 'Escape') {
         this.toggler.focus();
@@ -2702,9 +2644,11 @@ const subMenuEventBinding = init(function () {
   });
 });
 
-function menuInitStamp ({menuItem = menuItemStamp}={}) {
+function menuInitStamp ({menuItem = menuItemStamp} = {}) {
   return init(function () {
-    const menu = menuElement({el: this.el.querySelector('[role=menu]') || this.el});
+    const menu = menuElement({
+      el: this.el.querySelector('[role=menu]') || this.el
+    });
     const toggler = this.el.querySelector('[aria-haspopup]') || this.el;
 
     Object.defineProperty(this, 'toggler', {value: toggler});
@@ -2733,12 +2677,12 @@ function menuInitStamp ({menuItem = menuItemStamp}={}) {
 
 const abstractMenuStamp = compose(
   mandatoryElement$2,
-  listMediatorStamp,
+  listMediator,
   toggle$1(),
   observable$1('isOpen')
 );
 
-function dropdown ({menuItem = menuItemStamp} ={}) {
+function dropdown ({menuItem = menuItemStamp} = {}) {
   return compose(
     abstractMenuStamp,
     menuInitStamp({menuItem}),
@@ -2746,9 +2690,9 @@ function dropdown ({menuItem = menuItemStamp} ={}) {
   );
 }
 
-function subMenu ({menuItem = subMenuItemStamp}={}) {
+function subMenu ({menuItem = subMenuItemStamp} = {}) {
   return compose(
-    listItemStamp,
+    listItem,
     abstractMenuStamp,
     observable$1('isSelected'),
     menuInitStamp({menuItem}),
@@ -2758,10 +2702,10 @@ function subMenu ({menuItem = subMenuItemStamp}={}) {
 
 const subMenuStamp = subMenu({menuItem: subMenuItemStamp});
 
-function menubar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) {
+function menubar ({menuItem = menuItemStamp, subMenu = subMenuStamp} = {}) {
   return compose(
     ariaElement({ariaRole: 'menubar'}),
-    listMediatorStamp,
+    listMediator,
     init(function () {
       for (const item of findChildrenMenuItem(this.el)) {
         if (item.querySelector('[role=menu]') !== null) {
@@ -2778,46 +2722,30 @@ function menubar ({menuItem = menuItemStamp, subMenu = subMenuStamp}={}) {
 
 
 
-const expandableStamp = compose(
-  element(),
-  toggle$1(),
-  mapToAria('isOpen', 'expanded'),
-  init(function () {
-    Object.defineProperty(this, 'toggler', {value: this.el});
-  }),
-  menuEventBinding
-);
 
 function expandable () {
-  return compose(element(),
+  return compose(
+    element(),
+    toggle$1(),
+    observable$1('isOpen'),
     init(function () {
-      const toggler = this.el.querySelector('[aria-haspopup]');
-      if (!toggler) {
-        console.log(this.el);
-        throw new Error('the element above must contain a control with aria-haspopup attribute set to true');
-      }
-      Object.defineProperty(this, 'button', {value: expandableStamp({el: toggler})});
-
+      const toggler = this.el.querySelector('[aria-haspopup=true]');
       const controlledId = toggler.getAttribute('aria-controls');
-      if (!controlledId) {
-        console.log(toggler);
-        throw new Error('the toggler above must explicitly control a section via the aria-controls attribute');
-      }
+      const section = this.el.querySelector(`#${controlledId}`);
+      Object.defineProperty(this, 'section', {value: section});
+      Object.defineProperty(this, 'toggler', {value: toggler});
 
-      const expandableSection = this.el.querySelector(`#${controlledId}`);
-      if (!expandableSection) {
-        throw new Error('Could not find the element referenced by id ' + controlledId);
-      }
-      Object.defineProperty(this, 'expandableSection', {value: expandableSection});
-
-      this.button.$on('isOpen', isExpanded => {
-        this.expandableSection.setAttribute('aria-hidden', !isExpanded);
+      this.$on('isOpen', isOpen => {
+        this.section.setAttribute('aria-hidden', !isOpen);
+        this.toggler.setAttribute('aria-expanded', isOpen);
       });
 
-      this.button.isOpen = !!this.button.el.getAttribute('aria-expanded');
-    }));
-}
+      this.isOpen = Boolean(this.toggler.getAttribute('aria-expanded'));
 
+    }),
+    menuEventBinding
+  );
+}
 function findChildrenMenuItem (base) {
   const items = [];
   for (const c of base.children) {
@@ -3420,10 +3348,10 @@ var menubar$1 = zora()
   })
 ;
 
-const tooltipEventBindingStamp = init(function tooltipEventBinding() {
+const tooltipEventBindingStamp = init(function tooltipEventBinding () {
   this.target.addEventListener('focus', this.show.bind(this));
   this.target.addEventListener('keydown', event => {
-    const { key: k } = event;
+    const {key: k} = event;
     if (k === 'Escape') {
       this.hide();
     }
@@ -3433,9 +3361,9 @@ const tooltipEventBindingStamp = init(function tooltipEventBinding() {
   this.target.addEventListener('mouseleave', this.hide.bind(this));
 });
 
-function tooltip$1() {
+function tooltip$1 () {
   return compose(
-    ariaElement({ ariaRole: 'tooltip' }),
+    ariaElement({ariaRole: 'tooltip'}),
     observable$1('isOpen'),
     methods({
       hide() {
@@ -3452,7 +3380,7 @@ function tooltip$1() {
         this.isOpen = true;
       }
     }),
-    init(function initializeTooltip() {
+    init(function initializeTooltip () {
       const id = this.el.getAttribute('id');
       if (!id) {
         console.log(this.el);
@@ -3464,7 +3392,7 @@ function tooltip$1() {
           'there is no target element described by the tooltip ' + id
         );
       }
-      Object.defineProperty(this, 'target', { value: targetElement });
+      Object.defineProperty(this, 'target', {value: targetElement});
       this.hide();
     }),
     tooltipEventBindingStamp
