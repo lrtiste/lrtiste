@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "accessible widgets library, behaviours driven",
   "main": "./dist/lrtiste.js",
-  "js:next": "./dist/lrtiste.es.js",
+  "js:next": "./index.js",
   "keywords": [
     "ui",
     "browser",

@@ -4,26 +4,6 @@
 	(factory((global.lrtiste = global.lrtiste || {})));
 }(this, (function (exports) { 'use strict';
 
-function isObject(obj) {
-  var type = typeof obj;
-  return !!obj && (type === 'object' || type === 'function');
-}
-
-function isFunction(obj) {
-  return typeof obj === 'function';
-}
-
-var concat = Array.prototype.concat;
-var extractFunctions = function () {
-  var fns = concat.apply([], arguments).filter(isFunction);
-  return fns.length === 0 ? undefined : fns;
-};
-
-function isPlainObject(value) {
-  return !!value && typeof value === 'object' &&
-    Object.getPrototypeOf(value) === Object.prototype;
-}
-
 /**
  * The 'src' argument plays the command role.
  * The returned values is always of the same type as the 'src'.
@@ -36,7 +16,7 @@ function mergeOne(dst, src) {
 
   // According to specification arrays must be concatenated.
   // Also, the '.concat' creates a new array instance. Overrides the 'dst'.
-  if (Array.isArray(src)) { return (Array.isArray(dst) ? dst : []).concat(src); }
+  if (isArray(src)) { return (isArray(dst) ? dst : []).concat(src); }
 
   // Now deal with non plain 'src' object. 'src' overrides 'dst'
   // Note that functions are also assigned! We do not deep merge functions.
@@ -54,7 +34,7 @@ function mergeOne(dst, src) {
     if (srcValue !== undefined) {
       var dstValue = returnValue[key];
       // Recursive calls to mergeOne() must allow only plain objects or arrays in dst
-      var newDst = isPlainObject(dstValue) || Array.isArray(srcValue) ? dstValue : {};
+      var newDst = isPlainObject(dstValue) || isArray(srcValue) ? dstValue : {};
 
       // deep merge each property. Recursion!
       returnValue[key] = mergeOne(newDst, srcValue);
@@ -71,7 +51,57 @@ var merge = function (dst) {
   return srcs.reduce(mergeOne, dst);
 };
 
-var assign$1 = Object.assign;
+var assign = Object.assign;
+var isArray = Array.isArray;
+
+function isFunction(obj) {
+  return typeof obj === 'function';
+}
+
+function isObject(obj) {
+  var type = typeof obj;
+  return !!obj && (type === 'object' || type === 'function');
+}
+
+function isPlainObject(value) {
+  return !!value && typeof value === 'object' &&
+    Object.getPrototypeOf(value) === Object.prototype;
+}
+
+
+var concat = Array.prototype.concat;
+function extractFunctions() {
+  var fns = concat.apply([], arguments).filter(isFunction);
+  return fns.length === 0 ? undefined : fns;
+}
+
+function concatAssignFunctions(dstObject, srcArray, propName) {
+  if (!isArray(srcArray)) { return; }
+
+  var length = srcArray.length;
+  var dstArray = dstObject[propName] || [];
+  dstObject[propName] = dstArray;
+  for (var i = 0; i < length; i += 1) {
+    var fn = srcArray[i];
+    if (isFunction(fn) && dstArray.indexOf(fn) < 0) {
+      dstArray.push(fn);
+    }
+  }
+}
+
+
+function combineProperties(dstObject, srcObject, propName, action) {
+  if (!isObject(srcObject[propName])) { return; }
+  if (!isObject(dstObject[propName])) { dstObject[propName] = {}; }
+  action(dstObject[propName], srcObject[propName]);
+}
+
+function deepMergeAssign(dstObject, srcObject, propName) {
+  combineProperties(dstObject, srcObject, propName, merge);
+}
+function mergeAssign(dstObject, srcObject, propName) {
+  combineProperties(dstObject, srcObject, propName, assign);
+}
 
 /**
  * Converts stampit extended descriptor to a standard one.
@@ -93,6 +123,7 @@ var assign$1 = Object.assign;
  * @param [conf]
  * @param [deepConfiguration]
  * @param [deepConf]
+ * @param [composers]
  * @returns {Descriptor}
  */
 var standardiseDescriptor = function (ref) {
@@ -103,6 +134,7 @@ var standardiseDescriptor = function (ref) {
   var refs = ref.refs;
   var initializers = ref.initializers;
   var init = ref.init;
+  var composers = ref.composers;
   var deepProperties = ref.deepProperties;
   var deepProps = ref.deepProps;
   var propertyDescriptors = ref.propertyDescriptors;
@@ -117,38 +149,46 @@ var standardiseDescriptor = function (ref) {
   var deepConf = ref.deepConf;
 
   var p = isObject(props) || isObject(refs) || isObject(properties) ?
-    assign$1({}, props, refs, properties) : undefined;
+    assign({}, props, refs, properties) : undefined;
 
   var dp = isObject(deepProps) ? merge({}, deepProps) : undefined;
   dp = isObject(deepProperties) ? merge(dp, deepProperties) : dp;
 
   var sp = isObject(statics) || isObject(staticProperties) ?
-    assign$1({}, statics, staticProperties) : undefined;
+    assign({}, statics, staticProperties) : undefined;
 
   var dsp = isObject(deepStatics) ? merge({}, deepStatics) : undefined;
   dsp = isObject(staticDeepProperties) ? merge(dsp, staticDeepProperties) : dsp;
 
   var c = isObject(conf) || isObject(configuration) ?
-    assign$1({}, conf, configuration) : undefined;
+    assign({}, conf, configuration) : undefined;
 
   var dc = isObject(deepConf) ? merge({}, deepConf) : undefined;
   dc = isObject(deepConfiguration) ? merge(dc, deepConfiguration) : dc;
 
-  return {
-    methods: methods,
-    properties: p,
-    initializers: extractFunctions(init, initializers),
-    deepProperties: dp,
-    staticProperties: sp,
-    staticDeepProperties: dsp,
-    propertyDescriptors: propertyDescriptors,
-    staticPropertyDescriptors: staticPropertyDescriptors,
-    configuration: c,
-    deepConfiguration: dc
-  };
-};
+  var ii = extractFunctions(init, initializers);
 
-var assign$2 = Object.assign;
+  var composerFunctions = extractFunctions(composers);
+  if (composerFunctions) {
+    dc = dc || {};
+    concatAssignFunctions(dc, composerFunctions, 'composers');
+  }
+
+  var descriptor = {};
+  if (methods) { descriptor.methods = methods; }
+  if (p) { descriptor.properties = p; }
+  if (ii) { descriptor.initializers = ii; }
+  if (dp) { descriptor.deepProperties = dp; }
+  if (sp) { descriptor.staticProperties = sp; }
+  if (methods) { descriptor.methods = methods; }
+  if (dsp) { descriptor.staticDeepProperties = dsp; }
+  if (propertyDescriptors) { descriptor.propertyDescriptors = propertyDescriptors; }
+  if (staticPropertyDescriptors) { descriptor.staticPropertyDescriptors = staticPropertyDescriptors; }
+  if (c) { descriptor.configuration = c; }
+  if (dc) { descriptor.deepConfiguration = dc; }
+
+  return descriptor;
+};
 
 /**
  * Creates new factory instance.
@@ -164,17 +204,24 @@ function createFactory(descriptor) {
     var obj = Object.create(descriptor.methods || null);
 
     merge(obj, descriptor.deepProperties);
-    assign$2(obj, descriptor.properties);
+    assign(obj, descriptor.properties);
     Object.defineProperties(obj, descriptor.propertyDescriptors || {});
 
     if (!descriptor.initializers || descriptor.initializers.length === 0) { return obj; }
 
     if (options === undefined) { options = {}; }
-    return descriptor.initializers.filter(isFunction).reduce(function (resultingObj, initializer) {
-      var returnedValue = initializer.call(resultingObj, options,
-        {instance: resultingObj, stamp: Stamp, args: [options].concat(args)});
-      return returnedValue === undefined ? resultingObj : returnedValue;
-    }, obj);
+    var inits = descriptor.initializers;
+    var length = inits.length;
+    for (var i = 0; i < length; i += 1) {
+      var initializer = inits[i];
+      if (isFunction(initializer)) {
+        var returnedValue = initializer.call(obj, options,
+          {instance: obj, stamp: Stamp, args: [options].concat(args)});
+        obj = returnedValue === undefined ? obj : returnedValue;
+      }
+    }
+
+    return obj;
   };
 }
 
@@ -188,7 +235,7 @@ function createStamp(descriptor, composeFunction) {
   var Stamp = createFactory(descriptor);
 
   merge(Stamp, descriptor.staticDeepProperties);
-  assign$2(Stamp, descriptor.staticProperties);
+  assign(Stamp, descriptor.staticProperties);
   Object.defineProperties(Stamp, descriptor.staticPropertyDescriptors || {});
 
   var composeImplementation = isFunction(Stamp.compose) ? Stamp.compose : composeFunction;
@@ -198,7 +245,7 @@ function createStamp(descriptor, composeFunction) {
 
     return composeImplementation.apply(this, args);
   };
-  assign$2(Stamp.compose, descriptor);
+  assign(Stamp.compose, descriptor);
 
   return Stamp;
 }
@@ -214,29 +261,16 @@ function mergeComposable(dstDescriptor, srcComposable) {
   var srcDescriptor = (srcComposable && srcComposable.compose) || srcComposable;
   if (!isObject(srcDescriptor)) { return dstDescriptor; }
 
-  var combineProperty = function (propName, action) {
-    if (!isObject(srcDescriptor[propName])) { return; }
-    if (!isObject(dstDescriptor[propName])) { dstDescriptor[propName] = {}; }
-    action(dstDescriptor[propName], srcDescriptor[propName]);
-  };
-
-  combineProperty('methods', assign$2);
-  combineProperty('properties', assign$2);
-  combineProperty('deepProperties', merge);
-  combineProperty('propertyDescriptors', assign$2);
-  combineProperty('staticProperties', assign$2);
-  combineProperty('staticDeepProperties', merge);
-  combineProperty('staticPropertyDescriptors', assign$2);
-  combineProperty('configuration', assign$2);
-  combineProperty('deepConfiguration', merge);
-  if (Array.isArray(srcDescriptor.initializers)) {
-    dstDescriptor.initializers = srcDescriptor.initializers.reduce(function (result, init) {
-      if (isFunction(init) && result.indexOf(init) < 0) {
-        result.push(init);
-      }
-      return result;
-    }, Array.isArray(dstDescriptor.initializers) ? dstDescriptor.initializers : []);
-  }
+  mergeAssign(dstDescriptor, srcDescriptor, 'methods');
+  mergeAssign(dstDescriptor, srcDescriptor, 'properties');
+  deepMergeAssign(dstDescriptor, srcDescriptor, 'deepProperties');
+  mergeAssign(dstDescriptor, srcDescriptor, 'propertyDescriptors');
+  mergeAssign(dstDescriptor, srcDescriptor, 'staticProperties');
+  deepMergeAssign(dstDescriptor, srcDescriptor, 'staticDeepProperties');
+  mergeAssign(dstDescriptor, srcDescriptor, 'staticPropertyDescriptors');
+  mergeAssign(dstDescriptor, srcDescriptor, 'configuration');
+  deepMergeAssign(dstDescriptor, srcDescriptor, 'deepConfiguration');
+  concatAssignFunctions(dstDescriptor, srcDescriptor.initializers, 'initializers');
 
   return dstDescriptor;
 }
@@ -297,16 +331,13 @@ function isStamp(obj) {
   return isFunction(obj) && isFunction(obj.compose);
 }
 
-var assign = Object.assign;
-
 function createUtilityFunction(propName, action) {
   return function composeUtil() {
     var i = arguments.length, argsArray = Array(i);
     while ( i-- ) argsArray[i] = arguments[i];
 
-    var descriptor = {};
-    descriptor[propName] = action.apply(void 0, [ {} ].concat( argsArray ));
-    return ((this && this.compose) || stampit).call(this, descriptor);
+    return ((this && this.compose) || stampit).call(this, ( obj = {}, obj[propName] = action.apply(void 0, [ {} ].concat( argsArray )), obj ));
+    var obj;
   };
 }
 
@@ -321,6 +352,15 @@ function initializers() {
     initializers: extractFunctions.apply(void 0, args)
   });
 }
+function composers() {
+  var args = [], len = arguments.length;
+  while ( len-- ) args[ len ] = arguments[ len ];
+
+  return ((this && this.compose) || stampit).call(this, {
+    composers: extractFunctions.apply(void 0, args)
+  });
+}
+
 var deepProperties = createUtilityFunction('deepProperties', merge);
 var staticProperties = createUtilityFunction('staticProperties', assign);
 var staticDeepProperties = createUtilityFunction('staticDeepProperties', merge);
@@ -339,6 +379,8 @@ var allUtilities = {
 
   initializers: initializers,
   init: initializers,
+
+  composers: composers,
 
   deepProperties: deepProperties,
   deepProps: deepProperties,
@@ -389,11 +431,24 @@ function stampit() {
   var args = [], len = arguments.length;
   while ( len-- ) args[ len ] = arguments[ len ];
 
-  args = args.filter(isObject)
+  var composables = args.filter(isObject)
     .map(function (arg) { return isStamp(arg) ? arg : standardiseDescriptor(arg); });
 
   // Calling the standard pure compose function here.
-  return compose.apply(this || baseStampit, args);
+  var stamp = compose.apply(this || baseStampit, composables);
+
+  var composerFunctions = stamp.compose.deepConfiguration &&
+    stamp.compose.deepConfiguration.composers;
+  if (isArray(composerFunctions)) {
+    for (var i = 0; i < composerFunctions.length; i += 1) {
+      if (isFunction(composerFunctions[i])) {
+        var returnedValue = composerFunctions[i]({stamp: stamp, composables: composables});
+        stamp = isStamp(returnedValue) ? returnedValue : stamp;
+      }
+    }
+  }
+
+  return stamp;
 }
 
 var exportedCompose = stampit.bind(); // bind to 'undefined'
