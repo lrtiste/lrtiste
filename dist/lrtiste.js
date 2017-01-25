@@ -51,9 +51,6 @@ var merge = function (dst) {
   return srcs.reduce(mergeOne, dst);
 };
 
-var assign = Object.assign;
-var isArray = Array.isArray;
-
 function isFunction(obj) {
   return typeof obj === 'function';
 }
@@ -62,6 +59,9 @@ function isObject(obj) {
   var type = typeof obj;
   return !!obj && (type === 'object' || type === 'function');
 }
+
+var assign = Object.assign;
+var isArray = Array.isArray;
 
 function isPlainObject(value) {
   return !!value && typeof value === 'object' &&
@@ -439,12 +439,21 @@ function stampit() {
 
   var composerFunctions = stamp.compose.deepConfiguration &&
     stamp.compose.deepConfiguration.composers;
-  if (isArray(composerFunctions)) {
+  if (isArray(composerFunctions) && composerFunctions.length > 0) {
+    var uniqueComposers = [];
     for (var i = 0; i < composerFunctions.length; i += 1) {
-      if (isFunction(composerFunctions[i])) {
-        var returnedValue = composerFunctions[i]({stamp: stamp, composables: composables});
-        stamp = isStamp(returnedValue) ? returnedValue : stamp;
+      var composer = composerFunctions[i];
+      if (isFunction(composer) && !uniqueComposers.includes(composer)) {
+        uniqueComposers.push(composer);
       }
+    }
+    stamp.compose.deepConfiguration.composers = uniqueComposers;
+
+    if (isStamp(this)) { composables.unshift(this); }
+    for (var i$1 = 0; i$1 < uniqueComposers.length; i$1 += 1) {
+      var composer$1 = uniqueComposers[i$1];
+      var returnedValue = composer$1({stamp: stamp, composables: composables});
+      stamp = isStamp(returnedValue) ? returnedValue : stamp;
     }
   }
 

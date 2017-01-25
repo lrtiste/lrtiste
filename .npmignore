@@ -1,8 +1,6 @@
-behaviours
-components
 node_modules
 scripts
 test
 .gitignore
 circle.yml
-index.js
+.idea
