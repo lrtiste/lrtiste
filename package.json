@@ -1,9 +1,9 @@
 {
   "name": "lrtiste",
   "version": "0.2.2",
-  "description": "accessible widgets library, behaviours driven",
+  "description": "accessible widgets library",
   "main": "./dist/lrtiste.js",
-  "js:next": "./index.js",
+  "jsnext:main": "./index.js",
   "keywords": [
     "ui",
     "browser",
@@ -14,7 +14,6 @@
     "accessibility",
     "accessible"
   ],
-  "jsnext:main": "./dist/lrtiste.es.js",
   "author": "Laurent Renard",
   "license": "MIT",
   "scripts": {
@@ -23,14 +22,14 @@
     "test": "npm run build:test && cat ./test/dist/index.js | tape-run",
     "dev": "node ./scripts/dev.js"
   },
-  "dependencies": {
-    "stampit": "^3.0.6"
-  },
   "devDependencies": {
     "rollup": "^0.41.4",
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0",
     "tape-run": "^2.1.4",
     "zora": "^0.2.1"
+  },
+  "dependencies": {
+    "smart-table-events": "^1.0.0"
   }
 }

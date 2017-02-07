@@ -5,7 +5,7 @@ module.exports = {
   entry: './test/index.js',
   dest: './test/dist/index.js',
   format: 'iife',
-  plugins: [ node({}), commonjs() ],
+  plugins: [node({jsnext: true}), commonjs()],
   moduleName: 'test',
   sourceMap: true
 };

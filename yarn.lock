@@ -1001,6 +1001,10 @@ single-line-log@^1.1.2:
   dependencies:
     string-width "^1.0.1"
 
+smart-table-events@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/smart-table-events/-/smart-table-events-1.0.0.tgz#c0621a3e61de604eee5bc8e26304611998a0c336"
+
 sntp@1.x.x:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/sntp/-/sntp-1.0.9.tgz#6541184cc90aeea6c6e7b35e2659082443c66198"
@@ -1061,10 +1065,6 @@ sshpk@^1.7.0:
     jodid25519 "^1.0.0"
     jsbn "~0.1.0"
     tweetnacl "~0.14.0"
-
-stampit:
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/stampit/-/stampit-3.0.6.tgz#c1e3ce5862972186fd127dafeaebac8fee66a5f5"
 
 stream-read@^1.1.2:
   version "1.1.2"

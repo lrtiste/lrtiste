@@ -1,11 +1,11 @@
-import { accordion, accordionTab, accordionPanel } from './components/accordions';
-import { tabList, tab, tabPanel } from './components/tabs';
-import { dropdown, menubar, expandable } from './components/menus';
-import { tooltip } from './components/tooltips';
-import { element, ariaElement } from './behaviours/elements';
-import { listMediator, multiSelectListMediator, listItem } from './behaviours/listMediators';
-import { observable, mapToAria } from './behaviours/observables';
-import { toggle } from './behaviours/toggle';
-import { default as stampit } from 'stampit';
+import expandableFactory from './expandable/expandable';
+import tablistFactory from './tablist/tablist';
+import dropdownFactory from './dropdown/dropdown';
+import menubarFactory from './menu/menubar';
+import accordionFactory from './accordion/accordion';
 
-export { accordion, accordionTab, accordionPanel, tabList, tab, tabPanel, dropdown, menubar, expandable, tooltip, element, ariaElement, listMediator, multiSelectListMediator, listItem, observable, mapToAria, toggle, stampit };
+export const expandable = expandableFactory();
+export const dropdown = dropdownFactory;
+export const tablist = tablistFactory;
+export const menubar = menubarFactory;
+export const accordion = accordionFactory;

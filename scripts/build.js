@@ -5,7 +5,7 @@ const commonjs = require('rollup-plugin-commonjs');
 rollup
   .rollup({
     entry: './index.js',
-    plugins: [nodeResolve({jsnext: true}), commonjs()]
+    plugins: [nodeResolve({jsnext: true})]
   })
   .then(function (bundle) {
     return bundle.write({
