@@ -1,6 +1,6 @@
 {
   "name": "lrtiste",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "description": "accessible widgets library",
   "main": "./dist/lrtiste.js",
   "jsnext:main": "./index.js",
