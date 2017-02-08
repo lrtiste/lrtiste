@@ -680,6 +680,7 @@ var elementFactory = function ({element, emitter: emitter$$1 = createEmitter$1()
     clean(){
       element.removeEventListener('click', clickListener);
       element.removeEventListener('keydown', keydownListener);
+      element.removeEventListener('focus', focusListener);
       listener.off(DOM_CLICK);
       listener.off(DOM_KEYDOWN);
       listener.off(DOM_FOCUS);
@@ -1032,9 +1033,13 @@ function menubar$1 ({element}) {
 
   menubarComp.refresh();
 
-  return Object.assign(menubarComp, {
+  return Object.assign({}, menubarComp, {
     item(index){
       return subMenus[index];
+    },
+    clean(){
+      menubarComp.clean();
+      subMenus.forEach(sm => sm.clean());
     }
   });
 }
@@ -1152,9 +1157,9 @@ function testAccordionSections (accordion$$1, expected, t) {
 
 var accordion$$1 = plan$1()
   .test('accordion: set up initial states ', function * (t) {
-    const element = createAccordion();
-    const acc = accordion$1({element});
-    testAccordionActioners(element, [
+    const element$$1 = createAccordion();
+    const acc = accordion$1({element: element$$1});
+    testAccordionActioners(element$$1, [
       {
         'aria-expanded': 'true'
       }, {
@@ -1163,7 +1168,7 @@ var accordion$$1 = plan$1()
         'aria-expanded': 'false',
       }
     ], t);
-    testAccordionSections(element, [{
+    testAccordionSections(element$$1, [{
       'aria-hidden': 'false'
     }, {
       'aria-hidden': 'true'
@@ -1172,11 +1177,11 @@ var accordion$$1 = plan$1()
     }], t);
   })
   .test('accordion: open an accordion on click', function * (t) {
-    const element = createAccordion();
-    const acc = accordion$1({element});
-    const tab2 = element.querySelector('[aria-controls=tabpanel2]');
+    const element$$1 = createAccordion();
+    const acc = accordion$1({element: element$$1});
+    const tab2 = element$$1.querySelector('[aria-controls=tabpanel2]');
     click(tab2);
-    testAccordionActioners(element, [
+    testAccordionActioners(element$$1, [
       {
         'aria-expanded': 'true'
       }, {
@@ -1185,7 +1190,7 @@ var accordion$$1 = plan$1()
         'aria-expanded': 'false'
       }
     ], t);
-    testAccordionSections(element, [{
+    testAccordionSections(element$$1, [{
       'aria-hidden': 'false'
     }, {
       'aria-hidden': 'false'
@@ -1194,11 +1199,11 @@ var accordion$$1 = plan$1()
     }], t);
   })
   .test('accordion: close an accordion on click', function * (t) {
-    const element = createAccordion();
-    const acc = accordion$1({element});
-    const tab2 = element.querySelector('[aria-controls=tabpanel2]');
+    const element$$1 = createAccordion();
+    const acc = accordion$1({element: element$$1});
+    const tab2 = element$$1.querySelector('[aria-controls=tabpanel2]');
     click(tab2);
-    testAccordionActioners(element, [
+    testAccordionActioners(element$$1, [
       {
         'aria-expanded': 'true'
       }, {
@@ -1207,7 +1212,7 @@ var accordion$$1 = plan$1()
         'aria-expanded': 'false'
       }
     ], t);
-    testAccordionSections(element, [{
+    testAccordionSections(element$$1, [{
       'aria-hidden': 'false'
     }, {
       'aria-hidden': 'false'
@@ -1215,7 +1220,7 @@ var accordion$$1 = plan$1()
       'aria-hidden': 'true'
     }], t);
     click(tab2);
-    testAccordionActioners(element, [
+    testAccordionActioners(element$$1, [
       {
         'aria-expanded': 'true'
       }, {
@@ -1224,7 +1229,7 @@ var accordion$$1 = plan$1()
         'aria-expanded': 'false'
       }
     ], t);
-    testAccordionSections(element, [{
+    testAccordionSections(element$$1, [{
       'aria-hidden': 'false'
     }, {
       'aria-hidden': 'true'
@@ -1233,11 +1238,11 @@ var accordion$$1 = plan$1()
     }], t);
   })
   .test('accordion: open on key down enter', function * (t) {
-    const element = createAccordion();
-    const acc = accordion$1({element});
-    const tab2 = element.querySelector('[aria-controls=tabpanel2]');
+    const element$$1 = createAccordion();
+    const acc = accordion$1({element: element$$1});
+    const tab2 = element$$1.querySelector('[aria-controls=tabpanel2]');
     keydown(tab2, {key: 'Enter'});
-    testAccordionActioners(element, [
+    testAccordionActioners(element$$1, [
       {
         'aria-expanded': 'true'
       }, {
@@ -1246,7 +1251,7 @@ var accordion$$1 = plan$1()
         'aria-expanded': 'false'
       }
     ], t);
-    testAccordionSections(element, [{
+    testAccordionSections(element$$1, [{
       'aria-hidden': 'false'
     }, {
       'aria-hidden': 'false'
@@ -1255,11 +1260,11 @@ var accordion$$1 = plan$1()
     }], t);
   })
   .test('accordion: open on key down space', function * (t) {
-    const element = createAccordion();
-    const acc = accordion$1({element});
-    const tab2 = element.querySelector('[aria-controls=tabpanel2');
+    const element$$1 = createAccordion();
+    const acc = accordion$1({element: element$$1});
+    const tab2 = element$$1.querySelector('[aria-controls=tabpanel2');
     keydown(tab2, {code: 'Space'});
-    testAccordionActioners(element, [
+    testAccordionActioners(element$$1, [
       {
         'aria-expanded': 'true'
       }, {
@@ -1268,7 +1273,7 @@ var accordion$$1 = plan$1()
         'aria-expanded': 'false'
       }
     ], t);
-    testAccordionSections(element, [{
+    testAccordionSections(element$$1, [{
       'aria-hidden': 'false'
     }, {
       'aria-hidden': 'false'
@@ -1279,8 +1284,8 @@ var accordion$$1 = plan$1()
   .test('accordion: clean', function * (t) {
     let counter = 0;
     const increment = () => counter++;
-    const element = createAccordion();
-    const acc = accordion$1({element});
+    const element$$1 = createAccordion();
+    const acc = accordion$1({element: element$$1});
     acc.onActiveItemChange(increment);
     acc.onclick(increment);
     acc.onkeydown(increment);
@@ -1360,10 +1365,10 @@ function testTabPanels (container, expected, t) {
 
 var tablist$1 = plan$1()
   .test('tabs: set up initial states', function* (t) {
-    const element = createTablist();
-    const tabList = tablist({element});
+    const element$$1 = createTablist();
+    const tabList = tablist({element: element$$1});
     testTab(
-      element,
+      element$$1,
       [
         {'aria-selected': 'true', 'tabindex': '0'},
         {'aria-selected': 'false', 'tabindex': '-1'},
@@ -1372,7 +1377,7 @@ var tablist$1 = plan$1()
       t
     );
     testTabPanels(
-      element,
+      element$$1,
       [
         {'aria-hidden': 'false'},
         {'aria-hidden': 'true'},
@@ -1382,10 +1387,10 @@ var tablist$1 = plan$1()
     );
   })
   .test('select an other tab closing the others', function* (t) {
-    const element = createTablist();
-    const tabList = tablist({element});
+    const element$$1 = createTablist();
+    const tabList = tablist({element: element$$1});
     testTab(
-      element,
+      element$$1,
       [
         {'aria-selected': 'true', 'tabindex': '0'},
         {'aria-selected': 'false', 'tabindex': '-1'},
@@ -1394,7 +1399,7 @@ var tablist$1 = plan$1()
       t
     );
     testTabPanels(
-      element,
+      element$$1,
       [
         {'aria-hidden': 'false'},
         {'aria-hidden': 'true'},
@@ -1402,10 +1407,10 @@ var tablist$1 = plan$1()
       ],
       t
     );
-    const [tab1, tab2, tab3] = element.querySelectorAll('[role=tab]');
+    const [tab1, tab2, tab3] = element$$1.querySelectorAll('[role=tab]');
     click(tab2);
     testTab(
-      element,
+      element$$1,
       [
         {'aria-selected': 'false', 'tabindex': '-1'},
         {'aria-selected': 'true', 'tabindex': '0'},
@@ -1414,7 +1419,7 @@ var tablist$1 = plan$1()
       t
     );
     testTabPanels(
-      element,
+      element$$1,
       [
         {'aria-hidden': 'true'},
         {'aria-hidden': 'false'},
@@ -1424,10 +1429,10 @@ var tablist$1 = plan$1()
     );
   })
   .test('select previous tab using left arrow', function* (t) {
-    const element = createTablist();
-    const tabList = tablist({element});
+    const element$$1 = createTablist();
+    const tabList = tablist({element: element$$1});
     testTab(
-      element,
+      element$$1,
       [
         {'aria-selected': 'true', 'tabindex': '0'},
         {'aria-selected': 'false', 'tabindex': '-1'},
@@ -1436,7 +1441,7 @@ var tablist$1 = plan$1()
       t
     );
     testTabPanels(
-      element,
+      element$$1,
       [
         {'aria-hidden': 'false'},
         {'aria-hidden': 'true'},
@@ -1444,11 +1449,11 @@ var tablist$1 = plan$1()
       ],
       t
     );
-    const [tab1, tab2, tab3] = element.querySelectorAll('[role=tab]');
+    const [tab1, tab2, tab3] = element$$1.querySelectorAll('[role=tab]');
     tab1.focus();
     keydown(tab1, {key: 'ArrowLeft'});
     testTab(
-      element,
+      element$$1,
       [
         {'aria-selected': 'false', 'tabindex': '-1'},
         {'aria-selected': 'false', 'tabindex': '-1'},
@@ -1457,7 +1462,7 @@ var tablist$1 = plan$1()
       t
     );
     testTabPanels(
-      element,
+      element$$1,
       [
         {'aria-hidden': 'true'},
         {'aria-hidden': 'true'},
@@ -1467,7 +1472,7 @@ var tablist$1 = plan$1()
     );
     keydown(tab3, {key: 'ArrowLeft'});
     testTab(
-      element,
+      element$$1,
       [
         {'aria-selected': 'false', 'tabindex': '-1'},
         {'aria-selected': 'true', 'tabindex': '0'},
@@ -1476,7 +1481,7 @@ var tablist$1 = plan$1()
       t
     );
     testTabPanels(
-      element,
+      element$$1,
       [
         {'aria-hidden': 'true'},
         {'aria-hidden': 'false'},
@@ -1486,10 +1491,10 @@ var tablist$1 = plan$1()
     );
   })
   .test('select next tab using right arrow', function* (t) {
-    const element = createTablist();
-    const tabList = tablist({element});
+    const element$$1 = createTablist();
+    const tabList = tablist({element: element$$1});
     testTab(
-      element,
+      element$$1,
       [
         {'aria-selected': 'true', 'tabindex': '0'},
         {'aria-selected': 'false', 'tabindex': '-1'},
@@ -1498,7 +1503,7 @@ var tablist$1 = plan$1()
       t
     );
     testTabPanels(
-      element,
+      element$$1,
       [
         {'aria-hidden': 'false'},
         {'aria-hidden': 'true'},
@@ -1506,11 +1511,11 @@ var tablist$1 = plan$1()
       ],
       t
     );
-    const [tab1, tab2, tab3] = element.querySelectorAll('[role=tab]');
+    const [tab1, tab2, tab3] = element$$1.querySelectorAll('[role=tab]');
     tab1.focus();
     keydown(tab1, {key: 'ArrowRight'});
     testTab(
-      element,
+      element$$1,
       [
         {'aria-selected': 'false', 'tabindex': '-1'},
         {'aria-selected': 'true', 'tabindex': '0'},
@@ -1519,7 +1524,7 @@ var tablist$1 = plan$1()
       t
     );
     testTabPanels(
-      element,
+      element$$1,
       [
         {'aria-hidden': 'true'},
         {'aria-hidden': 'false'},
@@ -1529,7 +1534,7 @@ var tablist$1 = plan$1()
     );
     keydown(tab2, {key: 'ArrowRight'});
     testTab(
-      element,
+      element$$1,
       [
         {'aria-selected': 'false', 'tabindex': '-1'},
         {'aria-selected': 'false', 'tabindex': '-1'},
@@ -1538,7 +1543,7 @@ var tablist$1 = plan$1()
       t
     );
     testTabPanels(
-      element,
+      element$$1,
       [
         {'aria-hidden': 'true'},
         {'aria-hidden': 'true'},
@@ -1548,7 +1553,7 @@ var tablist$1 = plan$1()
     );
     keydown(tab3, {key: 'ArrowRight'});
     testTab(
-      element,
+      element$$1,
       [
         {'aria-selected': 'true', 'tabindex': '0'},
         {'aria-selected': 'false', 'tabindex': '-1'},
@@ -1557,7 +1562,7 @@ var tablist$1 = plan$1()
       t
     );
     testTabPanels(
-      element,
+      element$$1,
       [
         {'aria-hidden': 'false'},
         {'aria-hidden': 'true'},
@@ -1569,8 +1574,8 @@ var tablist$1 = plan$1()
   .test('tab: clean', function* (t) {
     let counter = 0;
     const increment = () => counter++;
-    const element = createTablist();
-    const tabList = tablist({element});
+    const element$$1 = createTablist();
+    const tabList = tablist({element: element$$1});
 
     tabList.onActiveItemChange(increment);
     tabList.onclick(increment);
@@ -1620,40 +1625,40 @@ function testMenuItems (dropdown$$1, expected, t) {
 
 var dropdown$2 = plan$1()
   .test('dropdown: init states', function * (t) {
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
   })
   .test('dropdown: open on click', function * (t) {
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
     click(button);
     t.equal(button.getAttribute('aria-expanded'), 'true');
     t.equal(menu.getAttribute('aria-hidden'), 'false');
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '0'},
       {tabindex: '-1'},
       {tabindex: '-1'}
     ], t);
   })
   .test('dropdown: close on click', function * (t) {
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
     click(button);
     t.equal(button.getAttribute('aria-expanded'), 'true');
     t.equal(menu.getAttribute('aria-hidden'), 'false');
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '0'},
       {tabindex: '-1'},
       {tabindex: '-1'}
@@ -1663,64 +1668,64 @@ var dropdown$2 = plan$1()
     t.equal(menu.getAttribute('aria-hidden'), 'true');
   })
   .test('dropdown: open menu on arrow down', function * (t) {
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
     keydown(button, {key: 'ArrowDown'});
     t.equal(button.getAttribute('aria-expanded'), 'true');
     t.equal(menu.getAttribute('aria-hidden'), 'false');
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '0'},
       {tabindex: '-1'},
       {tabindex: '-1'}
     ], t);
   })
   .test('dropdown: open menu on Enter', function * (t) {
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
     keydown(button, {key: 'Enter'});
     t.equal(button.getAttribute('aria-expanded'), 'true');
     t.equal(menu.getAttribute('aria-hidden'), 'false');
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '0'},
       {tabindex: '-1'},
       {tabindex: '-1'}
     ], t);
   })
   .test('dropdown: open menu on Space', function * (t) {
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
     keydown(button, {code: 'Space'});
     t.equal(button.getAttribute('aria-expanded'), 'true');
     t.equal(menu.getAttribute('aria-hidden'), 'false');
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '0'},
       {tabindex: '-1'},
       {tabindex: '-1'}
     ], t);
   })
   .test('dropdown: close menu on arrow up', function * (t) {
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
     keydown(button, {key: 'ArrowDown'});
     t.equal(button.getAttribute('aria-expanded'), 'true');
     t.equal(menu.getAttribute('aria-hidden'), 'false');
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '0'},
       {tabindex: '-1'},
       {tabindex: '-1'}
@@ -1730,80 +1735,80 @@ var dropdown$2 = plan$1()
     t.equal(menu.getAttribute('aria-hidden'), 'true');
   })
   .test('dropdown: select previous item with up arrow', function * (t) {
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
     click(button);
     t.equal(button.getAttribute('aria-expanded'), 'true');
     t.equal(menu.getAttribute('aria-hidden'), 'false');
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '0'},
       {tabindex: '-1'},
       {tabindex: '-1'}
     ], t);
-    const [item1, item2, item3] = element.querySelectorAll('[role=menuitem]');
+    const [item1, item2, item3] = element$$1.querySelectorAll('[role=menuitem]');
     keydown(item1, {key: 'ArrowUp'});
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '-1'},
       {tabindex: '-1'},
       {tabindex: '0'}
     ], t);
     keydown(item3, {key: 'ArrowUp'});
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '-1'},
       {tabindex: '0'},
       {tabindex: '-1'}
     ], t);
   })
   .test('dropdown: select next item with down arrow', function * (t) {
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
     click(button);
     t.equal(button.getAttribute('aria-expanded'), 'true');
     t.equal(menu.getAttribute('aria-hidden'), 'false');
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '0'},
       {tabindex: '-1'},
       {tabindex: '-1'}
     ], t);
-    const [item1, item2, item3] = element.querySelectorAll('[role=menuitem]');
+    const [item1, item2, item3] = element$$1.querySelectorAll('[role=menuitem]');
     keydown(item1, {key: 'ArrowDown'});
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '-1'},
       {tabindex: '0'},
       {tabindex: '-1'}
     ], t);
     keydown(item2, {key: 'ArrowDown'});
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '-1'},
       {tabindex: '-1'},
       {tabindex: '0'}
     ], t);
     keydown(item3, {key: 'ArrowDown'});
-    testMenuItems(element, [
+    testMenuItems(element$$1, [
       {tabindex: '0'},
       {tabindex: '-1'},
       {tabindex: '-1'}
     ], t);
   })
   .test('dropdown: close menu on escape keydown', function * (t) {
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
     click(button);
     t.equal(button.getAttribute('aria-expanded'), 'true');
     t.equal(menu.getAttribute('aria-hidden'), 'false');
-    const [item1, item2, item3] = element.querySelectorAll('[role=menuitem]');
+    const [item1, item2, item3] = element$$1.querySelectorAll('[role=menuitem]');
     keydown(item1, {key: 'Escape'});
     t.equal(button.getAttribute('aria-expanded'), 'false');
     t.equal(menu.getAttribute('aria-hidden'), 'true');
@@ -1813,10 +1818,10 @@ var dropdown$2 = plan$1()
 
     const increment = () => counter++;
 
-    const element = createDropdown();
-    const dropDown = dropdown({element});
-    const button = element.querySelector('button');
-    const menu = element.querySelector('#menu-sample');
+    const element$$1 = createDropdown();
+    const dropDown = dropdown({element: element$$1});
+    const button = element$$1.querySelector('button');
+    const menu = element$$1.querySelector('#menu-sample');
 
     dropDown.onclick(increment);
     dropDown.onkeydown(increment);
@@ -1837,10 +1842,10 @@ var dropdown$2 = plan$1()
     dropDown.refresh();
     click(button);
     click(menu);
-    click(element);
+    click(element$$1);
     keydown(button, {});
     keydown(menu, {});
-    keydown(element, {});
+    keydown(element$$1, {});
     for (let i = 0; i < 3; i++) {
       click(dropDown.menu().item(i).element());
       keydown(dropDown.menu().item(i).element(),{});
@@ -1861,18 +1866,18 @@ function createExpandableSection () {
 
 var expandable$4 = plan$1()
   .test('expandable init states', function * (t) {
-    const element = createExpandableSection();
-    const comp = expandable({element});
-    const button = element.querySelector('#toggler');
-    const section = element.querySelector('#expandable');
+    const element$$1 = createExpandableSection();
+    const comp = expandable({element: element$$1});
+    const button = element$$1.querySelector('#toggler');
+    const section = element$$1.querySelector('#expandable');
     t.equal(button.getAttribute('aria-expanded'), 'false', 'should default to aria-expanded=false');
     t.equal(section.getAttribute('aria-hidden'), 'true', 'should default to aria-hidden=true');
   })
   .test('expand section on click', function * (t) {
-    const element = createExpandableSection();
-    const comp = expandable({element});
-    const button = element.querySelector('#toggler');
-    const section = element.querySelector('#expandable');
+    const element$$1 = createExpandableSection();
+    const comp = expandable({element: element$$1});
+    const button = element$$1.querySelector('#toggler');
+    const section = element$$1.querySelector('#expandable');
     t.equal(button.getAttribute('aria-expanded'), 'false', 'should default to aria-expanded=false');
     t.equal(section.getAttribute('aria-hidden'), 'true', 'should default to aria-hidden=true');
     click(button);
@@ -1880,10 +1885,10 @@ var expandable$4 = plan$1()
     t.equal(section.getAttribute('aria-hidden'), 'false', 'should display the section');
   })
   .test('expand on keydown arrow down', function * (t) {
-    const element = createExpandableSection();
-    const comp = expandable({element});
-    const button = element.querySelector('#toggler');
-    const section = element.querySelector('#expandable');
+    const element$$1 = createExpandableSection();
+    const comp = expandable({element: element$$1});
+    const button = element$$1.querySelector('#toggler');
+    const section = element$$1.querySelector('#expandable');
     t.equal(button.getAttribute('aria-expanded'), 'false', 'should default to aria-expanded=false');
     t.equal(section.getAttribute('aria-hidden'), 'true', 'should default to aria-hidden=true');
     keydown(button, {key: 'ArrowDown'});
@@ -1891,10 +1896,10 @@ var expandable$4 = plan$1()
     t.equal(section.getAttribute('aria-hidden'), 'false', 'should display the section');
   })
   .test('close on click', function * (t) {
-    const element = createExpandableSection();
-    const comp = expandable({element});
-    const button = element.querySelector('#toggler');
-    const section = element.querySelector('#expandable');
+    const element$$1 = createExpandableSection();
+    const comp = expandable({element: element$$1});
+    const button = element$$1.querySelector('#toggler');
+    const section = element$$1.querySelector('#expandable');
     t.equal(button.getAttribute('aria-expanded'), 'false', 'should default to aria-expanded=false');
     t.equal(section.getAttribute('aria-hidden'), 'true', 'should default to aria-hidden=true');
     click(button);
@@ -1905,10 +1910,10 @@ var expandable$4 = plan$1()
     t.equal(section.getAttribute('aria-hidden'), 'true', 'should have hide the section');
   })
   .test('close on arrow up', function * (t) {
-    const element = createExpandableSection();
-    const comp = expandable({element});
-    const button = element.querySelector('#toggler');
-    const section = element.querySelector('#expandable');
+    const element$$1 = createExpandableSection();
+    const comp = expandable({element: element$$1});
+    const button = element$$1.querySelector('#toggler');
+    const section = element$$1.querySelector('#expandable');
     t.equal(button.getAttribute('aria-expanded'), 'false', 'should default to aria-expanded=false');
     t.equal(section.getAttribute('aria-hidden'), 'true', 'should default to aria-hidden=true');
     click(button);
@@ -1920,8 +1925,8 @@ var expandable$4 = plan$1()
   })
   .test('expandable: clean', function * (t) {
     let counter = 0;
-    const element = createExpandableSection();
-    const comp = expandable({element});
+    const element$$1 = createExpandableSection();
+    const comp = expandable({element: element$$1});
     const increment = () => counter++;
     comp.onExpandedChange(increment);
     comp.onclick(increment);
@@ -1930,17 +1935,17 @@ var expandable$4 = plan$1()
     comp.expander().onclick(increment);
     comp.expandable().onkeydown(increment);
     comp.expandable().onclick(increment);
-    const button = element.querySelector('#toggler');
-    const section = element.querySelector('#expandable');
+    const button = element$$1.querySelector('#toggler');
+    const section = element$$1.querySelector('#expandable');
 
     comp.clean();
 
     comp.refresh();
     click(button);
     click(section);
-    keydown(button,{});
-    keydown(section,{});
-    t.equal(counter,0);
+    keydown(button, {});
+    keydown(section, {});
+    t.equal(counter, 0);
   });
 
 function createMenubar () {
@@ -1977,12 +1982,12 @@ function createMenubar () {
 }
 
 
-plan$1()
+var menubar$2 = plan$1()
   .test('menubars: init states', function * (t) {
-    const element = createMenubar();
-    const mb = menubar({element});
-    const [b1, b2, b3] = element.querySelectorAll('button[aria-haspopup=true]');
-    const [m1, m2, m3] = element.querySelectorAll('ul[role=menu]');
+    const element$$1 = createMenubar();
+    const mb = menubar({element: element$$1});
+    const [b1, b2, b3] = element$$1.querySelectorAll('button[aria-haspopup=true]');
+    const [m1, m2, m3] = element$$1.querySelectorAll('ul[role=menu]');
     t.equal(b1.getAttribute('aria-expanded'), 'false');
     t.equal(b1.getAttribute('tabindex'), '0');
     t.equal(b2.getAttribute('aria-expanded'), 'false');
@@ -1994,10 +1999,10 @@ plan$1()
     t.equal(m3.getAttribute('aria-hidden'), 'true');
   })
   .test('menubars: open sub menu on click', function * (t) {
-    const element = createMenubar();
-    const mb = menubar({element});
-    const [b1, b2, b3] = element.querySelectorAll('button[aria-haspopup=true]');
-    const [m1, m2, m3] = element.querySelectorAll('ul[role=menu]');
+    const element$$1 = createMenubar();
+    const mb = menubar({element: element$$1});
+    const [b1, b2, b3] = element$$1.querySelectorAll('button[aria-haspopup=true]');
+    const [m1, m2, m3] = element$$1.querySelectorAll('ul[role=menu]');
     const items = m2.querySelectorAll('li[role=menuitem]');
     click(b2);
     t.equal(b1.getAttribute('aria-expanded'), 'false');
@@ -2008,10 +2013,10 @@ plan$1()
     t.equal(m3.getAttribute('aria-hidden'), 'true');
   })
   .test('menubars: open sub menu with keydown', function * (t) {
-    const element = createMenubar();
-    const mb = menubar({element});
-    const [b1, b2, b3] = element.querySelectorAll('button[aria-haspopup=true]');
-    const [m1, m2, m3] = element.querySelectorAll('ul[role=menu]');
+    const element$$1 = createMenubar();
+    const mb = menubar({element: element$$1});
+    const [b1, b2, b3] = element$$1.querySelectorAll('button[aria-haspopup=true]');
+    const [m1, m2, m3] = element$$1.querySelectorAll('ul[role=menu]');
     keydown(b2, {key: 'ArrowDown'});
     t.equal(b1.getAttribute('aria-expanded'), 'false');
     t.equal(b2.getAttribute('aria-expanded'), 'true');
@@ -2021,10 +2026,10 @@ plan$1()
     t.equal(m3.getAttribute('aria-hidden'), 'true');
   })
   .test('menubars: open sub menu with Enter', function * (t) {
-    const element = createMenubar();
-    const mb = menubar({element});
-    const [b1, b2, b3] = element.querySelectorAll('button[aria-haspopup=true]');
-    const [m1, m2, m3] = element.querySelectorAll('ul[role=menu]');
+    const element$$1 = createMenubar();
+    const mb = menubar({element: element$$1});
+    const [b1, b2, b3] = element$$1.querySelectorAll('button[aria-haspopup=true]');
+    const [m1, m2, m3] = element$$1.querySelectorAll('ul[role=menu]');
     keydown(b2, {key: 'Enter'});
     t.equal(b1.getAttribute('aria-expanded'), 'false');
     t.equal(b2.getAttribute('aria-expanded'), 'true');
@@ -2034,10 +2039,10 @@ plan$1()
     t.equal(m3.getAttribute('aria-hidden'), 'true');
   })
   .test('menubars: open sub menu with Space', function * (t) {
-    const element = createMenubar();
-    const mb = menubar({element});
-    const [b1, b2, b3] = element.querySelectorAll('button[aria-haspopup=true]');
-    const [m1, m2, m3] = element.querySelectorAll('ul[role=menu]');
+    const element$$1 = createMenubar();
+    const mb = menubar({element: element$$1});
+    const [b1, b2, b3] = element$$1.querySelectorAll('button[aria-haspopup=true]');
+    const [m1, m2, m3] = element$$1.querySelectorAll('ul[role=menu]');
     keydown(b2, {code: 'Space'});
     t.equal(b1.getAttribute('aria-expanded'), 'false');
     t.equal(b2.getAttribute('aria-expanded'), 'true');
@@ -2047,10 +2052,10 @@ plan$1()
     t.equal(m3.getAttribute('aria-hidden'), 'true');
   })
   .test('menubars: navigate to next menu with right arrow', function * (t) {
-    const element = createMenubar();
-    const mb = menubar({element});
-    const [b1, b2, b3] = element.querySelectorAll('button[aria-haspopup=true]');
-    const [m1, m2, m3] = element.querySelectorAll('ul[role=menu]');
+    const element$$1 = createMenubar();
+    const mb = menubar({element: element$$1});
+    const [b1, b2, b3] = element$$1.querySelectorAll('button[aria-haspopup=true]');
+    const [m1, m2, m3] = element$$1.querySelectorAll('ul[role=menu]');
     keydown(b1, {key: 'ArrowRight'});
     t.equal(b1.getAttribute('aria-expanded'), 'false');
     t.equal(b1.getAttribute('tabindex'), '-1');
@@ -2074,10 +2079,10 @@ plan$1()
     t.equal(m3.getAttribute('aria-hidden'), 'true');
   })
   .test('menubars: select previous menu item with left arrow', function * (t) {
-    const element = createMenubar();
-    const mb = menubar({element});
-    const [b1, b2, b3] = element.querySelectorAll('button[aria-haspopup=true]');
-    const [m1, m2, m3] = element.querySelectorAll('ul[role=menu]');
+    const element$$1 = createMenubar();
+    const mb = menubar({element: element$$1});
+    const [b1, b2, b3] = element$$1.querySelectorAll('button[aria-haspopup=true]');
+    const [m1, m2, m3] = element$$1.querySelectorAll('ul[role=menu]');
     keydown(b1, {key: 'ArrowLeft'});
     t.equal(b1.getAttribute('aria-expanded'), 'false');
     t.equal(b1.getAttribute('tabindex'), '-1');
@@ -2101,10 +2106,10 @@ plan$1()
     t.equal(m3.getAttribute('aria-hidden'), 'true');
   })
   .test('submenu: select previous menu item using up arrow', function * (t) {
-    const element = createMenubar();
-    const mb = menubar({element});
-    const [b1, b2, b3] = element.querySelectorAll('button[aria-haspopup=true]');
-    const [m1, m2, m3] = element.querySelectorAll('ul[role=menu]');
+    const element$$1 = createMenubar();
+    const mb = menubar({element: element$$1});
+    const [b1, b2, b3] = element$$1.querySelectorAll('button[aria-haspopup=true]');
+    const [m1, m2, m3] = element$$1.querySelectorAll('ul[role=menu]');
     t.equal(b1.getAttribute('aria-expanded'), 'false');
     t.equal(b1.getAttribute('tabindex'), '0');
     t.equal(b2.getAttribute('aria-expanded'), 'false');
@@ -2144,10 +2149,10 @@ plan$1()
     t.equal(si4.getAttribute('tabindex'), '-1');
   })
   .test('submenu: select next menu item using down arrow', function * (t) {
-    const element = createMenubar();
-    const mb = menubar({element});
-    const [b1, b2, b3] = element.querySelectorAll('button[aria-haspopup=true]');
-    const [m1, m2, m3] = element.querySelectorAll('ul[role=menu]');
+    const element$$1 = createMenubar();
+    const mb = menubar({element: element$$1});
+    const [b1, b2, b3] = element$$1.querySelectorAll('button[aria-haspopup=true]');
+    const [m1, m2, m3] = element$$1.querySelectorAll('ul[role=menu]');
     //open menu
     keydown(b1, {key: 'ArrowDown'});
     t.equal(b1.getAttribute('aria-expanded'), 'true');
@@ -2178,14 +2183,13 @@ plan$1()
     t.equal(si2.getAttribute('tabindex'), '-1');
     t.equal(si3.getAttribute('tabindex'), '-1');
     t.equal(si4.getAttribute('tabindex'), '-1');
-  })
-;
+  });
 
 plan$1()
   .test(tablist$1)
   .test(dropdown$2)
   .test(expandable$4)
-  // .test(menubar)
+  .test(menubar$2)
   .test(accordion$$1)
   .run();
 

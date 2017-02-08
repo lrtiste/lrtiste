@@ -530,12 +530,14 @@ const dropdown = dropdown$1;
 const tablist = tablistFactory;
 const menubar = menubar$1;
 const accordion = accordion$1;
+const element = elementFactory;
 
 exports.expandable = expandable;
 exports.dropdown = dropdown;
 exports.tablist = tablist;
 exports.menubar = menubar;
 exports.accordion = accordion;
+exports.element = element;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

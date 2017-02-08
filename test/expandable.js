@@ -90,7 +90,7 @@ export default zora()
     comp.refresh();
     click(button);
     click(section);
-    keydown(button,{});
-    keydown(section,{});
-    t.equal(counter,0);
+    keydown(button, {});
+    keydown(section, {});
+    t.equal(counter, 0);
   });
