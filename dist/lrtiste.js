@@ -195,7 +195,12 @@ function expandable$1 ({expandKeys = ['ArrowDown'], collapseKey = ['ArrowUp']} =
       }
     });
 
-    expanderComp.onclick(expandableComp.toggle);
+    expanderComp.onclick((ev) => {
+      const {clientX, clientY} = ev;
+      if (clientX !== 0 && clientY !== 0) { // to differentiate a click generated from a keypress or an actual click
+        expandableComp.toggle();
+      }
+    });
 
     expandableComp.refresh();
 
@@ -330,7 +335,9 @@ function createMenuItem ({previousKey, nextKey}) {
   return function menuItem ({menu, element, index}) {
     const comp = elementFactory({element});
     comp.attr('role', 'menuitem');
-    comp.onclick(() => menu.activateItem(index));
+    comp.onclick(() => {
+      menu.activateItem(index);
+    });
     comp.onkeydown((ev) => {
       const {key} =ev;
       if (key === nextKey) {

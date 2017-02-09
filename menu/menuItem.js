@@ -4,7 +4,9 @@ function createMenuItem ({previousKey, nextKey}) {
   return function menuItem ({menu, element, index}) {
     const comp = elementComp({element});
     comp.attr('role', 'menuitem');
-    comp.onclick(() => menu.activateItem(index));
+    comp.onclick(() => {
+      menu.activateItem(index);
+    });
     comp.onkeydown((ev) => {
       const {key} =ev;
       if (key === nextKey) {

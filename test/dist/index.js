@@ -761,7 +761,14 @@ function expandable$1 ({expandKeys = ['ArrowDown'], collapseKey = ['ArrowUp']} =
       }
     });
 
-    expanderComp.onclick(expandableComp.toggle);
+    expanderComp.onclick((ev) => {
+      const {clientX, clientY} = ev;
+      // to differentiate a click generated from a keypress or an actual click
+      // preventDefault does not seem enough on FF
+      if (clientX !== 0 && clientY !== 0) {
+        expandableComp.toggle();
+      }
+    });
 
     expandableComp.refresh();
 
@@ -896,7 +903,9 @@ function createMenuItem ({previousKey, nextKey}) {
   return function menuItem ({menu, element, index}) {
     const comp = elementFactory({element});
     comp.attr('role', 'menuitem');
-    comp.onclick(() => menu.activateItem(index));
+    comp.onclick(() => {
+      menu.activateItem(index);
+    });
     comp.onkeydown((ev) => {
       const {key} =ev;
       if (key === nextKey) {
@@ -1097,7 +1106,7 @@ const tablist = tablistFactory;
 const menubar = menubar$1;
 const accordion$1 = accordion$2;
 
-function click (el, opts = {bubbles: true, cancelable: true}) {
+function click (el, opts = {bubbles: true, cancelable: true, clientX:23,clientY:234}) {
   const event = new MouseEvent('click', opts);
   el.dispatchEvent(event);
 }

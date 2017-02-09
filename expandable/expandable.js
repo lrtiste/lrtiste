@@ -67,7 +67,14 @@ export default function expandable ({expandKeys = ['ArrowDown'], collapseKey = [
       }
     });
 
-    expanderComp.onclick(expandableComp.toggle);
+    expanderComp.onclick((ev) => {
+      const {clientX, clientY} = ev;
+      // to differentiate a click generated from a keypress or an actual click
+      // preventDefault does not seem enough on FF
+      if (clientX !== 0 && clientY !== 0) {
+        expandableComp.toggle()
+      }
+    });
 
     expandableComp.refresh();
 

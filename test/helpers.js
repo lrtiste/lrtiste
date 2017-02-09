@@ -1,4 +1,4 @@
-export function click (el, opts = {bubbles: true, cancelable: true}) {
+export function click (el, opts = {bubbles: true, cancelable: true, clientX: 23, clientY: 234}) {
   const event = new MouseEvent('click', opts);
   el.dispatchEvent(event);
 }
