@@ -4,6 +4,8 @@
 
 accessible widget library, behaviour driven using semantic definition (extended with ARIA)
 
+[doc](https://lrtiste.github.io/www/)
+
 ## install
 
 ``yarn add lrtiste``
