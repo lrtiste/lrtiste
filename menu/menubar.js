@@ -34,7 +34,7 @@ function createSubMenuComponent (arg) {
 export default function menubar ({element}) {
   const menubarComp = horizontalMenu({element});
   menubarComp.attr('role', 'menubar');
-  const subMenus = [...element.children].map((element, index) => createSubMenuComponent({
+  const subMenus = Array.from(element.children).map((element, index) => createSubMenuComponent({
     index,
     element,
     menu: menubarComp

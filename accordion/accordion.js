@@ -2,8 +2,9 @@ import elementFactory from '../common/element';
 import itemList from '../common/singleActiveItemList';
 import {emitter as createEmitter} from 'smart-table-events';
 import expandableFactory from '../expandable/expandable';
+import {isArrowDown, isArrowUp} from '../common/util';
 
-const expandable = expandableFactory({expandKeys: [], collapseKey: []});
+const expandable = expandableFactory({expandKey: '', collapseKey: ''});
 
 export default function accordion ({element}) {
   const emitter = createEmitter();
@@ -17,17 +18,16 @@ export default function accordion ({element}) {
     // let expanded
     const expander = exp.expander();
     expander.onkeydown(ev => {
-      const {key} =ev;
-      if (key === 'ArrowDown') {
+      if (isArrowDown(ev)) {
         itemListComp.activateNextItem();
         ev.preventDefault();
-      } else if (key === 'ArrowUp') {
+      } else if (isArrowUp(ev)) {
         itemListComp.activatePreviousItem();
         ev.preventDefault();
       }
     });
 
-    expander.onfocus(ev => {
+    expander.onfocus(_ => {
       itemListComp.activateItem(index);
     });
 

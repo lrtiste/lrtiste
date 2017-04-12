@@ -1,14 +1,15 @@
 import itemList  from '../common/singleActiveItemList';
 import elementComp from '../common/element';
 import {emitter as createEmitter} from 'smart-table-events';
+import {isArrowLeft, isArrowRight} from '../common/util';
 
 function tabFactory ({element, index, tablist}) {
   const comp = elementComp({element});
   comp.onclick(() => tablist.activateItem(index));
-  comp.onkeydown(({key}) => {
-    if (key === 'ArrowLeft') {
+  comp.onkeydown(ev => {
+    if (isArrowLeft(ev)) {
       tablist.activatePreviousItem();
-    } else if (key === 'ArrowRight') {
+    } else if (isArrowRight(ev)) {
       tablist.activateNextItem();
     }
   });
@@ -66,7 +67,7 @@ export default function ({element}) {
 
   itemListComp.refresh();
 
-  return Object.assign({},tabListComp,itemListComp, {
+  return Object.assign({}, tabListComp, itemListComp, {
     tabPanel(index){
       return tabs[index].tabPanel;
     },
@@ -76,7 +77,7 @@ export default function ({element}) {
     clean(){
       itemListComp.off();
       tabListComp.clean();
-      tabs.forEach(({tab,tabPanel})=>{
+      tabs.forEach(({tab, tabPanel}) => {
         tab.clean();
         tabPanel.clean();
       })

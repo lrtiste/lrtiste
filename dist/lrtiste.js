@@ -96,10 +96,10 @@ var elementFactory = function ({element, emitter: emitter$$1 = createEmitter$1()
 
   const api = {
     element(){
-      return element
+      return element;
     },
     attr(attributeName, value){
-      if (value === undefined) {
+      if (value === void 0) {
         return element.getAttribute(attributeName);
       } else {
         element.setAttribute(attributeName, value);
@@ -128,6 +128,33 @@ var elementFactory = function ({element, emitter: emitter$$1 = createEmitter$1()
 
   return Object.assign(listener, api);
 };
+
+const key = ev => ({key: ev.key, keyCode: ev.keyCode, code: ev.code});
+const checkKey = (keyName, keyCode) => ev => {
+  const k = key(ev);
+  return k.key ? k.key === keyName : k.keyCode === keyCode;
+};
+
+const isArrowLeft = checkKey('ArrowLeft', 37);
+const isArrowUp = checkKey('ArrowUp', 38);
+const isArrowRight = checkKey('ArrowRight', 39);
+const isArrowDown = checkKey('ArrowDown', 40);
+const isEscape = checkKey('Escape', 27);
+const isEnter = checkKey('Enter', 13);
+const isSpace = ev => {
+  const k = key(ev);
+  return k.code ? k.code === 'Space' : k.keyCode === 32;
+};
+
+var checkKeys = Object.freeze({
+	isArrowLeft: isArrowLeft,
+	isArrowUp: isArrowUp,
+	isArrowRight: isArrowRight,
+	isArrowDown: isArrowDown,
+	isEscape: isEscape,
+	isEnter: isEnter,
+	isSpace: isSpace
+});
 
 const {proxyListener: proxyListener$$1, emitter:createEmitter} = events;
 
@@ -160,7 +187,7 @@ function expandableFactory ({emitter: emitter$$1 = createEmitter(), expanded}) {
   });
 }
 
-function expandable$1 ({expandKeys = ['ArrowDown'], collapseKey = ['ArrowUp']} = {}) {
+function expandable$1 ({expandKey = 'isArrowDown', collapseKey = 'isArrowUp'} = {}) {
   return function ({element}) {
     const expander = element.querySelector('[aria-expanded]');
     const expanded = expander.getAttribute('aria-expanded') !== 'false';
@@ -182,14 +209,13 @@ function expandable$1 ({expandKeys = ['ArrowDown'], collapseKey = ['ArrowUp']} =
     });
 
     expanderComp.onkeydown((ev) => {
-      const {key, code} =ev;
-      if (key === 'Enter' || code === 'Space') {
+      if (isEnter(ev) || isSpace(ev)) {
         expandableComp.toggle();
         ev.preventDefault();
-      } else if (collapseKey.indexOf(key) !== -1) {
+      } else if (collapseKey && checkKeys[collapseKey](ev)) {
         expandableComp.collapse();
         ev.preventDefault();
-      } else if (expandKeys.indexOf(key) !== -1) {
+      } else if (expandKey && checkKeys[expandKey](ev)) {
         expandableComp.expand();
         ev.preventDefault();
       }
@@ -197,7 +223,9 @@ function expandable$1 ({expandKeys = ['ArrowDown'], collapseKey = ['ArrowUp']} =
 
     expanderComp.onclick((ev) => {
       const {clientX, clientY} = ev;
-      if (clientX !== 0 && clientY !== 0) { // to differentiate a click generated from a keypress or an actual click
+      // to differentiate a click generated from a keypress or an actual click
+      // preventDefault does not seem enough on FF
+      if (clientX !== 0 && clientY !== 0) {
         expandableComp.toggle();
       }
     });
@@ -252,10 +280,10 @@ function listComponent ({emitter: emitter$$1 = createEmitter$2(), activeItem = 0
 function tabFactory ({element, index, tablist}) {
   const comp = elementFactory({element});
   comp.onclick(() => tablist.activateItem(index));
-  comp.onkeydown(({key}) => {
-    if (key === 'ArrowLeft') {
+  comp.onkeydown(ev => {
+    if (isArrowLeft(ev)) {
       tablist.activatePreviousItem();
-    } else if (key === 'ArrowRight') {
+    } else if (isArrowRight(ev)) {
       tablist.activateNextItem();
     }
   });
@@ -313,7 +341,7 @@ var tablistFactory = function ({element}) {
 
   itemListComp.refresh();
 
-  return Object.assign({},tabListComp,itemListComp, {
+  return Object.assign({}, tabListComp, itemListComp, {
     tabPanel(index){
       return tabs[index].tabPanel;
     },
@@ -323,7 +351,7 @@ var tablistFactory = function ({element}) {
     clean(){
       itemListComp.off();
       tabListComp.clean();
-      tabs.forEach(({tab,tabPanel})=>{
+      tabs.forEach(({tab, tabPanel}) => {
         tab.clean();
         tabPanel.clean();
       });
@@ -339,11 +367,10 @@ function createMenuItem ({previousKey, nextKey}) {
       menu.activateItem(index);
     });
     comp.onkeydown((ev) => {
-      const {key} =ev;
-      if (key === nextKey) {
+      if (checkKeys[nextKey](ev)) {
         menu.activateNextItem();
         ev.preventDefault();
-      } else if (key === previousKey) {
+      } else if (checkKeys[previousKey](ev)) {
         menu.activatePreviousItem();
         ev.preventDefault();
       }
@@ -370,28 +397,28 @@ function createMenuItem ({previousKey, nextKey}) {
 
 }
 
-const verticalMenuItem = createMenuItem({previousKey: 'ArrowUp', nextKey: 'ArrowDown'});
-const horizontalMenuItem = createMenuItem({previousKey: 'ArrowLeft', nextKey: 'ArrowRight'});
+const verticalMenuItem = createMenuItem({previousKey: 'isArrowUp', nextKey: 'isArrowDown'});
+const horizontalMenuItem = createMenuItem({previousKey: 'isArrowLeft', nextKey: 'isArrowRight'});
 
 var menuFactory = function (menuItemFactory = verticalMenuItem) {
   return function menu ({element}) {
     const emitter$$1 = emitter();
-    const menuItems = [...element.children].filter(child => child.getAttribute('role') === 'menuitem');
+    const menuItems = Array.from(element.children).filter(child => child.getAttribute('role') === 'menuitem');
     const listComp = listComponent({emitter: emitter$$1, itemCount: menuItems.length});
     const menuComp = elementFactory({element, emitter: emitter$$1});
 
-    menuComp.attr('role','menu');
+    menuComp.attr('role', 'menu');
 
     const menuItemComps = menuItems.map((element, index) => menuItemFactory({menu: listComp, element, index}));
 
-    return Object.assign({},listComp,menuComp, {
+    return Object.assign({}, listComp, menuComp, {
       item(index){
         return menuItemComps[index];
       },
       clean(){
         listComp.off();
         menuComp.clean();
-        menuItemComps.forEach(comp=>{
+        menuItemComps.forEach(comp => {
           comp.clean();
         });
       }
@@ -414,8 +441,7 @@ function dropdown$1 ({element}) {
   });
 
   menuComp.onkeydown(ev => {
-    const {key}=ev;
-    if (key === 'Escape') {
+    if (isEscape(ev)) {
       expandableComp.collapse();
       expandableComp.expander().element().focus();
     }
@@ -466,7 +492,7 @@ function createSubMenuComponent (arg) {
 function menubar$1 ({element}) {
   const menubarComp = horizontalMenu({element});
   menubarComp.attr('role', 'menubar');
-  const subMenus = [...element.children].map((element, index) => createSubMenuComponent({
+  const subMenus = Array.from(element.children).map((element, index) => createSubMenuComponent({
     index,
     element,
     menu: menubarComp
@@ -485,7 +511,7 @@ function menubar$1 ({element}) {
   });
 }
 
-const expandable$3 = expandable$1({expandKeys: [], collapseKey: []});
+const expandable$3 = expandable$1({expandKey: '', collapseKey: ''});
 
 function accordion$1 ({element}) {
   const emitter$$1 = emitter();
@@ -499,17 +525,16 @@ function accordion$1 ({element}) {
     // let expanded
     const expander = exp.expander();
     expander.onkeydown(ev => {
-      const {key} =ev;
-      if (key === 'ArrowDown') {
+      if (isArrowDown(ev)) {
         itemListComp.activateNextItem();
         ev.preventDefault();
-      } else if (key === 'ArrowUp') {
+      } else if (isArrowUp(ev)) {
         itemListComp.activatePreviousItem();
         ev.preventDefault();
       }
     });
 
-    expander.onfocus(ev => {
+    expander.onfocus(_ => {
       itemListComp.activateItem(index);
     });
 

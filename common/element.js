@@ -26,10 +26,10 @@ export default function ({element, emitter = createEmitter()}) {
 
   const api = {
     element(){
-      return element
+      return element;
     },
     attr(attributeName, value){
-      if (value === undefined) {
+      if (value === void 0) {
         return element.getAttribute(attributeName);
       } else {
         element.setAttribute(attributeName, value);

@@ -1,4 +1,5 @@
 import elementComp from '../common/element';
+import * as checkKeys from '../common/util';
 
 function createMenuItem ({previousKey, nextKey}) {
   return function menuItem ({menu, element, index}) {
@@ -8,11 +9,10 @@ function createMenuItem ({previousKey, nextKey}) {
       menu.activateItem(index);
     });
     comp.onkeydown((ev) => {
-      const {key} =ev;
-      if (key === nextKey) {
+      if (checkKeys[nextKey](ev)) {
         menu.activateNextItem();
         ev.preventDefault();
-      } else if (key === previousKey) {
+      } else if (checkKeys[previousKey](ev)) {
         menu.activatePreviousItem();
         ev.preventDefault();
       }
@@ -39,5 +39,5 @@ function createMenuItem ({previousKey, nextKey}) {
 
 }
 
-export const verticalMenuItem = createMenuItem({previousKey: 'ArrowUp', nextKey: 'ArrowDown'});
-export const horizontalMenuItem = createMenuItem({previousKey: 'ArrowLeft', nextKey: 'ArrowRight'});
+export const verticalMenuItem = createMenuItem({previousKey: 'isArrowUp', nextKey: 'isArrowDown'});
+export const horizontalMenuItem = createMenuItem({previousKey: 'isArrowLeft', nextKey: 'isArrowRight'});

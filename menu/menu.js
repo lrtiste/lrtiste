@@ -6,22 +6,22 @@ import {emitter as createEmitter} from 'smart-table-events';
 export default function (menuItemFactory = verticalMenuItem) {
   return function menu ({element}) {
     const emitter = createEmitter();
-    const menuItems = [...element.children].filter(child => child.getAttribute('role') === 'menuitem');
+    const menuItems = Array.from(element.children).filter(child => child.getAttribute('role') === 'menuitem');
     const listComp = itemList({emitter, itemCount: menuItems.length});
     const menuComp = elementFactory({element, emitter});
 
-    menuComp.attr('role','menu');
+    menuComp.attr('role', 'menu');
 
     const menuItemComps = menuItems.map((element, index) => menuItemFactory({menu: listComp, element, index}));
 
-    return Object.assign({},listComp,menuComp, {
+    return Object.assign({}, listComp, menuComp, {
       item(index){
         return menuItemComps[index];
       },
       clean(){
         listComp.off();
         menuComp.clean();
-        menuItemComps.forEach(comp=>{
+        menuItemComps.forEach(comp => {
           comp.clean();
         });
       }

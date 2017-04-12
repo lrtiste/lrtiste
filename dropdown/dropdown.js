@@ -1,5 +1,6 @@
 import menu from '../menu/menu';
 import expandableFactory from '../expandable/expandable';
+import {isEscape} from '../common/util';
 
 const verticalMenu = menu();
 const expandable = expandableFactory();
@@ -16,8 +17,7 @@ export default function dropdown ({element}) {
   });
 
   menuComp.onkeydown(ev => {
-    const {key}=ev;
-    if (key === 'Escape') {
+    if (isEscape(ev)) {
       expandableComp.collapse();
       expandableComp.expander().element().focus();
     }

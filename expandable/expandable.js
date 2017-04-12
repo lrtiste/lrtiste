@@ -1,5 +1,6 @@
 import * as events from 'smart-table-events';
 import elementComponent from '../common/element';
+import * as checkKeys from '../common/util';
 
 const {proxyListener, emitter:createEmitter} = events;
 
@@ -32,7 +33,7 @@ function expandableFactory ({emitter = createEmitter(), expanded}) {
   });
 }
 
-export default function expandable ({expandKeys = ['ArrowDown'], collapseKey = ['ArrowUp']} = {}) {
+export default function expandable ({expandKey = 'isArrowDown', collapseKey = 'isArrowUp'} = {}) {
   return function ({element}) {
     const expander = element.querySelector('[aria-expanded]');
     const expanded = expander.getAttribute('aria-expanded') !== 'false';
@@ -54,14 +55,13 @@ export default function expandable ({expandKeys = ['ArrowDown'], collapseKey = [
     });
 
     expanderComp.onkeydown((ev) => {
-      const {key, code} =ev;
-      if (key === 'Enter' || code === 'Space') {
+      if (checkKeys.isEnter(ev) || checkKeys.isSpace(ev)) {
         expandableComp.toggle();
         ev.preventDefault();
-      } else if (collapseKey.indexOf(key) !== -1) {
+      } else if (collapseKey && checkKeys[collapseKey](ev)) {
         expandableComp.collapse();
         ev.preventDefault();
-      } else if (expandKeys.indexOf(key) !== -1) {
+      } else if (expandKey && checkKeys[expandKey](ev)) {
         expandableComp.expand();
         ev.preventDefault();
       }
