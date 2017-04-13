@@ -12,18 +12,7 @@ const buildTest = function () {
 
   return rollup.rollup({
     entry: path.join(cwd, '/test/index.js'),
-    plugins: [node({}), commonjs()
-      // ,
-      // babel({
-      //   presets: [
-      //     'es2015-rollup'
-      //   ],
-      //   plugins: [["transform-runtime", {
-      //     "helpers": false, // defaults to true
-      //     "polyfill": false, // defaults to true
-      //   }]]
-      // })
-    ]
+    plugins: [node({}), commonjs()]
   }).then(function (bundle) {
     bundle.write({
       format: 'iife',

@@ -23,13 +23,13 @@
     "dev": "node ./scripts/dev.js"
   },
   "devDependencies": {
-    "rollup": "^0.41.4",
-    "rollup-plugin-commonjs": "^5.0.5",
-    "rollup-plugin-node-resolve": "^2.0.0",
-    "tape-run": "^2.1.4",
-    "zora": "^0.2.1"
+    "rollup": "^0.41.6",
+    "rollup-plugin-commonjs": "^8.0.2",
+    "rollup-plugin-node-resolve": "^3.0.0",
+    "tape-run": "^3.0.0",
+    "zora": "^0.3.0"
   },
   "dependencies": {
-    "smart-table-events": "^1.0.0"
+    "smart-table-events": "^1.0.1"
   }
 }

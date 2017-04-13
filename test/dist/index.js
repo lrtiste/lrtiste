@@ -375,37 +375,122 @@ function objEquiv(a, b, opts) {
 });
 
 const assertions = {
-  ok(val, message = 'should be truthy'){
-    const assertionResult = {pass: Boolean(val), expected: 'truthy', actual: val, operator: 'ok', message};
+  ok(val, message = 'should be truthy') {
+    const assertionResult = {
+      pass: Boolean(val),
+      expected: 'truthy',
+      actual: val,
+      operator: 'ok',
+      message
+    };
     this.test.addAssertion(assertionResult);
     return assertionResult;
   },
-  deepEqual(actual, expected, message = 'should be equivalent'){
-    const assertionResult = {pass: index$1(actual, expected), actual, expected, message, operator: 'deepEqual'};
+  deepEqual(actual, expected, message = 'should be equivalent') {
+    const assertionResult = {
+      pass: index$1(actual, expected),
+      actual,
+      expected,
+      message,
+      operator: 'deepEqual'
+    };
     this.test.addAssertion(assertionResult);
     return assertionResult;
   },
-  equal(actual, expected, message = 'should be equal'){
-    const assertionResult = {pass: actual === expected, actual, expected, message, operator: 'equal'};
+  equal(actual, expected, message = 'should be equal') {
+    const assertionResult = {
+      pass: actual === expected,
+      actual,
+      expected,
+      message,
+      operator: 'equal'
+    };
     this.test.addAssertion(assertionResult);
     return assertionResult;
   },
-  notOk(val, message = 'should not be truthy'){
-    const assertionResult = {pass: !Boolean(val), expected: 'falsy', actual: val, operator: 'notOk', message};
+  notOk(val, message = 'should not be truthy') {
+    const assertionResult = {
+      pass: !Boolean(val),
+      expected: 'falsy',
+      actual: val,
+      operator: 'notOk',
+      message
+    };
     this.test.addAssertion(assertionResult);
     return assertionResult;
   },
-  notDeepEqual(actual, expected, message = 'should not be equivalent'){
-    const assertionResult = {pass: !index$1(actual, expected), actual, expected, message, operator: 'notDeepEqual'};
+  notDeepEqual(actual, expected, message = 'should not be equivalent') {
+    const assertionResult = {
+      pass: !index$1(actual, expected),
+      actual,
+      expected,
+      message,
+      operator: 'notDeepEqual'
+    };
     this.test.addAssertion(assertionResult);
     return assertionResult;
   },
-  notEqual(actual, expected, message = 'should not be equal'){
-    const assertionResult = {pass: actual !== expected, actual, expected, message, operator: 'notEqual'};
+  notEqual(actual, expected, message = 'should not be equal') {
+    const assertionResult = {
+      pass: actual !== expected,
+      actual,
+      expected,
+      message,
+      operator: 'notEqual'
+    };
     this.test.addAssertion(assertionResult);
     return assertionResult;
   },
-  fail(reason = 'fail called'){
+  throws(func, expected, message) {
+    let caught, pass, actual;
+    if (typeof expected === 'string') {
+      [expected, message] = [message, expected];
+    }
+    try {
+      func();
+    } catch (error) {
+      caught = {error};
+    }
+    pass = caught !== undefined;
+    actual = caught && caught.error;
+    if (expected instanceof RegExp) {
+      pass = expected.test(actual) || expected.test(actual && actual.message);
+      expected = String(expected);
+    } else if (typeof expected === 'function' && caught) {
+      pass = actual instanceof expected;
+      actual = actual.constructor;
+    }
+    const assertionResult = {
+      pass,
+      expected,
+      actual,
+      operator: 'throws',
+      message: message || 'should throw'
+    };
+    this.test.addAssertion(assertionResult);
+    return assertionResult;
+  },
+  doesNotThrow(func, expected, message) {
+    let caught;
+    if (typeof expected === 'string') {
+      [expected, message] = [message, expected];
+    }
+    try {
+      func();
+    } catch (error) {
+      caught = {error};
+    }
+    const assertionResult = {
+      pass: caught === undefined,
+      expected: 'no thrown error',
+      actual: caught && caught.error,
+      operator: 'doesNotThrow',
+      message: message || 'should not throw'
+    };
+    this.test.addAssertion(assertionResult);
+    return assertionResult;
+  },
+  fail(reason = 'fail called') {
     const assertionResult = {
       pass: false,
       actual: 'fail called',
@@ -573,29 +658,29 @@ function plan$1 () {
 function emitter () {
 
   const listenersLists = {};
-
-  return {
+  const instance = {
     on(event, ...listeners){
       listenersLists[event] = (listenersLists[event] || []).concat(listeners);
-      return this;
+      return instance;
     },
     dispatch(event, ...args){
       const listeners = listenersLists[event] || [];
       for (let listener of listeners) {
         listener(...args);
       }
-      return this;
+      return instance;
     },
     off(event, ...listeners){
       if (!event) {
-        Object.keys(listenersLists).forEach(ev => this.off(ev));
+        Object.keys(listenersLists).forEach(ev => instance.off(ev));
       } else {
         const list = listenersLists[event] || [];
         listenersLists[event] = listeners.length ? list.filter(listener => !listeners.includes(listener)) : [];
       }
-      return this;
+      return instance;
     }
-  }
+  };
+  return instance;
 }
 
 function proxyListener$1 (eventMap) {
@@ -610,21 +695,19 @@ function proxyListener$1 (eventMap) {
       proxy[method] = function (...listeners) {
         eventListeners[ev] = eventListeners[ev].concat(listeners);
         emitter.on(ev, ...listeners);
-        return this;
+        return proxy;
       };
     }
 
     return Object.assign(proxy, {
       off(ev){
         if (!ev) {
-          Object.keys(eventListeners).forEach(eventName => this.off(eventName));
+          Object.keys(eventListeners).forEach(eventName => proxy.off(eventName));
         }
-
         if (eventListeners[ev]) {
           emitter.off(ev, ...eventListeners[ev]);
         }
-
-        return this;
+        return proxy;
       }
     });
   }
