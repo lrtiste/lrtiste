@@ -3,8 +3,8 @@ import {verticalMenuItem} from './menuItem'
 import elementFactory from '../common/element';
 import {emitter as createEmitter} from 'smart-table-events';
 
-export default function (menuItemFactory = verticalMenuItem) {
-  return function menu ({element}) {
+export default (menuItemFactory = verticalMenuItem) =>
+  ({element}) => {
     const emitter = createEmitter();
     const menuItems = Array.from(element.children).filter(child => child.getAttribute('role') === 'menuitem');
     const listComp = itemList({emitter, itemCount: menuItems.length});
@@ -27,5 +27,4 @@ export default function (menuItemFactory = verticalMenuItem) {
       }
     });
   };
-}
 

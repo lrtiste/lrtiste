@@ -5,7 +5,7 @@ const {proxyListener, emitter:createEmitter} = events;
 const ACTIVE_ITEM_CHANGED = 'ACTIVE_ITEM_CHANGED';
 const proxy = proxyListener({[ACTIVE_ITEM_CHANGED]: 'onActiveItemChange'});
 
-export default function listComponent ({emitter = createEmitter(), activeItem = 0, itemCount}) {
+export default ({emitter = createEmitter(), activeItem = 0, itemCount}) => {
   const state = {activeItem, itemCount};
   const event = proxy({emitter});
   const dispatch = () => emitter.dispatch(ACTIVE_ITEM_CHANGED, Object.assign({}, state));
@@ -26,4 +26,4 @@ export default function listComponent ({emitter = createEmitter(), activeItem = 
   };
 
   return Object.assign(event, api);
-}
+};

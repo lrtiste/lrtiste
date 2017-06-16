@@ -79,7 +79,7 @@ const domListener = proxyListener$2({
   [DOM_FOCUS]: 'onfocus'
 });
 
-var elementFactory = function ({element, emitter: emitter$$1 = createEmitter$1()}) {
+var elementFactory = ({element, emitter: emitter$$1 = createEmitter$1()}) => {
 
   if (!element) {
     throw new Error('a dom element must be provided');
@@ -123,7 +123,6 @@ var elementFactory = function ({element, emitter: emitter$$1 = createEmitter$1()
   element.addEventListener('keydown', keydownListener);
   element.addEventListener('focus', focusListener);
 
-
   return Object.assign(listener, api);
 };
 
@@ -154,12 +153,12 @@ var checkKeys = Object.freeze({
 	isSpace: isSpace
 });
 
-const {proxyListener: proxyListener$$1, emitter:createEmitter} = events;
+const {proxyListener, emitter:createEmitter} = events;
 
 const EXPANDED_CHANGED = 'EXPANDED_CHANGED';
-const proxy = proxyListener$$1({[EXPANDED_CHANGED]: 'onExpandedChange'});
+const proxy = proxyListener({[EXPANDED_CHANGED]: 'onExpandedChange'});
 
-function expandableFactory ({emitter: emitter$$1 = createEmitter(), expanded}) {
+const expandableFactory = ({emitter: emitter$$1 = createEmitter(), expanded}) => {
   const state = {expanded};
   const dispatch = () => emitter$$1.dispatch(EXPANDED_CHANGED, Object.assign({}, state));
   const setAndDispatch = (val) => () => {
@@ -183,10 +182,10 @@ function expandableFactory ({emitter: emitter$$1 = createEmitter(), expanded}) {
       target.off();
     }
   });
-}
+};
 
-function expandable$1 ({expandKey = 'isArrowDown', collapseKey = 'isArrowUp'} = {}) {
-  return function ({element}) {
+var expandableFactory$1 = ({expandKey = 'isArrowDown', collapseKey = 'isArrowUp'} = {}) =>
+  ({element}) => {
     const expander = element.querySelector('[aria-expanded]');
     const expanded = expander.getAttribute('aria-expanded') !== 'false';
 
@@ -244,15 +243,14 @@ function expandable$1 ({expandKey = 'isArrowDown', collapseKey = 'isArrowUp'} = 
         expandableComp.clean();
       }
     });
-  }
-}
+  };
 
 const {proxyListener: proxyListener$3, emitter:createEmitter$2} = events;
 
 const ACTIVE_ITEM_CHANGED = 'ACTIVE_ITEM_CHANGED';
 const proxy$1 = proxyListener$3({[ACTIVE_ITEM_CHANGED]: 'onActiveItemChange'});
 
-function listComponent ({emitter: emitter$$1 = createEmitter$2(), activeItem = 0, itemCount}) {
+var itemList = ({emitter: emitter$$1 = createEmitter$2(), activeItem = 0, itemCount}) => {
   const state = {activeItem, itemCount};
   const event = proxy$1({emitter: emitter$$1});
   const dispatch = () => emitter$$1.dispatch(ACTIVE_ITEM_CHANGED, Object.assign({}, state));
@@ -273,9 +271,9 @@ function listComponent ({emitter: emitter$$1 = createEmitter$2(), activeItem = 0
   };
 
   return Object.assign(event, api);
-}
+};
 
-function tabFactory ({element, index, tablist}) {
+const tabFactory = ({element, index, tablist}) => {
   const comp = elementFactory({element});
   comp.onclick(() => tablist.activateItem(index));
   comp.onkeydown(ev => {
@@ -294,9 +292,9 @@ function tabFactory ({element, index, tablist}) {
     }
   });
   return comp;
-}
+};
 
-function tabPanelFactory ({element, index, tablist}) {
+const tabPanelFactory = ({element, index, tablist}) => {
   const comp = elementFactory({element});
 
   tablist.onActiveItemChange(({activeItem}) => {
@@ -304,9 +302,9 @@ function tabPanelFactory ({element, index, tablist}) {
   });
 
   return comp;
-}
+};
 
-var tablistFactory = function ({element}) {
+var tablistFactory = ({element}) => {
 
   const emitter$$1 = emitter();
 
@@ -328,7 +326,7 @@ var tablistFactory = function ({element}) {
   });
 
   const tabListComp = elementFactory({emitter: emitter$$1, element});
-  const itemListComp = listComponent({emitter: emitter$$1, itemCount: pairs.length});
+  const itemListComp = itemList({emitter: emitter$$1, itemCount: pairs.length});
 
   const tabs = pairs.map((pair, index) => {
     return {
@@ -357,8 +355,8 @@ var tablistFactory = function ({element}) {
   });
 };
 
-function createMenuItem ({previousKey, nextKey}) {
-  return function menuItem ({menu, element, index}) {
+const createMenuItem = ({previousKey, nextKey}) =>
+  ({menu, element, index}) => {
     const comp = elementFactory({element});
     comp.attr('role', 'menuitem');
     comp.onclick(() => {
@@ -391,18 +389,17 @@ function createMenuItem ({previousKey, nextKey}) {
       comp.attr('tabindex', '-1');
     };
     return comp;
-  }
+  };
 
-}
 
 const verticalMenuItem = createMenuItem({previousKey: 'isArrowUp', nextKey: 'isArrowDown'});
 const horizontalMenuItem = createMenuItem({previousKey: 'isArrowLeft', nextKey: 'isArrowRight'});
 
-var menuFactory = function (menuItemFactory = verticalMenuItem) {
-  return function menu ({element}) {
+var menuFactory = (menuItemFactory = verticalMenuItem) =>
+  ({element}) => {
     const emitter$$1 = emitter();
     const menuItems = Array.from(element.children).filter(child => child.getAttribute('role') === 'menuitem');
-    const listComp = listComponent({emitter: emitter$$1, itemCount: menuItems.length});
+    const listComp = itemList({emitter: emitter$$1, itemCount: menuItems.length});
     const menuComp = elementFactory({element, emitter: emitter$$1});
 
     menuComp.attr('role', 'menu');
@@ -422,13 +419,12 @@ var menuFactory = function (menuItemFactory = verticalMenuItem) {
       }
     });
   };
-};
 
 const verticalMenu = menuFactory();
-const expandable$2 = expandable$1();
+const expandable$1 = expandableFactory$1();
 
-function dropdown$1 ({element}) {
-  const expandableComp = expandable$2({element});
+var dropdown$1 = ({element}) => {
+  const expandableComp = expandable$1({element});
   expandableComp.expander().attr('aria-haspopup', 'true');
   const menuComp = verticalMenu({element: expandableComp.expandable().element()});
 
@@ -456,16 +452,14 @@ function dropdown$1 ({element}) {
       menuComp.clean();
     }
   });
-}
+};
 
 const horizontalMenu = menuFactory(horizontalMenuItem);
 
 
-function regularSubMenu ({index, menu}) {
-  return menu.item(index);
-}
+const regularSubMenu = ({index, menu}) => menu.item(index);
 
-function dropDownSubMenu ({index, element, menu}) {
+const dropDownSubMenu = ({index, element, menu}) => {
   const subMenuComp = dropdown$1({element});
   menu.onActiveItemChange(({activeItem}) => {
     if (activeItem !== index) {
@@ -478,16 +472,16 @@ function dropDownSubMenu ({index, element, menu}) {
     }
   });
   return subMenuComp;
-}
+};
 
-function createSubMenuComponent (arg) {
+const createSubMenuComponent = (arg) => {
   const {element} =arg;
   return element.querySelector('[role=menu]') !== null ?
     dropDownSubMenu(arg) :
     regularSubMenu(arg);
-}
+};
 
-function menubar$1 ({element}) {
+var menubarFactory = ({element}) => {
   const menubarComp = horizontalMenu({element});
   menubarComp.attr('role', 'menubar');
   const subMenus = Array.from(element.children).map((element, index) => createSubMenuComponent({
@@ -507,17 +501,17 @@ function menubar$1 ({element}) {
       subMenus.forEach(sm => sm.clean());
     }
   });
-}
+};
 
-const expandable$3 = expandable$1({expandKey: '', collapseKey: ''});
+const expandable$2 = expandableFactory$1({expandKey: '', collapseKey: ''});
 
-function accordion$1 ({element}) {
+var accordionFactory = ({element}) => {
   const emitter$$1 = emitter();
   const accordionHeaders = element.querySelectorAll('[data-lrtiste-accordion-header]');
-  const itemListComp = listComponent({itemCount: accordionHeaders.length});
+  const itemListComp = itemList({itemCount: accordionHeaders.length});
   const containerComp = elementFactory({element, emitter: emitter$$1});
 
-  const expandables = [...accordionHeaders].map(element => expandable$3({element}));
+  const expandables = [...accordionHeaders].map(element => expandable$2({element}));
 
   expandables.forEach((exp, index) => {
     // let expanded
@@ -553,13 +547,13 @@ function accordion$1 ({element}) {
       expandables.forEach(item => item.clean());
     }
   });
-}
+};
 
-const expandable = expandable$1();
+const expandable = expandableFactory$1();
 const dropdown = dropdown$1;
 const tablist = tablistFactory;
-const menubar = menubar$1;
-const accordion = accordion$1;
+const menubar = menubarFactory;
+const accordion = accordionFactory;
 const element = elementFactory;
 
 exports.expandable = expandable;

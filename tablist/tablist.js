@@ -3,7 +3,7 @@ import elementComp from '../common/element';
 import {emitter as createEmitter} from 'smart-table-events';
 import {isArrowLeft, isArrowRight} from '../common/util';
 
-function tabFactory ({element, index, tablist}) {
+const tabFactory = ({element, index, tablist}) => {
   const comp = elementComp({element});
   comp.onclick(() => tablist.activateItem(index));
   comp.onkeydown(ev => {
@@ -22,9 +22,9 @@ function tabFactory ({element, index, tablist}) {
     }
   });
   return comp;
-}
+};
 
-function tabPanelFactory ({element, index, tablist}) {
+const tabPanelFactory = ({element, index, tablist}) => {
   const comp = elementComp({element});
 
   tablist.onActiveItemChange(({activeItem}) => {
@@ -32,9 +32,9 @@ function tabPanelFactory ({element, index, tablist}) {
   });
 
   return comp;
-}
+};
 
-export default function ({element}) {
+export default ({element}) => {
 
   const emitter = createEmitter();
 
@@ -83,4 +83,4 @@ export default function ({element}) {
       })
     }
   });
-}
+};

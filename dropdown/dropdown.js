@@ -5,7 +5,7 @@ import {isEscape} from '../common/util';
 const verticalMenu = menu();
 const expandable = expandableFactory();
 
-export default function dropdown ({element}) {
+export default ({element}) => {
   const expandableComp = expandable({element});
   expandableComp.expander().attr('aria-haspopup', 'true');
   const menuComp = verticalMenu({element: expandableComp.expandable().element()});
@@ -34,4 +34,4 @@ export default function dropdown ({element}) {
       menuComp.clean();
     }
   });
-}
+};

@@ -11,7 +11,7 @@ const domListener = proxyListener({
   [DOM_FOCUS]: 'onfocus'
 });
 
-export default function ({element, emitter = createEmitter()}) {
+export default ({element, emitter = createEmitter()}) => {
 
   if (!element) {
     throw new Error('a dom element must be provided');
@@ -55,6 +55,5 @@ export default function ({element, emitter = createEmitter()}) {
   element.addEventListener('keydown', keydownListener);
   element.addEventListener('focus', focusListener);
 
-
   return Object.assign(listener, api);
-}
+};

@@ -6,7 +6,7 @@ import {isArrowDown, isArrowUp} from '../common/util';
 
 const expandable = expandableFactory({expandKey: '', collapseKey: ''});
 
-export default function accordion ({element}) {
+export default ({element}) => {
   const emitter = createEmitter();
   const accordionHeaders = element.querySelectorAll('[data-lrtiste-accordion-header]');
   const itemListComp = itemList({itemCount: accordionHeaders.length});
@@ -48,4 +48,4 @@ export default function accordion ({element}) {
       expandables.forEach(item => item.clean());
     }
   });
-}
+};

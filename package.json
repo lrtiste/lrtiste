@@ -23,7 +23,7 @@
     "dev": "node ./scripts/dev.js"
   },
   "devDependencies": {
-    "rollup": "^0.41.6",
+    "rollup": "^0.43.0",
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "tape-run": "^3.0.0",

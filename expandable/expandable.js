@@ -7,7 +7,7 @@ const {proxyListener, emitter:createEmitter} = events;
 const EXPANDED_CHANGED = 'EXPANDED_CHANGED';
 const proxy = proxyListener({[EXPANDED_CHANGED]: 'onExpandedChange'});
 
-function expandableFactory ({emitter = createEmitter(), expanded}) {
+const expandableFactory = ({emitter = createEmitter(), expanded}) => {
   const state = {expanded};
   const dispatch = () => emitter.dispatch(EXPANDED_CHANGED, Object.assign({}, state));
   const setAndDispatch = (val) => () => {
@@ -31,10 +31,10 @@ function expandableFactory ({emitter = createEmitter(), expanded}) {
       target.off();
     }
   });
-}
+};
 
-export default function expandable ({expandKey = 'isArrowDown', collapseKey = 'isArrowUp'} = {}) {
-  return function ({element}) {
+export default  ({expandKey = 'isArrowDown', collapseKey = 'isArrowUp'} = {}) =>
+  ({element}) => {
     const expander = element.querySelector('[aria-expanded]');
     const expanded = expander.getAttribute('aria-expanded') !== 'false';
 
@@ -92,5 +92,4 @@ export default function expandable ({expandKey = 'isArrowDown', collapseKey = 'i
         expandableComp.clean();
       }
     });
-  }
-}
+  };

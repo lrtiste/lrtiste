@@ -1,8 +1,8 @@
 import elementComp from '../common/element';
 import * as checkKeys from '../common/util';
 
-function createMenuItem ({previousKey, nextKey}) {
-  return function menuItem ({menu, element, index}) {
+const createMenuItem = ({previousKey, nextKey}) =>
+  ({menu, element, index}) => {
     const comp = elementComp({element});
     comp.attr('role', 'menuitem');
     comp.onclick(() => {
@@ -35,9 +35,8 @@ function createMenuItem ({previousKey, nextKey}) {
       comp.attr('tabindex', '-1');
     };
     return comp;
-  }
+  };
 
-}
 
 export const verticalMenuItem = createMenuItem({previousKey: 'isArrowUp', nextKey: 'isArrowDown'});
 export const horizontalMenuItem = createMenuItem({previousKey: 'isArrowLeft', nextKey: 'isArrowRight'});
