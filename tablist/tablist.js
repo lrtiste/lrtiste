@@ -14,10 +14,10 @@ const tabFactory = ({element, index, tablist}) => {
     }
   });
 
-  tablist.onActiveItemChange(({activeItem}) => {
+  tablist.onActiveItemChange(({activeItem, focus = true}) => {
     comp.attr('aria-selected', activeItem === index);
     comp.attr('tabindex', activeItem === index ? '0' : '-1');
-    if (activeItem === index) {
+    if (activeItem === index && focus) {
       element.focus();
     }
   });
@@ -65,7 +65,7 @@ export default ({element}) => {
     };
   });
 
-  itemListComp.refresh();
+  itemListComp.refresh({focus:false});
 
   return Object.assign({}, tabListComp, itemListComp, {
     tabPanel(index){

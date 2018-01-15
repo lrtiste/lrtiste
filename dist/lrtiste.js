@@ -245,32 +245,32 @@ var expandableFactory$1 = ({expandKey = 'isArrowDown', collapseKey = 'isArrowUp'
     });
   };
 
-const {proxyListener: proxyListener$3, emitter:createEmitter$2} = events;
+const {proxyListener: proxyListener$3, emitter: createEmitter$2} = events;
 
 const ACTIVE_ITEM_CHANGED = 'ACTIVE_ITEM_CHANGED';
 const proxy$1 = proxyListener$3({[ACTIVE_ITEM_CHANGED]: 'onActiveItemChange'});
 
 var itemList = ({emitter: emitter$$1 = createEmitter$2(), activeItem = 0, itemCount}) => {
-  const state = {activeItem, itemCount};
-  const event = proxy$1({emitter: emitter$$1});
-  const dispatch = () => emitter$$1.dispatch(ACTIVE_ITEM_CHANGED, Object.assign({}, state));
-  const api = {
-    activateItem(index){
-      state.activeItem = index < 0 ? itemCount - 1 : index % itemCount;
-      dispatch();
-    },
-    activateNextItem(){
-      api.activateItem(state.activeItem + 1);
-    },
-    activatePreviousItem(){
-      api.activateItem(state.activeItem - 1);
-    },
-    refresh(){
-      dispatch();
-    }
-  };
+	const state = {activeItem, itemCount};
+	const event = proxy$1({emitter: emitter$$1});
+	const dispatch = (opts = {}) => emitter$$1.dispatch(ACTIVE_ITEM_CHANGED, Object.assign({}, state, opts));
+	const api = {
+		activateItem(index) {
+			state.activeItem = index < 0 ? itemCount - 1 : index % itemCount;
+			dispatch();
+		},
+		activateNextItem() {
+			api.activateItem(state.activeItem + 1);
+		},
+		activatePreviousItem() {
+			api.activateItem(state.activeItem - 1);
+		},
+		refresh(opts) {
+			dispatch(opts);
+		}
+	};
 
-  return Object.assign(event, api);
+	return Object.assign(event, api);
 };
 
 const tabFactory = ({element, index, tablist}) => {
@@ -284,10 +284,10 @@ const tabFactory = ({element, index, tablist}) => {
     }
   });
 
-  tablist.onActiveItemChange(({activeItem}) => {
+  tablist.onActiveItemChange(({activeItem, focus = true}) => {
     comp.attr('aria-selected', activeItem === index);
     comp.attr('tabindex', activeItem === index ? '0' : '-1');
-    if (activeItem === index) {
+    if (activeItem === index && focus) {
       element.focus();
     }
   });
@@ -335,7 +335,7 @@ var tablistFactory = ({element}) => {
     };
   });
 
-  itemListComp.refresh();
+  itemListComp.refresh({focus:false});
 
   return Object.assign({}, tabListComp, itemListComp, {
     tabPanel(index){
