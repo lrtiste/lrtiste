@@ -1,0 +1,31 @@
+{
+  "name": "@citykleta/ui-kit",
+  "version": "0.1.0",
+  "description": "web components for common widgets used accross citykleta organization",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Citykleta/ui-kit.git"
+  },
+  "keywords": [
+    "ui",
+    "ux",
+    "components",
+    "web-components",
+    "webcomponents"
+  ],
+  "author": "Laurent RENARD",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Citykleta/ui-kit/issues"
+  },
+  "homepage": "https://github.com/Citykleta/ui-kit#readme",
+  "devDependencies": {
+    "puppeteer": "^1.20.0",
+    "rollup": "^1.22.0",
+    "zora": "^3.0.3"
+  }
+}

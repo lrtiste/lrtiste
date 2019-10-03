@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>playground</title>
+</head>
+<style>
+    body {
+        box-sizing: border-box;
+    }
+
+    body * {
+        box-sizing: inherit;
+    }
+
+    ui-listbox {
+        width: 200px;
+        display: flex;
+        flex-direction: column;
+        max-height: 200px;
+        overflow: auto;
+    }
+
+    ui-listbox-option {
+        padding: 0.5em;
+    }
+
+    [aria-selected=true] {
+        background: red;
+        color: white;
+    }
+
+</style>
+<body>
+<p>selected item index is: <span id="val"></span></p>
+<ui-listbox>
+    <ui-listbox-option label="first hello" id="hello">Hello 1</ui-listbox-option>
+    <ui-listbox-option selected><strong>Hello 2</strong></ui-listbox-option>
+    <ui-listbox-option>option 3</ui-listbox-option>
+    <ui-listbox-option>option 4</ui-listbox-option>
+    <ui-listbox-option>option 5</ui-listbox-option>
+    <ui-listbox-option>option 6</ui-listbox-option>
+    <ui-listbox-option>option 7</ui-listbox-option>
+    <ui-listbox-option>option 8</ui-listbox-option>
+    <ui-listbox-option>option 9</ui-listbox-option>
+    <ui-listbox-option>option 10</ui-listbox-option>
+</ui-listbox>
+<script type="module">
+    import {ListBox, ListBoxOption} from '../../src/listbox/index.js';
+
+    customElements.define('ui-listbox', ListBox);
+    customElements.define('ui-listbox-option', ListBoxOption);
+
+    const span = document.getElementById('val');
+
+    document
+        .querySelector('ui-listbox')
+        .addEventListener('change', ev => {
+            const {detail: {selectedIndex}} = ev;
+            span.textContent = selectedIndex;
+        });
+</script>
+</body>
+</html>
