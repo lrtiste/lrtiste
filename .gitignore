@@ -62,3 +62,5 @@ typings/
 
 .idea
 ./dist
+test/dist/*.js
+test/dist/*.js.map

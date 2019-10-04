@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">test/listbox/listbox.spec.js | @citykleta/ui-kit</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="web components for common widgets used accross citykleta organization"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="@citykleta/ui-kit"><meta property="twitter:description" content="web components for common widgets used accross citykleta organization"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/Citykleta/ui-kit"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#expandable">expandable</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/expandable/index.js~Expandable.html">Expandable</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/listbox/listbox.spec.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {test} from &apos;zora&apos;;
+import {body, LIST_BOX_OPTION_TAG_NAME, LIST_BOX_TAG_NAME} from &apos;./util.js&apos;;
+import {nextTick} from &apos;../util.js&apos;;
+
+/**
+ * @test {ListBox}
+ */
+test(&apos;ListBox component&apos;, ({test}) =&gt; {
+
+    test(&apos;Empty ListBox is connected&apos;, t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        body.appendChild(el);
+
+        t.eq(el.getAttribute(&apos;role&apos;), &apos;listbox&apos;, &apos;should have set the role&apos;);
+        t.eq(el.getAttribute(&apos;tabindex&apos;), &apos;0&apos;, &apos;should have added the element in tab sequence&apos;);
+        t.eq(el.selectedIndex, -1, &apos;no element should be selected&apos;);
+        t.eq(el.selectedOption, null, &apos;no element should be selected&apos;);
+        t.eq(el.length, 0, &apos;length should be 0 as there is no option&apos;);
+    });
+
+    test(&apos;ListBox with some options but no default value&apos;, async t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        el.innerHTML = `
+        &lt;${LIST_BOX_OPTION_TAG_NAME}&gt;option 1&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME}&gt;option 2&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME}&gt;option 3&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME}&gt;option 4&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        `;
+
+        body.appendChild(el);
+
+        await nextTick();
+
+        t.eq(el.getAttribute(&apos;role&apos;), &apos;listbox&apos;, &apos;should have set the role&apos;);
+        t.eq(el.getAttribute(&apos;tabindex&apos;), &apos;0&apos;, &apos;should have added the element in tab sequence&apos;);
+        t.eq(el.selectedIndex, -1);
+        t.eq(el.selectedOption, null);
+        t.eq(el.length, 4, &apos;should have four options&apos;);
+
+        const [opt1, opt2, opt3, opt4] = el.querySelectorAll(&apos;[role=option]&apos;);
+
+        t.ok(opt1.id.startsWith(&apos;listbox-option&apos;), &apos;should have assigned a generated id&apos;);
+        t.ok(opt2.id.startsWith(&apos;listbox-option&apos;), &apos;should have assigned a generated id&apos;);
+        t.ok(opt3.id.startsWith(&apos;listbox-option&apos;), &apos;should have assigned a generated id&apos;);
+        t.ok(opt4.id.startsWith(&apos;listbox-option&apos;), &apos;should have assigned a generated id&apos;);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt3.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt4.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;&apos;);
+    });
+
+    test(&apos;ListBox with some options and default value&apos;, async t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        el.innerHTML = `
+        &lt;${LIST_BOX_OPTION_TAG_NAME}&gt;option 1&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id&quot;&gt;option 2&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME} selected&gt;option 3&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME}&gt;option 4&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        `;
+
+        body.appendChild(el);
+
+        await nextTick();
+
+        t.eq(el.getAttribute(&apos;role&apos;), &apos;listbox&apos;, &apos;should have set the role&apos;);
+        t.eq(el.getAttribute(&apos;tabindex&apos;), &apos;0&apos;, &apos;should have added the element in tab sequence&apos;);
+        t.eq(el.selectedIndex, 2, &apos;should select the option with the &quot;selected&quot; attribute&apos;);
+        t.eq(el.selectedOption, el.children[2], &apos;should return the 3rd option element&apos;);
+        t.eq(el.length, 4, &apos;should have four options&apos;);
+
+        const [opt1, opt2, opt3, opt4] = el.querySelectorAll(&apos;[role=option]&apos;);
+
+        t.ok(opt1.id.startsWith(&apos;listbox-option&apos;), &apos;should have assigned a generated id&apos;);
+        t.eq(opt2.id, &apos;custom-id&apos;, &apos;should use the provided id&apos;);
+        t.ok(opt3.id.startsWith(&apos;listbox-option&apos;), &apos;should have assigned a generated id&apos;);
+        t.ok(opt4.id.startsWith(&apos;listbox-option&apos;), &apos;should have assigned a generated id&apos;);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt3.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+        t.eq(opt4.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), opt3.id, &apos;should have updated the aria-activedescendant with the selected option id&apos;);
+    });
+
+    test(&apos;updating the selected index property should update the component&apos;, async t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        el.innerHTML = `
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-1&quot;&gt;option 1&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-2&quot;&gt;option 2&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        `;
+
+        body.appendChild(el);
+
+        await nextTick();
+
+        t.eq(el.selectedIndex, -1);
+        t.eq(el.selectedOption, null);
+        t.eq(el.length, 2, &apos;should have two options&apos;);
+
+        const [opt1, opt2] = el.querySelectorAll(&apos;[role=option]&apos;);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;&apos;);
+
+        el.selectedIndex = 1;
+
+        t.eq(el.selectedIndex, 1);
+        t.eq(el.selectedOption, opt2);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;custom-id-2&apos;);
+
+        el.selectedIndex = 666;
+
+        t.eq(el.selectedIndex, -1, &apos;should have unselected all&apos;);
+        t.eq(el.selectedOption, null, &apos;should have unselected all&apos;);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;, &apos;should have unselected all&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;&apos;, &apos;should have unselected all&apos;);
+    });
+
+    test(&apos;click an option should select it&apos;, async t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        el.innerHTML = `
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-1&quot;&gt;option 1&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-2&quot;&gt;option 2&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        `;
+
+        body.appendChild(el);
+
+        await nextTick();
+
+        t.eq(el.selectedIndex, -1);
+        t.eq(el.selectedOption, null);
+        t.eq(el.length, 2, &apos;should have two options&apos;);
+
+        const [opt1, opt2] = el.querySelectorAll(&apos;[role=option]&apos;);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;&apos;);
+
+        opt1.click();
+
+        t.eq(el.selectedIndex, 0);
+        t.eq(el.selectedOption, opt1);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;custom-id-1&apos;);
+    });
+
+    test(&apos;arrow key down should select the next option&apos;, async t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        el.innerHTML = `
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-1&quot;&gt;option 1&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-2&quot;&gt;option 2&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        `;
+
+        body.appendChild(el);
+
+        await nextTick();
+
+        t.eq(el.selectedIndex, -1);
+        t.eq(el.selectedOption, null);
+        t.eq(el.length, 2, &apos;should have two options&apos;);
+
+        const [opt1, opt2] = el.querySelectorAll(&apos;[role=option]&apos;);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;&apos;);
+
+        el.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+            key: &apos;ArrowDown&apos;
+        }));
+
+        t.eq(el.selectedIndex, 0);
+        t.eq(el.selectedOption, opt1);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;custom-id-1&apos;);
+    });
+
+    test(&apos;arrow key down should keep the last option in case it is already selected&apos;, async t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        el.innerHTML = `
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-1&quot;&gt;option 1&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME} selected id=&quot;custom-id-2&quot;&gt;option 2&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        `;
+
+        body.appendChild(el);
+
+        await nextTick();
+
+        const [opt1, opt2] = el.querySelectorAll(&apos;[role=option]&apos;);
+
+        t.eq(el.selectedIndex, 1);
+        t.eq(el.selectedOption, opt2);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;custom-id-2&apos;);
+
+        el.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+            key: &apos;ArrowDown&apos;
+        }));
+
+        t.eq(el.selectedIndex, 1);
+        t.eq(el.selectedOption, opt2);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;custom-id-2&apos;);
+    });
+
+    test(&apos;arrow key up should select the last option if none is selected&apos;, async t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        el.innerHTML = `
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-1&quot;&gt;option 1&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-2&quot;&gt;option 2&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        `;
+
+        body.appendChild(el);
+
+        await nextTick();
+
+        t.eq(el.selectedIndex, -1);
+        t.eq(el.selectedOption, null);
+        t.eq(el.length, 2, &apos;should have two options&apos;);
+
+        const [opt1, opt2] = el.querySelectorAll(&apos;[role=option]&apos;);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;&apos;);
+
+        el.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+            key: &apos;ArrowUp&apos;
+        }));
+
+        t.eq(el.selectedIndex, 1);
+        t.eq(el.selectedOption, opt2);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;custom-id-2&apos;);
+    });
+
+    test(&apos;arrow key up should select the previous option&apos;, async t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        el.innerHTML = `
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-1&quot;&gt;option 1&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME} selected id=&quot;custom-id-2&quot;&gt;option 2&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        `;
+
+        body.appendChild(el);
+
+        await nextTick();
+
+        const [opt1, opt2] = el.querySelectorAll(&apos;[role=option]&apos;);
+
+        t.eq(el.selectedIndex, 1);
+        t.eq(el.selectedOption, opt2);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;custom-id-2&apos;);
+
+        el.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+            key: &apos;ArrowUp&apos;
+        }));
+
+        t.eq(el.selectedIndex, 0);
+        t.eq(el.selectedOption, opt1);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;custom-id-1&apos;);
+    });
+
+    test(&apos;arrow key up should keep the first option selected if it is already selected&apos;, async t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        el.innerHTML = `
+        &lt;${LIST_BOX_OPTION_TAG_NAME} selected id=&quot;custom-id-1&quot;&gt;option 1&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-2&quot;&gt;option 2&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        `;
+
+        body.appendChild(el);
+
+        await nextTick();
+
+        const [opt1, opt2] = el.querySelectorAll(&apos;[role=option]&apos;);
+
+        t.eq(el.selectedIndex, 0);
+        t.eq(el.selectedOption, opt1);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;custom-id-1&apos;);
+
+        el.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+            key: &apos;ArrowUp&apos;
+        }));
+
+        t.eq(el.selectedIndex, 0);
+        t.eq(el.selectedOption, opt1);
+
+        t.eq(opt1.getAttribute(&apos;aria-selected&apos;), &apos;true&apos;);
+        t.eq(opt2.getAttribute(&apos;aria-selected&apos;), &apos;false&apos;);
+
+        t.eq(el.getAttribute(&apos;aria-activedescendant&apos;), &apos;custom-id-1&apos;);
+    });
+
+    test(&apos;listbox emits &quot;change&quot; event &apos;, async t =&gt; {
+        const el = document.createElement(LIST_BOX_TAG_NAME);
+        el.innerHTML = `
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-1&quot;&gt;option 1&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        &lt;${LIST_BOX_OPTION_TAG_NAME} id=&quot;custom-id-2&quot;&gt;option 2&lt;/${LIST_BOX_OPTION_TAG_NAME}&gt;
+        `;
+
+        body.appendChild(el);
+
+        await nextTick();
+
+        let selectedIndex = null;
+
+        el.addEventListener(&apos;change&apos;, ev =&gt; {
+            selectedIndex = ev.selectedIndex;
+        });
+
+        t.eq(selectedIndex, null);
+
+        el.selectedIndex = 0;
+
+        t.eq(selectedIndex, 0, &apos;event should have been emitted&apos;);
+    });
+});</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

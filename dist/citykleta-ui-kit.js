@@ -1,5 +1,31 @@
-import {generateRandomId, isSelectedPredicate} from './util.js';
-import ChangeEvent from './change-event.js';
+let counter = 0;
+/**
+ * @private
+ */
+const generateRandomId = () => `listbox-option-${++counter}`;
+/**
+ * @private
+ */
+const isSelectedPredicate = i => i.getAttribute('aria-selected') === 'true';
+
+/**
+ * @desc Custom event emitted when the selected option of a {@link ListBox} has changed.
+ */
+class ChangeEvent extends CustomEvent {
+    constructor(index) {
+        super('change', {
+            detail: {selectedIndex: index}
+        });
+    }
+
+    /**
+     *
+     * @returns {number} the index of the newly selected item (-1 for none)
+     */
+    get selectedIndex() {
+        return this.detail.selectedIndex;
+    }
+}
 
 const template = document.createElement('template');
 
@@ -26,7 +52,7 @@ template.innerHTML = `<style>:host{position:relative}</style>
  *     customElements.define('ui-listbox-option', ListBoxOption);
  * </script>
  */
-export class ListBox extends HTMLElement {
+class ListBox extends HTMLElement {
 
     /**
      * @protected
@@ -175,3 +201,61 @@ export class ListBox extends HTMLElement {
         }
     }
 }
+
+/**
+ * @desc An option to be nested within a {@link ListBox} element
+ */
+class ListBoxOption extends HTMLElement {
+
+    /**
+     * @protected
+     */
+    static get observedAttributes() {
+        return ['label'];
+    }
+
+    /**
+     * @protected
+     */
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'label') {
+            if (newValue) {
+                this.setAttribute('aria-label', newValue);
+            } else {
+                this.removeAttribute('aria-label');
+            }
+        }
+    }
+
+    /**
+     * @returns {boolean} whether the option is currently selected or not
+     */
+    get selected() {
+        return this.getAttribute('aria-selected') === 'true';
+    }
+
+    /**
+     * @returns {string} The label or text content to be used by assistive technologies to describe the option
+     */
+    get label() {
+        return this.hasAttribute('label') ? this.getAttribute('label') : this.textContent;
+    }
+
+    /**
+     * @desc Reflects on ``aria-label`` attribute
+     * @param value
+     */
+    set label(value) {
+        this.setAttribute('label', value);
+    }
+
+    /**
+     * @protected
+     */
+    connectedCallback() {
+        this.setAttribute('role', 'option');
+        this.setAttribute('slot', 'options');
+    }
+}
+
+export { ListBox, ListBoxOption };

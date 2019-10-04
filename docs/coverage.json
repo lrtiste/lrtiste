@@ -1,0 +1,44 @@
+{
+  "coverage": "72.41%",
+  "expectCount": 29,
+  "actualCount": 21,
+  "files": {
+    "src/expandable/index.js": {
+      "expectCount": 1,
+      "actualCount": 0,
+      "undocumentLines": [
+        1
+      ]
+    },
+    "src/listbox/change-event.js": {
+      "expectCount": 3,
+      "actualCount": 2,
+      "undocumentLines": [
+        5
+      ]
+    },
+    "src/listbox/listbox-option.js": {
+      "expectCount": 7,
+      "actualCount": 7,
+      "undocumentLines": []
+    },
+    "src/listbox/listbox.js": {
+      "expectCount": 15,
+      "actualCount": 10,
+      "undocumentLines": [
+        4,
+        112,
+        143,
+        151,
+        167
+      ]
+    },
+    "src/listbox/util.js": {
+      "expectCount": 3,
+      "actualCount": 2,
+      "undocumentLines": [
+        1
+      ]
+    }
+  }
+}

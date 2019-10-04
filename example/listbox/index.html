@@ -45,6 +45,8 @@
     <ui-listbox-option>option 9</ui-listbox-option>
     <ui-listbox-option>option 10</ui-listbox-option>
 </ui-listbox>
+<button>Select 3rd option</button>
+<button>Select 9nth option</button>
 <script type="module">
     import {ListBox, ListBoxOption} from '../../src/listbox/index.js';
 
@@ -53,12 +55,18 @@
 
     const span = document.getElementById('val');
 
-    document
-        .querySelector('ui-listbox')
+    const listbox = document
+        .querySelector('ui-listbox');
+
+    listbox
         .addEventListener('change', ev => {
-            const {detail: {selectedIndex}} = ev;
+            const {selectedIndex} = ev;
             span.textContent = selectedIndex;
         });
+
+    const [b1, b2] = document.querySelectorAll('button');
+    b1.addEventListener('click', ev => listbox.selectedIndex = 2);
+    b2.addEventListener('click', ev => listbox.selectedIndex = 8);
 </script>
 </body>
 </html>

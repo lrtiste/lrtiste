@@ -1,11 +1,20 @@
 {
   "name": "@citykleta/ui-kit",
   "version": "0.1.0",
-  "description": "web components for common widgets used accross citykleta organization",
-  "main": "index.js",
+  "description": "web components for common widgets used across citykleta organization",
+  "main": "./dist/index",
+  "module": "./dist/citykleta-ui-kit.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "http-serve -p 3002",
+    "build": "rollup -c ./rollup/build.js",
+    "build:test": "rollup -c ./rollup/test.js",
+    "test:ci": "http-serve -s -p 3002 & (npm run test | tap-set-exit)",
+    "test": "node ./test/run-test.js",
+    "dev": "npm run serve & npm run test:build -- -w"
   },
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Citykleta/ui-kit.git"
@@ -15,17 +24,26 @@
     "ux",
     "components",
     "web-components",
-    "webcomponents"
+    "webcomponents",
+    "aria",
+    "ally",
+    "wai-aria",
+    "widgets"
   ],
   "author": "Laurent RENARD",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Citykleta/ui-kit/issues"
   },
   "homepage": "https://github.com/Citykleta/ui-kit#readme",
   "devDependencies": {
+    "esdoc": "^1.1.0",
+    "esdoc-standard-plugin": "^1.0.0",
+    "http-serve": "^1.0.1",
     "puppeteer": "^1.20.0",
     "rollup": "^1.22.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "tap-set-exit": "^1.1.1",
     "zora": "^3.0.3"
   }
 }

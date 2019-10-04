@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">test/listbox/listbox-option.spec.js | @citykleta/ui-kit</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="web components for common widgets used accross citykleta organization"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="@citykleta/ui-kit"><meta property="twitter:description" content="web components for common widgets used accross citykleta organization"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/Citykleta/ui-kit"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#expandable">expandable</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/expandable/index.js~Expandable.html">Expandable</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/listbox/listbox-option.spec.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {test} from &apos;zora&apos;;
+import {body, LIST_BOX_OPTION_TAG_NAME} from &apos;./util.js&apos;;
+
+/**
+ * @test {ListBoxOption}
+ */
+test(&apos;ListBoxOption component&apos;, ({test}) =&gt; {
+    test(&apos;ListBoxOption component is connected&apos;, t =&gt; {
+        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);
+        el.setAttribute(&apos;label&apos;, &apos;some label&apos;);
+        body.appendChild(el);
+
+        t.eq(el.getAttribute(&apos;role&apos;), &apos;option&apos;, &apos;should have set the role&apos;);
+        t.eq(el.getAttribute(&apos;slot&apos;), &apos;options&apos;, &apos;should have set the slot attribute&apos;);
+        t.eq(el.getAttribute(&apos;aria-label&apos;), &apos;some label&apos;, &apos;should have updated the aria-label attribute&apos;);
+    });
+
+    test(&apos;label property getter should default to textContent if attribute is not present&apos;, t =&gt; {
+        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);
+        el.textContent = &apos;I am the text content&apos;;
+        body.appendChild(el);
+        t.eq(el.label, &apos;I am the text content&apos;);
+    });
+
+    test(&apos;label property setter should reflect on aria-label attribute&apos;, t =&gt; {
+        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);
+        el.setAttribute(&apos;label&apos;, &apos;some label&apos;);
+        body.appendChild(el);
+
+        t.eq(el.getAttribute(&apos;aria-label&apos;), &apos;some label&apos;, &apos;should have updated the aria-label attribute&apos;);
+        el.label = &apos;updated label&apos;;
+        t.eq(el.getAttribute(&apos;aria-label&apos;), &apos;updated label&apos;, &apos;should have updated the aria-label attribute&apos;);
+    });
+
+    test(&apos;selected property getter&apos;, t =&gt; {
+        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);
+        el.setAttribute(&apos;label&apos;, &apos;some label&apos;);
+        body.appendChild(el);
+
+        t.eq(el.selected, false, &apos;should be false if no aria-selected is set&apos;);
+        el.setAttribute(&apos;aria-selected&apos;, &apos;false&apos;);
+        t.eq(el.selected, false, &apos;should be false if aria-selected value is &quot;false&apos;);
+        el.setAttribute(&apos;aria-selected&apos;, &apos;true&apos;);
+        t.eq(el.selected, true, &apos;should be true if aria-selected is &quot;true&quot;&apos;);
+    });
+});</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
