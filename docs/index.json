@@ -566,36 +566,6 @@
   {
     "__docId__": 48,
     "kind": "file",
-    "name": "src/expandable/index.js",
-    "content": "export default class Expandable extends HTMLElement{\n\n}",
-    "static": true,
-    "longname": "/Volumes/data/code/ui-kit/src/expandable/index.js",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1
-  },
-  {
-    "__docId__": 49,
-    "kind": "class",
-    "name": "Expandable",
-    "memberof": "src/expandable/index.js",
-    "static": true,
-    "longname": "src/expandable/index.js~Expandable",
-    "access": "public",
-    "export": true,
-    "importPath": "@citykleta/ui-kit/src/expandable/index.js",
-    "importStyle": "Expandable",
-    "description": null,
-    "lineNumber": 1,
-    "undocument": true,
-    "interface": false,
-    "extends": [
-      "HTMLElement"
-    ]
-  },
-  {
-    "__docId__": 50,
-    "kind": "file",
     "name": "src/index.js",
     "content": "export * from './listbox/index.js';",
     "static": true,
@@ -605,10 +575,10 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 51,
+    "__docId__": 49,
     "kind": "file",
     "name": "src/listbox/change-event.js",
-    "content": "/**\n * @desc Custom event emitted when the selected option of a {@link ListBox} has changed.\n */\nexport default class ChangeEvent extends CustomEvent {\n    constructor(index) {\n        super('change', {\n            detail: {selectedIndex: index}\n        });\n    }\n\n    /**\n     *\n     * @returns {number} the index of the newly selected item (-1 for none)\n     */\n    get selectedIndex() {\n        return this.detail.selectedIndex;\n    }\n}",
+    "content": "/**\n * @desc Custom event emitted when the selected option of a {@link ListBox} has changed.\n */\nexport default class ChangeEvent extends CustomEvent {\n\n    /**\n     * @param {Number} index - The index of the newly selected option\n     */\n    constructor(index) {\n        super('change', {\n            detail: {selectedIndex: index}\n        });\n    }\n\n    /**\n     *\n     * @returns {number} the index of the newly selected item (-1 for none)\n     */\n    get selectedIndex() {\n        return this.detail.selectedIndex;\n    }\n}",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/src/listbox/change-event.js",
     "access": "public",
@@ -616,7 +586,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 52,
+    "__docId__": 50,
     "kind": "class",
     "name": "ChangeEvent",
     "memberof": "src/listbox/change-event.js",
@@ -634,7 +604,7 @@
     ]
   },
   {
-    "__docId__": 53,
+    "__docId__": 51,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/listbox/change-event.js~ChangeEvent",
@@ -643,12 +613,23 @@
     "static": false,
     "longname": "src/listbox/change-event.js~ChangeEvent#constructor",
     "access": "public",
-    "description": null,
-    "lineNumber": 5,
-    "undocument": true
+    "description": "",
+    "lineNumber": 9,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "Number"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "index",
+        "description": "The index of the newly selected option"
+      }
+    ]
   },
   {
-    "__docId__": 54,
+    "__docId__": 52,
     "kind": "get",
     "name": "selectedIndex",
     "memberof": "src/listbox/change-event.js~ChangeEvent",
@@ -658,7 +639,7 @@
     "longname": "src/listbox/change-event.js~ChangeEvent#selectedIndex",
     "access": "public",
     "description": "",
-    "lineNumber": 15,
+    "lineNumber": 19,
     "unknown": [
       {
         "tagName": "@returns",
@@ -680,7 +661,7 @@
     }
   },
   {
-    "__docId__": 55,
+    "__docId__": 53,
     "kind": "file",
     "name": "src/listbox/index.js",
     "content": "export * from './listbox.js';\nexport * from './listbox-option.js';\nexport * from './change-event.js';",
@@ -691,7 +672,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 56,
+    "__docId__": 54,
     "kind": "file",
     "name": "src/listbox/listbox-option.js",
     "content": "/**\n * @desc An option to be nested within a {@link ListBox} element\n */\nexport class ListBoxOption extends HTMLElement {\n\n    /**\n     * @protected\n     */\n    static get observedAttributes() {\n        return ['label'];\n    }\n\n    /**\n     * @protected\n     */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'label') {\n            if (newValue) {\n                this.setAttribute('aria-label', newValue);\n            } else {\n                this.removeAttribute('aria-label');\n            }\n        }\n    }\n\n    /**\n     * @returns {boolean} whether the option is currently selected or not\n     */\n    get selected() {\n        return this.getAttribute('aria-selected') === 'true';\n    }\n\n    /**\n     * @returns {string} The label or text content to be used by assistive technologies to describe the option\n     */\n    get label() {\n        return this.hasAttribute('label') ? this.getAttribute('label') : this.textContent;\n    }\n\n    /**\n     * @desc Reflects on ``aria-label`` attribute\n     * @param value\n     */\n    set label(value) {\n        this.setAttribute('label', value);\n    }\n\n    /**\n     * @protected\n     */\n    connectedCallback() {\n        this.setAttribute('role', 'option');\n        this.setAttribute('slot', 'options');\n    }\n}",
@@ -702,7 +683,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 57,
+    "__docId__": 55,
     "kind": "class",
     "name": "ListBoxOption",
     "memberof": "src/listbox/listbox-option.js",
@@ -720,7 +701,7 @@
     ]
   },
   {
-    "__docId__": 58,
+    "__docId__": 56,
     "kind": "get",
     "name": "observedAttributes",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -739,7 +720,7 @@
     }
   },
   {
-    "__docId__": 59,
+    "__docId__": 57,
     "kind": "method",
     "name": "attributeChangedCallback",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -774,7 +755,7 @@
     "return": null
   },
   {
-    "__docId__": 60,
+    "__docId__": 58,
     "kind": "get",
     "name": "selected",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -806,7 +787,7 @@
     }
   },
   {
-    "__docId__": 61,
+    "__docId__": 59,
     "kind": "get",
     "name": "label",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -838,7 +819,7 @@
     }
   },
   {
-    "__docId__": 62,
+    "__docId__": 60,
     "kind": "set",
     "name": "label",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -863,7 +844,7 @@
     ]
   },
   {
-    "__docId__": 63,
+    "__docId__": 61,
     "kind": "method",
     "name": "connectedCallback",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -879,10 +860,10 @@
     "return": null
   },
   {
-    "__docId__": 64,
+    "__docId__": 62,
     "kind": "file",
     "name": "src/listbox/listbox.js",
-    "content": "import {generateRandomId, isSelectedPredicate} from './util.js';\nimport ChangeEvent from './change-event.js';\n\nconst template = document.createElement('template');\n\ntemplate.innerHTML = `<style>:host{position:relative}</style>\n<slot name=\"options\"></slot>\n`;\n\n/**\n * @desc Implements the ListBox pattern for single select ListBox where the focus follows the selection.\n *\n * Keyboard interaction is handled for <kbd>Up Arrow</kbd> and <kbd>Down Arrow</kbd>. In the same way if one option is clicked, then it becomes selected\n *\n * @see https://www.w3.org/TR/wai-aria-practices/#Listbox\n * @example\n * <ui-listbox>\n *     <ui-listbox-option><span>Some custom template</span></ui-listbox-option>\n *     <ui-listbox-option selected>Other option selected by default</ui-listbox-option>\n * </ui-listbox>\n *\n * <script type=\"module\">\n *     import {ListBox, ListBoxOption} from 'path/to/lib'\n *\n *     customElements.define('ui-listbox', ListBox);\n *     customElements.define('ui-listbox-option', ListBoxOption);\n * </script>\n */\nexport class ListBox extends HTMLElement {\n\n    /**\n     * @protected\n     */\n    static get observedAttributes() {\n        return ['aria-activedescendant'];\n    }\n\n    /**\n     * @returns {ListBoxOption|null} The currently selected ListBoxOption element\n     */\n    get selectedOption() {\n        return this._optionElements.filter(isSelectedPredicate)[0] || null;\n    }\n\n    /**\n     * @returns {number} - The current number of available options\n     */\n    get length() {\n        return this._optionElements.length;\n    }\n\n    /**\n     * @returns {number} The index of the currently selected option, -1 if none is selected\n     */\n    get selectedIndex() {\n        return this._optionElements.findIndex(isSelectedPredicate);\n    }\n\n    /**\n     * @desc Reflects on ``aria-activedescendant`` attribute\n     * @param {Number} index - The index of the new option element to select\n     * @emits {ChangeEvent}\n     * @example\n     * const listbox = document.getElementId('some listbox id');\n     * listbox.addEventListener('change', ev => {\n     *     console.log(ev.selectedIndex);\n     * })\n     *\n     * listbox.selectedIndex = 0; // select first option;\n     * listbox.selectedIndex = 1; // select second option;\n     *\n     * //etc\n     *\n     * listbox.selectedIndex = -1; // unselect all\n     *\n     */\n    set selectedIndex(index) {\n        const options = this._optionElements;\n        if (index < 0 || index >= options.length) {\n            this.setAttribute('aria-activedescendant', '');\n        } else {\n            this.setAttribute('aria-activedescendant', options[index].getAttribute('id'));\n        }\n    }\n\n    /**\n     * @protected\n     */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'aria-activedescendant' && oldValue !== newValue) {\n            for (const el of this._optionElements) {\n                el.setAttribute('aria-selected', String(newValue === el.getAttribute('id')));\n            }\n\n            if (this.selectedOption) {\n                const {offsetTop, offsetHeight} = this.selectedOption;\n\n                //before\n                if (offsetTop < this.scrollTop) {\n                    /** @protected*/\n                    this.scrollTop = offsetTop;\n                } else if ((offsetTop + offsetHeight) > (this.scrollTop + this.clientHeight)) {\n                    // after\n                    this.scrollBy(0, (offsetTop + offsetHeight) - (this.scrollTop + this.clientHeight));\n                }\n            }\n\n            this.dispatchEvent(new ChangeEvent(this.selectedIndex));\n        }\n    }\n\n    constructor() {\n        super();\n        /**\n         * @type {ListBoxOption[]}\n         * @private\n         */\n        this._optionElements = [];\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n        this._handleOptionChangeEvent = this._handleOptionChangeEvent.bind(this);\n        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);\n        this._handleOptionClick = this._handleOptionClick.bind(this);\n    }\n\n    /**\n     * @protected\n     */\n    connectedCallback() {\n        this.setAttribute('role', 'listbox');\n\n        if (!this.hasAttribute('tabindex')) {\n            this.setAttribute('tabindex', '0');\n        }\n\n        this.shadowRoot\n            .querySelector('slot[name=options]')\n            .addEventListener('slotchange', this._handleOptionChangeEvent);\n\n        this.addEventListener('keydown', this._handleKeydownEvent);\n    }\n\n    _handleOptionClick(ev) {\n        const {currentTarget: option} = ev;\n        const index = this._optionElements.indexOf(option);\n        if (index !== -1) {\n            this.selectedIndex = index;\n        }\n    }\n\n    _handleOptionChangeEvent(ev) {\n        this._optionElements = this.shadowRoot\n            .querySelector('slot')\n            .assignedNodes()\n            .filter(el => el.getAttribute('role') === 'option');\n\n        for (const opt of this._optionElements) {\n            if (!opt.hasAttribute('id')) {\n                opt.setAttribute('id', generateRandomId());\n            }\n            opt.addEventListener('click', this._handleOptionClick);\n        }\n\n        this.selectedIndex = this._optionElements.findIndex(i => i.hasAttribute('selected'));\n    }\n\n    _handleKeydownEvent(ev) {\n        const {key} = ev;\n        if (['ArrowDown', 'ArrowUp'].includes(key)) {\n            this.selectedIndex = key === 'ArrowDown' ?\n                Math.min(this.selectedIndex + 1, this.length - 1) :\n                (this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0) :\n                    this.length - 1);\n            ev.preventDefault();\n        }\n    }\n}",
+    "content": "import {generateRandomId, isSelectedPredicate} from './util.js';\nimport ChangeEvent from './change-event.js';\n\nconst template = document.createElement('template');\n\ntemplate.innerHTML = `<style>:host{position:relative}</style>\n<slot name=\"options\"></slot>\n`;\n\n/**\n * @desc Implements the ListBox pattern for single select ListBox where the focus follows the selection.\n *\n * Keyboard interaction is handled for <kbd>Up Arrow</kbd> and <kbd>Down Arrow</kbd>. In the same way if one option is clicked, then it becomes selected\n *\n * @see https://www.w3.org/TR/wai-aria-practices/#Listbox\n * @examples\n * <ui-listbox>\n *     <ui-listbox-option><span>Some custom template</span></ui-listbox-option>\n *     <ui-listbox-option selected>Other option selected by default</ui-listbox-option>\n * </ui-listbox>\n *\n * <script type=\"module\">\n *     import {ListBox, ListBoxOption} from 'path/to/lib'\n *\n *     customElements.define('ui-listbox', ListBox);\n *     customElements.define('ui-listbox-option', ListBoxOption);\n * </script>\n */\nexport class ListBox extends HTMLElement {\n\n    /** @protected */\n    static get observedAttributes() {\n        return ['aria-activedescendant'];\n    }\n\n    /**\n     * @returns {ListBoxOption|null} The currently selected ListBoxOption element\n     */\n    get selectedOption() {\n        return this._optionElements.filter(isSelectedPredicate)[0] || null;\n    }\n\n    /**\n     * @returns {number} - The current number of available options\n     */\n    get length() {\n        return this._optionElements.length;\n    }\n\n    /**\n     * @returns {number} The index of the currently selected option, -1 if none is selected\n     */\n    get selectedIndex() {\n        return this._optionElements.findIndex(isSelectedPredicate);\n    }\n\n    /**\n     * @desc Reflects on ``aria-activedescendant`` attribute\n     * @param {Number} index - The index of the new option element to select\n     * @emits {ChangeEvent}\n     * @examples\n     * const listbox = document.getElementId('some listbox id');\n     * listbox.addEventListener('change', ev => {\n     *     console.log(ev.selectedIndex);\n     * })\n     *\n     * listbox.selectedIndex = 0; // select first option;\n     * listbox.selectedIndex = 1; // select second option;\n     *\n     * //etc\n     *\n     * listbox.selectedIndex = -1; // unselect all\n     *\n     */\n    set selectedIndex(index) {\n        const options = this._optionElements;\n        if (index < 0 || index >= options.length) {\n            this.setAttribute('aria-activedescendant', '');\n        } else {\n            this.setAttribute('aria-activedescendant', options[index].getAttribute('id'));\n        }\n    }\n\n    /** @protected */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'aria-activedescendant' && oldValue !== newValue) {\n            for (const el of this._optionElements) {\n                el.setAttribute('aria-selected', String(newValue === el.getAttribute('id')));\n            }\n\n            if (this.selectedOption) {\n                const {offsetTop, offsetHeight} = this.selectedOption;\n\n                //before\n                if (offsetTop < this.scrollTop) {\n                    /** @protected*/\n                    this.scrollTop = offsetTop;\n                } else if ((offsetTop + offsetHeight) > (this.scrollTop + this.clientHeight)) {\n                    // after\n                    this.scrollBy(0, (offsetTop + offsetHeight) - (this.scrollTop + this.clientHeight));\n                }\n            }\n\n            this.dispatchEvent(new ChangeEvent(this.selectedIndex));\n        }\n    }\n\n    constructor() {\n        super();\n        /**\n         * @type {ListBoxOption[]}\n         * @private\n         */\n        this._optionElements = [];\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n        this._handleOptionChangeEvent = this._handleOptionChangeEvent.bind(this);\n        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);\n        this._handleOptionClick = this._handleOptionClick.bind(this);\n    }\n\n    /** @protected */\n    connectedCallback() {\n        this.setAttribute('role', 'listbox');\n\n        if (!this.hasAttribute('tabindex')) {\n            this.setAttribute('tabindex', '0');\n        }\n\n        this.shadowRoot\n            .querySelector('slot[name=options]')\n            .addEventListener('slotchange', this._handleOptionChangeEvent);\n\n        this.addEventListener('keydown', this._handleKeydownEvent);\n    }\n\n    /** @private */\n    _handleOptionClick(ev) {\n        const {currentTarget: option} = ev;\n        const index = this._optionElements.indexOf(option);\n        if (index !== -1) {\n            this.selectedIndex = index;\n        }\n    }\n\n    /** @private */\n    _handleOptionChangeEvent(ev) {\n        this._optionElements = this.shadowRoot\n            .querySelector('slot')\n            .assignedNodes()\n            .filter(el => el.getAttribute('role') === 'option');\n\n        for (const opt of this._optionElements) {\n            if (!opt.hasAttribute('id')) {\n                opt.setAttribute('id', generateRandomId());\n            }\n            opt.addEventListener('click', this._handleOptionClick);\n        }\n\n        this.selectedIndex = this._optionElements.findIndex(i => i.hasAttribute('selected'));\n    }\n\n    /** @private */\n    _handleKeydownEvent(ev) {\n        const {key} = ev;\n        if (['ArrowDown', 'ArrowUp'].includes(key)) {\n            this.selectedIndex = key === 'ArrowDown' ?\n                Math.min(this.selectedIndex + 1, this.length - 1) :\n                (this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0) :\n                    this.length - 1);\n            ev.preventDefault();\n        }\n    }\n}",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/src/listbox/listbox.js",
     "access": "public",
@@ -890,7 +871,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 65,
+    "__docId__": 63,
     "kind": "variable",
     "name": "template",
     "memberof": "src/listbox/listbox.js",
@@ -911,7 +892,7 @@
     "ignore": true
   },
   {
-    "__docId__": 66,
+    "__docId__": 64,
     "kind": "class",
     "name": "ListBox",
     "memberof": "src/listbox/listbox.js",
@@ -922,20 +903,23 @@
     "importPath": "@citykleta/ui-kit/src/listbox/listbox.js",
     "importStyle": "{ListBox}",
     "description": "Implements the ListBox pattern for single select ListBox where the focus follows the selection.\n\nKeyboard interaction is handled for <kbd>Up Arrow</kbd> and <kbd>Down Arrow</kbd>. In the same way if one option is clicked, then it becomes selected",
-    "examples": [
-      "<ui-listbox>\n    <ui-listbox-option><span>Some custom template</span></ui-listbox-option>\n    <ui-listbox-option selected>Other option selected by default</ui-listbox-option>\n</ui-listbox>\n\n<script type=\"module\">\n    import {ListBox, ListBoxOption} from 'path/to/lib'\n\n    customElements.define('ui-listbox', ListBox);\n    customElements.define('ui-listbox-option', ListBoxOption);\n</script>"
-    ],
     "see": [
       "https://www.w3.org/TR/wai-aria-practices/#Listbox"
     ],
     "lineNumber": 29,
+    "unknown": [
+      {
+        "tagName": "@examples",
+        "tagValue": "<ui-listbox>\n    <ui-listbox-option><span>Some custom template</span></ui-listbox-option>\n    <ui-listbox-option selected>Other option selected by default</ui-listbox-option>\n</ui-listbox>\n\n<script type=\"module\">\n    import {ListBox, ListBoxOption} from 'path/to/lib'\n\n    customElements.define('ui-listbox', ListBox);\n    customElements.define('ui-listbox-option', ListBoxOption);\n</script>"
+      }
+    ],
     "interface": false,
     "extends": [
       "HTMLElement"
     ]
   },
   {
-    "__docId__": 67,
+    "__docId__": 65,
     "kind": "get",
     "name": "observedAttributes",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -944,8 +928,8 @@
     "static": true,
     "longname": "src/listbox/listbox.js~ListBox.observedAttributes",
     "access": "protected",
-    "description": "",
-    "lineNumber": 34,
+    "description": null,
+    "lineNumber": 32,
     "ignore": true,
     "type": {
       "types": [
@@ -954,7 +938,7 @@
     }
   },
   {
-    "__docId__": 68,
+    "__docId__": 66,
     "kind": "get",
     "name": "selectedOption",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -964,7 +948,7 @@
     "longname": "src/listbox/listbox.js~ListBox#selectedOption",
     "access": "public",
     "description": "",
-    "lineNumber": 41,
+    "lineNumber": 39,
     "unknown": [
       {
         "tagName": "@returns",
@@ -987,7 +971,7 @@
     }
   },
   {
-    "__docId__": 69,
+    "__docId__": 67,
     "kind": "get",
     "name": "length",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -997,7 +981,7 @@
     "longname": "src/listbox/listbox.js~ListBox#length",
     "access": "public",
     "description": "",
-    "lineNumber": 48,
+    "lineNumber": 46,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1019,7 +1003,7 @@
     }
   },
   {
-    "__docId__": 70,
+    "__docId__": 68,
     "kind": "get",
     "name": "selectedIndex",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1029,7 +1013,7 @@
     "longname": "src/listbox/listbox.js~ListBox#selectedIndex",
     "access": "public",
     "description": "",
-    "lineNumber": 55,
+    "lineNumber": 53,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1051,7 +1035,7 @@
     }
   },
   {
-    "__docId__": 71,
+    "__docId__": 69,
     "kind": "set",
     "name": "selectedIndex",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1061,10 +1045,13 @@
     "longname": "src/listbox/listbox.js~ListBox#selectedIndex",
     "access": "public",
     "description": "Reflects on ``aria-activedescendant`` attribute",
-    "examples": [
-      "const listbox = document.getElementId('some listbox id');\nlistbox.addEventListener('change', ev => {\n    console.log(ev.selectedIndex);\n})\n\nlistbox.selectedIndex = 0; // select first option;\nlistbox.selectedIndex = 1; // select second option;\n\n//etc\n\nlistbox.selectedIndex = -1; // unselect all"
+    "lineNumber": 75,
+    "unknown": [
+      {
+        "tagName": "@examples",
+        "tagValue": "const listbox = document.getElementId('some listbox id');\nlistbox.addEventListener('change', ev => {\n    console.log(ev.selectedIndex);\n})\n\nlistbox.selectedIndex = 0; // select first option;\nlistbox.selectedIndex = 1; // select second option;\n\n//etc\n\nlistbox.selectedIndex = -1; // unselect all"
+      }
     ],
-    "lineNumber": 77,
     "params": [
       {
         "nullable": null,
@@ -1087,7 +1074,7 @@
     ]
   },
   {
-    "__docId__": 72,
+    "__docId__": 70,
     "kind": "method",
     "name": "attributeChangedCallback",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1096,8 +1083,8 @@
     "static": false,
     "longname": "src/listbox/listbox.js~ListBox#attributeChangedCallback",
     "access": "protected",
-    "description": "",
-    "lineNumber": 89,
+    "description": null,
+    "lineNumber": 85,
     "ignore": true,
     "params": [
       {
@@ -1122,7 +1109,7 @@
     "return": null
   },
   {
-    "__docId__": 73,
+    "__docId__": 71,
     "kind": "member",
     "name": "scrollTop",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1130,7 +1117,7 @@
     "longname": "src/listbox/listbox.js~ListBox#scrollTop",
     "access": "protected",
     "description": null,
-    "lineNumber": 101,
+    "lineNumber": 97,
     "ignore": true,
     "type": {
       "types": [
@@ -1139,7 +1126,7 @@
     }
   },
   {
-    "__docId__": 74,
+    "__docId__": 72,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1149,11 +1136,11 @@
     "longname": "src/listbox/listbox.js~ListBox#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 112,
+    "lineNumber": 108,
     "undocument": true
   },
   {
-    "__docId__": 75,
+    "__docId__": 73,
     "kind": "member",
     "name": "_optionElements",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1161,7 +1148,7 @@
     "longname": "src/listbox/listbox.js~ListBox#_optionElements",
     "access": "private",
     "description": "",
-    "lineNumber": 118,
+    "lineNumber": 114,
     "type": {
       "nullable": null,
       "types": [
@@ -1173,7 +1160,7 @@
     "ignore": true
   },
   {
-    "__docId__": 79,
+    "__docId__": 77,
     "kind": "method",
     "name": "connectedCallback",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1182,14 +1169,14 @@
     "static": false,
     "longname": "src/listbox/listbox.js~ListBox#connectedCallback",
     "access": "protected",
-    "description": "",
-    "lineNumber": 129,
+    "description": null,
+    "lineNumber": 123,
     "ignore": true,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 80,
+    "__docId__": 78,
     "kind": "method",
     "name": "_handleOptionClick",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1199,8 +1186,7 @@
     "longname": "src/listbox/listbox.js~ListBox#_handleOptionClick",
     "access": "private",
     "description": null,
-    "lineNumber": 143,
-    "undocument": true,
+    "lineNumber": 138,
     "ignore": true,
     "params": [
       {
@@ -1213,7 +1199,7 @@
     "return": null
   },
   {
-    "__docId__": 82,
+    "__docId__": 80,
     "kind": "method",
     "name": "_handleOptionChangeEvent",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1223,8 +1209,30 @@
     "longname": "src/listbox/listbox.js~ListBox#_handleOptionChangeEvent",
     "access": "private",
     "description": null,
-    "lineNumber": 151,
-    "undocument": true,
+    "lineNumber": 147,
+    "ignore": true,
+    "params": [
+      {
+        "name": "ev",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 83,
+    "kind": "method",
+    "name": "_handleKeydownEvent",
+    "memberof": "src/listbox/listbox.js~ListBox",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/listbox/listbox.js~ListBox#_handleKeydownEvent",
+    "access": "private",
+    "description": null,
+    "lineNumber": 164,
     "ignore": true,
     "params": [
       {
@@ -1238,30 +1246,6 @@
   },
   {
     "__docId__": 85,
-    "kind": "method",
-    "name": "_handleKeydownEvent",
-    "memberof": "src/listbox/listbox.js~ListBox",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/listbox/listbox.js~ListBox#_handleKeydownEvent",
-    "access": "private",
-    "description": null,
-    "lineNumber": 167,
-    "undocument": true,
-    "ignore": true,
-    "params": [
-      {
-        "name": "ev",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 87,
     "kind": "file",
     "name": "src/listbox/util.js",
     "content": "let counter = 0;\n/**\n * @private\n */\nexport const generateRandomId = () => `listbox-option-${++counter}`;\n/**\n * @private\n */\nexport const isSelectedPredicate = i => i.getAttribute('aria-selected') === 'true';\n",
@@ -1272,7 +1256,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 88,
+    "__docId__": 86,
     "kind": "variable",
     "name": "counter",
     "memberof": "src/listbox/util.js",
@@ -1293,7 +1277,7 @@
     "ignore": true
   },
   {
-    "__docId__": 89,
+    "__docId__": 87,
     "kind": "function",
     "name": "generateRandomId",
     "memberof": "src/listbox/util.js",
@@ -1312,7 +1296,7 @@
     "return": null
   },
   {
-    "__docId__": 90,
+    "__docId__": 88,
     "kind": "function",
     "name": "isSelectedPredicate",
     "memberof": "src/listbox/util.js",
@@ -1347,17 +1331,17 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"@citykleta/ui-kit\",\n  \"version\": \"0.1.0\",\n  \"description\": \"web components for common widgets used accross citykleta organization\",\n  \"main\": \"index.js\",\n  \"scripts\": {\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"\n  },\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/Citykleta/ui-kit.git\"\n  },\n  \"keywords\": [\n    \"ui\",\n    \"ux\",\n    \"components\",\n    \"web-components\",\n    \"webcomponents\"\n  ],\n  \"author\": \"Laurent RENARD\",\n  \"license\": \"ISC\",\n  \"bugs\": {\n    \"url\": \"https://github.com/Citykleta/ui-kit/issues\"\n  },\n  \"homepage\": \"https://github.com/Citykleta/ui-kit#readme\",\n  \"devDependencies\": {\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"puppeteer\": \"^1.20.0\",\n    \"rollup\": \"^1.22.0\",\n    \"rollup-plugin-node-resolve\": \"^5.2.0\",\n    \"zora\": \"^3.0.3\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"@citykleta/ui-kit\",\n  \"version\": \"0.1.0\",\n  \"description\": \"web components for common widgets used across citykleta organization\",\n  \"main\": \"./dist/index\",\n  \"module\": \"./dist/citykleta-ui-kit.js\",\n  \"scripts\": {\n    \"serve\": \"http-serve -p 3002\",\n    \"build\": \"rollup -c ./rollup/build.js\",\n    \"build:test\": \"rollup -c ./rollup/test.js\",\n    \"build:docs\": \"rm -rf docs && esdoc\",\n    \"test:ci\": \"http-serve -s -p 3002 & (npm run test | tap-set-exit)\",\n    \"test\": \"node ./test/run-test.js\",\n    \"dev\": \"npm run serve & npm run test:build -- -w\"\n  },\n  \"files\": [\n    \"dist\"\n  ],\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/Citykleta/ui-kit.git\"\n  },\n  \"keywords\": [\n    \"ui\",\n    \"ux\",\n    \"components\",\n    \"web-components\",\n    \"webcomponents\",\n    \"aria\",\n    \"ally\",\n    \"wai-aria\",\n    \"widgets\"\n  ],\n  \"author\": \"Laurent RENARD\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/Citykleta/ui-kit/issues\"\n  },\n  \"homepage\": \"https://github.com/Citykleta/ui-kit#readme\",\n  \"devDependencies\": {\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"http-serve\": \"^1.0.1\",\n    \"puppeteer\": \"^1.20.0\",\n    \"rollup\": \"^1.22.0\",\n    \"rollup-plugin-node-resolve\": \"^5.2.0\",\n    \"tap-set-exit\": \"^1.1.1\",\n    \"zora\": \"^3.0.3\"\n  }\n}\n",
     "longname": "/Volumes/data/code/ui-kit/package.json",
     "name": "package.json",
     "static": true,
     "access": "public"
   },
   {
-    "__docId__": 91,
+    "__docId__": 89,
     "kind": "testFile",
     "name": "test/listbox/listbox-option.spec.js",
-    "content": "import {test} from 'zora';\nimport {body, LIST_BOX_OPTION_TAG_NAME} from './util.js';\n\n/**\n * @test {ListBoxOption}\n */\ntest('ListBoxOption component', ({test}) => {\n    test('ListBoxOption component is connected', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('role'), 'option', 'should have set the role');\n        t.eq(el.getAttribute('slot'), 'options', 'should have set the slot attribute');\n        t.eq(el.getAttribute('aria-label'), 'some label', 'should have updated the aria-label attribute');\n    });\n\n    test('label property getter should default to textContent if attribute is not present', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.textContent = 'I am the text content';\n        body.appendChild(el);\n        t.eq(el.label, 'I am the text content');\n    });\n\n    test('label property setter should reflect on aria-label attribute', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('aria-label'), 'some label', 'should have updated the aria-label attribute');\n        el.label = 'updated label';\n        t.eq(el.getAttribute('aria-label'), 'updated label', 'should have updated the aria-label attribute');\n    });\n\n    test('selected property getter', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.selected, false, 'should be false if no aria-selected is set');\n        el.setAttribute('aria-selected', 'false');\n        t.eq(el.selected, false, 'should be false if aria-selected value is \"false');\n        el.setAttribute('aria-selected', 'true');\n        t.eq(el.selected, true, 'should be true if aria-selected is \"true\"');\n    });\n});",
+    "content": "import {test} from 'zora';\nimport {body, LIST_BOX_OPTION_TAG_NAME} from './util.js';\n\n/**\n * @test {ListBoxOption}\n */\ntest('ListBoxOption component', ({test}) => {\n    test('ListBoxOption component is connected', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('role'), 'option', 'should have set the role');\n        t.eq(el.getAttribute('slot'), 'options', 'should have set the slot attribute');\n        t.eq(el.getAttribute('aria-label'), 'some label', 'should have updated the aria-label attribute');\n    });\n\n    /** @test {ListBoxOption#label} */\n    test('label property getter should default to textContent if attribute is not present', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.textContent = 'I am the text content';\n        body.appendChild(el);\n        t.eq(el.label, 'I am the text content');\n    });\n\n    /** @test {ListBoxOption#label} */\n    test('label property setter should reflect on aria-label attribute', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('aria-label'), 'some label', 'should have updated the aria-label attribute');\n        el.label = 'updated label';\n        t.eq(el.getAttribute('aria-label'), 'updated label', 'should have updated the aria-label attribute');\n    });\n\n    /** @test {ListBoxOption#selected} */\n    test('selected property getter', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.selected, false, 'should be false if no aria-selected is set');\n        el.setAttribute('aria-selected', 'false');\n        t.eq(el.selected, false, 'should be false if aria-selected value is \"false');\n        el.setAttribute('aria-selected', 'true');\n        t.eq(el.selected, true, 'should be true if aria-selected is \"true\"');\n    });\n});",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/test/listbox/listbox-option.spec.js",
     "access": null,
@@ -1365,7 +1349,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 92,
+    "__docId__": 90,
     "kind": "test",
     "name": "test0",
     "testId": 0,
@@ -1381,7 +1365,7 @@
     ]
   },
   {
-    "__docId__": 93,
+    "__docId__": 91,
     "kind": "test",
     "name": "test1",
     "testId": 1,
@@ -1394,7 +1378,7 @@
     "lineNumber": 8
   },
   {
-    "__docId__": 94,
+    "__docId__": 92,
     "kind": "test",
     "name": "test2",
     "testId": 2,
@@ -1404,10 +1388,13 @@
     "longname": "test/listbox/listbox-option.spec.js~test0.test2",
     "access": null,
     "description": "label property getter should default to textContent if attribute is not present",
-    "lineNumber": 18
+    "lineNumber": 19,
+    "testTargets": [
+      "ListBoxOption#label"
+    ]
   },
   {
-    "__docId__": 95,
+    "__docId__": 93,
     "kind": "test",
     "name": "test3",
     "testId": 3,
@@ -1417,10 +1404,13 @@
     "longname": "test/listbox/listbox-option.spec.js~test0.test3",
     "access": null,
     "description": "label property setter should reflect on aria-label attribute",
-    "lineNumber": 25
+    "lineNumber": 27,
+    "testTargets": [
+      "ListBoxOption#label"
+    ]
   },
   {
-    "__docId__": 96,
+    "__docId__": 94,
     "kind": "test",
     "name": "test4",
     "testId": 4,
@@ -1430,13 +1420,16 @@
     "longname": "test/listbox/listbox-option.spec.js~test0.test4",
     "access": null,
     "description": "selected property getter",
-    "lineNumber": 35
+    "lineNumber": 38,
+    "testTargets": [
+      "ListBoxOption#selected"
+    ]
   },
   {
-    "__docId__": 97,
+    "__docId__": 95,
     "kind": "testFile",
     "name": "test/listbox/listbox.spec.js",
-    "content": "import {test} from 'zora';\nimport {body, LIST_BOX_OPTION_TAG_NAME, LIST_BOX_TAG_NAME} from './util.js';\nimport {nextTick} from '../util.js';\n\n/**\n * @test {ListBox}\n */\ntest('ListBox component', ({test}) => {\n\n    test('Empty ListBox is connected', t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, -1, 'no element should be selected');\n        t.eq(el.selectedOption, null, 'no element should be selected');\n        t.eq(el.length, 0, 'length should be 0 as there is no option');\n    });\n\n    test('ListBox with some options but no default value', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 3</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 4</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 4, 'should have four options');\n\n        const [opt1, opt2, opt3, opt4] = el.querySelectorAll('[role=option]');\n\n        t.ok(opt1.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt2.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt3.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt4.id.startsWith('listbox-option'), 'should have assigned a generated id');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n        t.eq(opt3.getAttribute('aria-selected'), 'false');\n        t.eq(opt4.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n    });\n\n    test('ListBox with some options and default value', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected>option 3</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 4</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, 2, 'should select the option with the \"selected\" attribute');\n        t.eq(el.selectedOption, el.children[2], 'should return the 3rd option element');\n        t.eq(el.length, 4, 'should have four options');\n\n        const [opt1, opt2, opt3, opt4] = el.querySelectorAll('[role=option]');\n\n        t.ok(opt1.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.eq(opt2.id, 'custom-id', 'should use the provided id');\n        t.ok(opt3.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt4.id.startsWith('listbox-option'), 'should have assigned a generated id');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n        t.eq(opt3.getAttribute('aria-selected'), 'true');\n        t.eq(opt4.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), opt3.id, 'should have updated the aria-activedescendant with the selected option id');\n    });\n\n    test('updating the selected index property should update the component', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.selectedIndex = 1;\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.selectedIndex = 666;\n\n        t.eq(el.selectedIndex, -1, 'should have unselected all');\n        t.eq(el.selectedOption, null, 'should have unselected all');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false', 'should have unselected all');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '', 'should have unselected all');\n    });\n\n    test('click an option should select it', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        opt1.click();\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key down should select the next option', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowDown'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key down should keep the last option in case it is already selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowDown'\n        }));\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n    });\n\n    test('arrow key up should select the last option if none is selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n    });\n\n    test('arrow key up should select the previous option', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key up should keep the first option selected if it is already selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('listbox emits \"change\" event ', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        let selectedIndex = null;\n\n        el.addEventListener('change', ev => {\n            selectedIndex = ev.selectedIndex;\n        });\n\n        t.eq(selectedIndex, null);\n\n        el.selectedIndex = 0;\n\n        t.eq(selectedIndex, 0, 'event should have been emitted');\n    });\n});",
+    "content": "import {test} from 'zora';\nimport {body, LIST_BOX_OPTION_TAG_NAME, LIST_BOX_TAG_NAME} from './util.js';\nimport {nextTick} from '../util.js';\n\n/**\n * @test {ListBox}\n */\ntest('ListBox component', ({test}) => {\n\n    test('Empty ListBox is connected', t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, -1, 'no element should be selected');\n        t.eq(el.selectedOption, null, 'no element should be selected');\n        t.eq(el.length, 0, 'length should be 0 as there is no option');\n    });\n\n    test('ListBox with some options but no default value is connected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 3</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 4</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 4, 'should have four options');\n\n        const [opt1, opt2, opt3, opt4] = el.querySelectorAll('[role=option]');\n\n        t.ok(opt1.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt2.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt3.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt4.id.startsWith('listbox-option'), 'should have assigned a generated id');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n        t.eq(opt3.getAttribute('aria-selected'), 'false');\n        t.eq(opt4.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n    });\n\n    test('ListBox with some options and default value is connected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected>option 3</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 4</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, 2, 'should select the option with the \"selected\" attribute');\n        t.eq(el.selectedOption, el.children[2], 'should return the 3rd option element');\n        t.eq(el.length, 4, 'should have four options');\n\n        const [opt1, opt2, opt3, opt4] = el.querySelectorAll('[role=option]');\n\n        t.ok(opt1.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.eq(opt2.id, 'custom-id', 'should use the provided id');\n        t.ok(opt3.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt4.id.startsWith('listbox-option'), 'should have assigned a generated id');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n        t.eq(opt3.getAttribute('aria-selected'), 'true');\n        t.eq(opt4.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), opt3.id, 'should have updated the aria-activedescendant with the selected option id');\n    });\n\n    /** @test {ListBox#selectedIndex} */\n    test('updating the selected index property should update the component', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.selectedIndex = 1;\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.selectedIndex = 666;\n\n        t.eq(el.selectedIndex, -1, 'should have unselected all');\n        t.eq(el.selectedOption, null, 'should have unselected all');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false', 'should have unselected all');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '', 'should have unselected all');\n    });\n\n    test('click an option should select it', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        opt1.click();\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key down should select the next option', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowDown'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key down should keep the last option in case it is already selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowDown'\n        }));\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n    });\n\n    test('arrow key up should select the last option if none is selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n    });\n\n    test('arrow key up should select the previous option', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key up should keep the first option selected if it is already selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('listbox should emit \"change\" event when selected option changes ', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        let selectedIndex = null;\n\n        el.addEventListener('change', ev => {\n            selectedIndex = ev.selectedIndex;\n        });\n\n        t.eq(selectedIndex, null);\n\n        el.selectedIndex = 0;\n\n        t.eq(selectedIndex, 0, 'event should have been emitted');\n    });\n});",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/test/listbox/listbox.spec.js",
     "access": null,
@@ -1444,7 +1437,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 98,
+    "__docId__": 96,
     "kind": "test",
     "name": "test5",
     "testId": 5,
@@ -1460,7 +1453,7 @@
     ]
   },
   {
-    "__docId__": 99,
+    "__docId__": 97,
     "kind": "test",
     "name": "test6",
     "testId": 6,
@@ -1473,7 +1466,7 @@
     "lineNumber": 10
   },
   {
-    "__docId__": 100,
+    "__docId__": 98,
     "kind": "test",
     "name": "test7",
     "testId": 7,
@@ -1482,11 +1475,11 @@
     "static": true,
     "longname": "test/listbox/listbox.spec.js~test5.test7",
     "access": null,
-    "description": "ListBox with some options but no default value",
+    "description": "ListBox with some options but no default value is connected",
     "lineNumber": 21
   },
   {
-    "__docId__": 101,
+    "__docId__": 99,
     "kind": "test",
     "name": "test8",
     "testId": 8,
@@ -1495,11 +1488,11 @@
     "static": true,
     "longname": "test/listbox/listbox.spec.js~test5.test8",
     "access": null,
-    "description": "ListBox with some options and default value",
+    "description": "ListBox with some options and default value is connected",
     "lineNumber": 55
   },
   {
-    "__docId__": 102,
+    "__docId__": 100,
     "kind": "test",
     "name": "test9",
     "testId": 9,
@@ -1509,10 +1502,13 @@
     "longname": "test/listbox/listbox.spec.js~test5.test9",
     "access": null,
     "description": "updating the selected index property should update the component",
-    "lineNumber": 89
+    "lineNumber": 90,
+    "testTargets": [
+      "ListBox#selectedIndex"
+    ]
   },
   {
-    "__docId__": 103,
+    "__docId__": 101,
     "kind": "test",
     "name": "test10",
     "testId": 10,
@@ -1522,10 +1518,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test10",
     "access": null,
     "description": "click an option should select it",
-    "lineNumber": 132
+    "lineNumber": 133
   },
   {
-    "__docId__": 104,
+    "__docId__": 102,
     "kind": "test",
     "name": "test11",
     "testId": 11,
@@ -1535,10 +1531,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test11",
     "access": null,
     "description": "arrow key down should select the next option",
-    "lineNumber": 165
+    "lineNumber": 166
   },
   {
-    "__docId__": 105,
+    "__docId__": 103,
     "kind": "test",
     "name": "test12",
     "testId": 12,
@@ -1548,10 +1544,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test12",
     "access": null,
     "description": "arrow key down should keep the last option in case it is already selected",
-    "lineNumber": 200
+    "lineNumber": 201
   },
   {
-    "__docId__": 106,
+    "__docId__": 104,
     "kind": "test",
     "name": "test13",
     "testId": 13,
@@ -1561,10 +1557,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test13",
     "access": null,
     "description": "arrow key up should select the last option if none is selected",
-    "lineNumber": 234
+    "lineNumber": 235
   },
   {
-    "__docId__": 107,
+    "__docId__": 105,
     "kind": "test",
     "name": "test14",
     "testId": 14,
@@ -1574,10 +1570,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test14",
     "access": null,
     "description": "arrow key up should select the previous option",
-    "lineNumber": 269
+    "lineNumber": 270
   },
   {
-    "__docId__": 108,
+    "__docId__": 106,
     "kind": "test",
     "name": "test15",
     "testId": 15,
@@ -1587,10 +1583,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test15",
     "access": null,
     "description": "arrow key up should keep the first option selected if it is already selected",
-    "lineNumber": 303
+    "lineNumber": 304
   },
   {
-    "__docId__": 109,
+    "__docId__": 107,
     "kind": "test",
     "name": "test16",
     "testId": 16,
@@ -1599,7 +1595,7 @@
     "static": true,
     "longname": "test/listbox/listbox.spec.js~test5.test16",
     "access": null,
-    "description": "listbox emits \"change\" event ",
-    "lineNumber": 337
+    "description": "listbox should emit \"change\" event when selected option changes ",
+    "lineNumber": 338
   }
 ]

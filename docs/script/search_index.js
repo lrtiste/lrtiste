@@ -6,12 +6,6 @@ window.esdocSearchIndex = [
     "class"
   ],
   [
-    "@citykleta/ui-kit/src/expandable/index.js~expandable",
-    "class/src/expandable/index.js~Expandable.html",
-    "<span>Expandable</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/expandable/index.js</span>",
-    "class"
-  ],
-  [
     "@citykleta/ui-kit/src/listbox/listbox.js~listbox",
     "class/src/listbox/listbox.js~ListBox.html",
     "<span>ListBox</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/listbox/listbox.js</span>",
@@ -38,60 +32,60 @@ window.esdocSearchIndex = [
   [
     "",
     "test-file/test/listbox/listbox.spec.js.html#lineNumber55",
-    "ListBox component ListBox with some options and default value",
+    "ListBox component ListBox with some options and default value is connected",
     "test"
   ],
   [
     "",
     "test-file/test/listbox/listbox.spec.js.html#lineNumber21",
-    "ListBox component ListBox with some options but no default value",
+    "ListBox component ListBox with some options but no default value is connected",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber200",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber201",
     "ListBox component arrow key down should keep the last option in case it is already selected",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber165",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber166",
     "ListBox component arrow key down should select the next option",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber303",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber304",
     "ListBox component arrow key up should keep the first option selected if it is already selected",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber234",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber235",
     "ListBox component arrow key up should select the last option if none is selected",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber269",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber270",
     "ListBox component arrow key up should select the previous option",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber132",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber133",
     "ListBox component click an option should select it",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber337",
-    "ListBox component listbox emits \"change\" event ",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber338",
+    "ListBox component listbox should emit \"change\" event when selected option changes ",
     "test"
   ],
   [
-    "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber89",
+    "listbox#selectedindex src/listbox/listbox.js~listbox#selectedindex,listbox#selectedindex",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber90",
     "ListBox component updating the selected index property should update the component",
     "test"
   ],
@@ -108,20 +102,20 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "",
-    "test-file/test/listbox/listbox-option.spec.js.html#lineNumber18",
+    "listboxoption#label src/listbox/listbox-option.js~listboxoption#label,listboxoption#label",
+    "test-file/test/listbox/listbox-option.spec.js.html#lineNumber19",
     "ListBoxOption component label property getter should default to textContent if attribute is not present",
     "test"
   ],
   [
-    "",
-    "test-file/test/listbox/listbox-option.spec.js.html#lineNumber25",
+    "listboxoption#label src/listbox/listbox-option.js~listboxoption#label,listboxoption#label",
+    "test-file/test/listbox/listbox-option.spec.js.html#lineNumber27",
     "ListBoxOption component label property setter should reflect on aria-label attribute",
     "test"
   ],
   [
-    "",
-    "test-file/test/listbox/listbox-option.spec.js.html#lineNumber35",
+    "listboxoption#selected src/listbox/listbox-option.js~listboxoption#selected,listboxoption#selected",
+    "test-file/test/listbox/listbox-option.spec.js.html#lineNumber38",
     "ListBoxOption component selected property getter",
     "test"
   ],
@@ -406,12 +400,6 @@ window.esdocSearchIndex = [
     "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
     "src/.external-ecmascript.js~undefined",
     "external"
-  ],
-  [
-    "src/expandable/index.js",
-    "file/src/expandable/index.js.html",
-    "src/expandable/index.js",
-    "file"
   ],
   [
     "src/index.js",

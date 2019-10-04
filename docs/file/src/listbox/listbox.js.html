@@ -8,7 +8,7 @@
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="web components for common widgets used accross citykleta organization"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="@citykleta/ui-kit"><meta property="twitter:description" content="web components for common widgets used accross citykleta organization"></head>
+<meta name="description" content="web components for common widgets used across citykleta organization"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="@citykleta/ui-kit"><meta property="twitter:description" content="web components for common widgets used across citykleta organization"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -29,8 +29,7 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#expandable">expandable</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/expandable/index.js~Expandable.html">Expandable</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
 </ul>
@@ -53,7 +52,7 @@ template.innerHTML = `&lt;style&gt;:host{position:relative}&lt;/style&gt;
  * Keyboard interaction is handled for &lt;kbd&gt;Up Arrow&lt;/kbd&gt; and &lt;kbd&gt;Down Arrow&lt;/kbd&gt;. In the same way if one option is clicked, then it becomes selected
  *
  * @see https://www.w3.org/TR/wai-aria-practices/#Listbox
- * @example
+ * @examples
  * &lt;ui-listbox&gt;
  *     &lt;ui-listbox-option&gt;&lt;span&gt;Some custom template&lt;/span&gt;&lt;/ui-listbox-option&gt;
  *     &lt;ui-listbox-option selected&gt;Other option selected by default&lt;/ui-listbox-option&gt;
@@ -68,9 +67,7 @@ template.innerHTML = `&lt;style&gt;:host{position:relative}&lt;/style&gt;
  */
 export class ListBox extends HTMLElement {
 
-    /**
-     * @protected
-     */
+    /** @protected */
     static get observedAttributes() {
         return [&apos;aria-activedescendant&apos;];
     }
@@ -100,7 +97,7 @@ export class ListBox extends HTMLElement {
      * @desc Reflects on ``aria-activedescendant`` attribute
      * @param {Number} index - The index of the new option element to select
      * @emits {ChangeEvent}
-     * @example
+     * @examples
      * const listbox = document.getElementId(&apos;some listbox id&apos;);
      * listbox.addEventListener(&apos;change&apos;, ev =&gt; {
      *     console.log(ev.selectedIndex);
@@ -123,9 +120,7 @@ export class ListBox extends HTMLElement {
         }
     }
 
-    /**
-     * @protected
-     */
+    /** @protected */
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === &apos;aria-activedescendant&apos; &amp;&amp; oldValue !== newValue) {
             for (const el of this._optionElements) {
@@ -163,9 +158,7 @@ export class ListBox extends HTMLElement {
         this._handleOptionClick = this._handleOptionClick.bind(this);
     }
 
-    /**
-     * @protected
-     */
+    /** @protected */
     connectedCallback() {
         this.setAttribute(&apos;role&apos;, &apos;listbox&apos;);
 
@@ -180,6 +173,7 @@ export class ListBox extends HTMLElement {
         this.addEventListener(&apos;keydown&apos;, this._handleKeydownEvent);
     }
 
+    /** @private */
     _handleOptionClick(ev) {
         const {currentTarget: option} = ev;
         const index = this._optionElements.indexOf(option);
@@ -188,6 +182,7 @@ export class ListBox extends HTMLElement {
         }
     }
 
+    /** @private */
     _handleOptionChangeEvent(ev) {
         this._optionElements = this.shadowRoot
             .querySelector(&apos;slot&apos;)
@@ -204,6 +199,7 @@ export class ListBox extends HTMLElement {
         this.selectedIndex = this._optionElements.findIndex(i =&gt; i.hasAttribute(&apos;selected&apos;));
     }
 
+    /** @private */
     _handleKeydownEvent(ev) {
         const {key} = ev;
         if ([&apos;ArrowDown&apos;, &apos;ArrowUp&apos;].includes(key)) {

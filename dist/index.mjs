@@ -12,6 +12,10 @@ const isSelectedPredicate = i => i.getAttribute('aria-selected') === 'true';
  * @desc Custom event emitted when the selected option of a {@link ListBox} has changed.
  */
 class ChangeEvent extends CustomEvent {
+
+    /**
+     * @param {Number} index - The index of the newly selected option
+     */
     constructor(index) {
         super('change', {
             detail: {selectedIndex: index}
@@ -39,7 +43,7 @@ template.innerHTML = `<style>:host{position:relative}</style>
  * Keyboard interaction is handled for <kbd>Up Arrow</kbd> and <kbd>Down Arrow</kbd>. In the same way if one option is clicked, then it becomes selected
  *
  * @see https://www.w3.org/TR/wai-aria-practices/#Listbox
- * @example
+ * @examples
  * <ui-listbox>
  *     <ui-listbox-option><span>Some custom template</span></ui-listbox-option>
  *     <ui-listbox-option selected>Other option selected by default</ui-listbox-option>
@@ -54,9 +58,7 @@ template.innerHTML = `<style>:host{position:relative}</style>
  */
 class ListBox extends HTMLElement {
 
-    /**
-     * @protected
-     */
+    /** @protected */
     static get observedAttributes() {
         return ['aria-activedescendant'];
     }
@@ -86,7 +88,7 @@ class ListBox extends HTMLElement {
      * @desc Reflects on ``aria-activedescendant`` attribute
      * @param {Number} index - The index of the new option element to select
      * @emits {ChangeEvent}
-     * @example
+     * @examples
      * const listbox = document.getElementId('some listbox id');
      * listbox.addEventListener('change', ev => {
      *     console.log(ev.selectedIndex);
@@ -109,9 +111,7 @@ class ListBox extends HTMLElement {
         }
     }
 
-    /**
-     * @protected
-     */
+    /** @protected */
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'aria-activedescendant' && oldValue !== newValue) {
             for (const el of this._optionElements) {
@@ -149,9 +149,7 @@ class ListBox extends HTMLElement {
         this._handleOptionClick = this._handleOptionClick.bind(this);
     }
 
-    /**
-     * @protected
-     */
+    /** @protected */
     connectedCallback() {
         this.setAttribute('role', 'listbox');
 
@@ -166,6 +164,7 @@ class ListBox extends HTMLElement {
         this.addEventListener('keydown', this._handleKeydownEvent);
     }
 
+    /** @private */
     _handleOptionClick(ev) {
         const {currentTarget: option} = ev;
         const index = this._optionElements.indexOf(option);
@@ -174,6 +173,7 @@ class ListBox extends HTMLElement {
         }
     }
 
+    /** @private */
     _handleOptionChangeEvent(ev) {
         this._optionElements = this.shadowRoot
             .querySelector('slot')
@@ -190,6 +190,7 @@ class ListBox extends HTMLElement {
         this.selectedIndex = this._optionElements.findIndex(i => i.hasAttribute('selected'));
     }
 
+    /** @private */
     _handleKeydownEvent(ev) {
         const {key} = ev;
         if (['ArrowDown', 'ArrowUp'].includes(key)) {

@@ -18,7 +18,7 @@ test('ListBox component', ({test}) => {
         t.eq(el.length, 0, 'length should be 0 as there is no option');
     });
 
-    test('ListBox with some options but no default value', async t => {
+    test('ListBox with some options but no default value is connected', async t => {
         const el = document.createElement(LIST_BOX_TAG_NAME);
         el.innerHTML = `
         <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>
@@ -52,7 +52,7 @@ test('ListBox component', ({test}) => {
         t.eq(el.getAttribute('aria-activedescendant'), '');
     });
 
-    test('ListBox with some options and default value', async t => {
+    test('ListBox with some options and default value is connected', async t => {
         const el = document.createElement(LIST_BOX_TAG_NAME);
         el.innerHTML = `
         <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>
@@ -86,6 +86,7 @@ test('ListBox component', ({test}) => {
         t.eq(el.getAttribute('aria-activedescendant'), opt3.id, 'should have updated the aria-activedescendant with the selected option id');
     });
 
+    /** @test {ListBox#selectedIndex} */
     test('updating the selected index property should update the component', async t => {
         const el = document.createElement(LIST_BOX_TAG_NAME);
         el.innerHTML = `
@@ -334,7 +335,7 @@ test('ListBox component', ({test}) => {
         t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');
     });
 
-    test('listbox emits "change" event ', async t => {
+    test('listbox should emit "change" event when selected option changes ', async t => {
         const el = document.createElement(LIST_BOX_TAG_NAME);
         el.innerHTML = `
         <${LIST_BOX_OPTION_TAG_NAME} id="custom-id-1">option 1</${LIST_BOX_OPTION_TAG_NAME}>

@@ -8,7 +8,7 @@
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
   <script src="script/manual.js"></script>
-<meta name="description" content="web components for common widgets used accross citykleta organization"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="@citykleta/ui-kit"><meta property="twitter:description" content="web components for common widgets used accross citykleta organization"></head>
+<meta name="description" content="web components for common widgets used across citykleta organization"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="@citykleta/ui-kit"><meta property="twitter:description" content="web components for common widgets used across citykleta organization"></head>
 <body class="layout-container" data-ice="rootContainer">
 
 <header>
@@ -29,8 +29,7 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#expandable">expandable</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/expandable/index.js~Expandable.html">Expandable</a></span></span></li>
-<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
 </ul>
@@ -55,6 +54,7 @@ test(&apos;ListBoxOption component&apos;, ({test}) =&gt; {
         t.eq(el.getAttribute(&apos;aria-label&apos;), &apos;some label&apos;, &apos;should have updated the aria-label attribute&apos;);
     });
 
+    /** @test {ListBoxOption#label} */
     test(&apos;label property getter should default to textContent if attribute is not present&apos;, t =&gt; {
         const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);
         el.textContent = &apos;I am the text content&apos;;
@@ -62,6 +62,7 @@ test(&apos;ListBoxOption component&apos;, ({test}) =&gt; {
         t.eq(el.label, &apos;I am the text content&apos;);
     });
 
+    /** @test {ListBoxOption#label} */
     test(&apos;label property setter should reflect on aria-label attribute&apos;, t =&gt; {
         const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);
         el.setAttribute(&apos;label&apos;, &apos;some label&apos;);
@@ -72,6 +73,7 @@ test(&apos;ListBoxOption component&apos;, ({test}) =&gt; {
         t.eq(el.getAttribute(&apos;aria-label&apos;), &apos;updated label&apos;, &apos;should have updated the aria-label attribute&apos;);
     });
 
+    /** @test {ListBoxOption#selected} */
     test(&apos;selected property getter&apos;, t =&gt; {
         const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);
         el.setAttribute(&apos;label&apos;, &apos;some label&apos;);

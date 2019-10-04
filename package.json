@@ -1,6 +1,6 @@
 {
   "name": "@citykleta/ui-kit",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "web components for common widgets used across citykleta organization",
   "main": "./dist/index",
   "module": "./dist/citykleta-ui-kit.js",
@@ -8,6 +8,7 @@
     "serve": "http-serve -p 3002",
     "build": "rollup -c ./rollup/build.js",
     "build:test": "rollup -c ./rollup/test.js",
+    "build:docs": "rm -rf docs && esdoc",
     "test:ci": "http-serve -s -p 3002 & (npm run test | tap-set-exit)",
     "test": "node ./test/run-test.js",
     "dev": "npm run serve & npm run test:build -- -w"
