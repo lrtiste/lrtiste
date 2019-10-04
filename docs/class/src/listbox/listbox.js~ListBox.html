@@ -70,7 +70,24 @@
 
   <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://www.w3.org/TR/wai-aria-practices/#Listbox">https://www.w3.org/TR/wai-aria-practices/#Listbox</a></span></li></ul></div>
 
-  
+  <div data-ice="exampleDocs">
+    <h4>Example:</h4>
+    
+  <div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">&lt;ui-listbox&gt;
+    &lt;ui-listbox-option&gt;&lt;span&gt;Some custom template&lt;/span&gt;&lt;/ui-listbox-option&gt;
+    &lt;ui-listbox-option selected&gt;Other option selected by default&lt;/ui-listbox-option&gt;
+&lt;/ui-listbox&gt;
+
+&lt;script type=&quot;module&quot;&gt;
+    import {ListBox, ListBoxOption} from &apos;path/to/lib&apos;
+
+    customElements.define(&apos;ui-listbox&apos;, ListBox);
+    customElements.define(&apos;ui-listbox-option&apos;, ListBoxOption);
+&lt;/script&gt;</code></pre>
+    </div>
+</div>
 
   <div data-ice="tests">
     <h4>Test:</h4>
@@ -460,7 +477,24 @@
 
   
 
-  
+  <div data-ice="example">
+    <h4>Example:</h4>
+    
+  <div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">const listbox = document.getElementId(&apos;some listbox id&apos;);
+listbox.addEventListener(&apos;change&apos;, ev =&gt; {
+    console.log(ev.selectedIndex);
+})
+
+listbox.selectedIndex = 0; // select first option;
+listbox.selectedIndex = 1; // select second option;
+
+//etc
+
+listbox.selectedIndex = -1; // unselect all</code></pre>
+    </div>
+</div>
 
   
 
