@@ -60,7 +60,7 @@ typings/
 # next.js build output
 .next
 
-.idea
+.idea/
 ./dist
 test/dist/*.js
 test/dist/*.js.map
