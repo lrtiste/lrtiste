@@ -1,11 +1,16 @@
 {
-  "coverage": "89.28%",
-  "expectCount": 28,
-  "actualCount": 25,
+  "coverage": "60%",
+  "expectCount": 55,
+  "actualCount": 33,
   "files": {
-    "src/listbox/change-event.js": {
+    "src/common/change-event.js": {
       "expectCount": 3,
       "actualCount": 3,
+      "undocumentLines": []
+    },
+    "src/common/utils.js": {
+      "expectCount": 2,
+      "actualCount": 2,
       "undocumentLines": []
     },
     "src/listbox/listbox-option.js": {
@@ -14,18 +19,49 @@
       "undocumentLines": []
     },
     "src/listbox/listbox.js": {
-      "expectCount": 15,
+      "expectCount": 16,
       "actualCount": 13,
       "undocumentLines": [
         4,
-        108
+        6,
+        109
       ]
     },
-    "src/listbox/util.js": {
-      "expectCount": 3,
-      "actualCount": 2,
+    "src/tabs/tab-panel.js": {
+      "expectCount": 5,
+      "actualCount": 0,
       "undocumentLines": [
-        1
+        1,
+        4,
+        6,
+        10,
+        16
+      ]
+    },
+    "src/tabs/tab-set.js": {
+      "expectCount": 17,
+      "actualCount": 8,
+      "undocumentLines": [
+        4,
+        5,
+        7,
+        10,
+        17,
+        21,
+        25,
+        51,
+        65
+      ]
+    },
+    "src/tabs/tab.js": {
+      "expectCount": 5,
+      "actualCount": 0,
+      "undocumentLines": [
+        1,
+        4,
+        6,
+        10,
+        16
       ]
     }
   }

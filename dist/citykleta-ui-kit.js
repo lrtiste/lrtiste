@@ -43,7 +43,7 @@ template.innerHTML = `<style>:host{position:relative}</style>
  * Keyboard interaction is handled for <kbd>Up Arrow</kbd> and <kbd>Down Arrow</kbd>. In the same way if one option is clicked, then it becomes selected
  *
  * @see https://www.w3.org/TR/wai-aria-practices/#Listbox
- * @examples
+ * @example
  * <ui-listbox>
  *     <ui-listbox-option><span>Some custom template</span></ui-listbox-option>
  *     <ui-listbox-option selected>Other option selected by default</ui-listbox-option>
@@ -88,7 +88,7 @@ class ListBox extends HTMLElement {
      * @desc Reflects on ``aria-activedescendant`` attribute
      * @param {Number} index - The index of the new option element to select
      * @emits {ChangeEvent}
-     * @examples
+     * @example
      * const listbox = document.getElementId('some listbox id');
      * listbox.addEventListener('change', ev => {
      *     console.log(ev.selectedIndex);
@@ -193,11 +193,26 @@ class ListBox extends HTMLElement {
     /** @private */
     _handleKeydownEvent(ev) {
         const {key} = ev;
-        if (['ArrowDown', 'ArrowUp'].includes(key)) {
-            this.selectedIndex = key === 'ArrowDown' ?
-                Math.min(this.selectedIndex + 1, this.length - 1) :
-                (this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0) :
-                    this.length - 1);
+        if (['ArrowDown', 'ArrowUp', 'End', 'Home'].includes(key)) {
+            switch (key) {
+                case 'ArrowDown': {
+                    Math.min(this.selectedIndex + 1, this.length - 1);
+                    break;
+                }
+                case 'ArrowUp': {
+                    this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0)
+                        : this.length - 1;
+                    break;
+                }
+                case 'Home': {
+                    this.selectedIndex = this.length ? 0 : -1;
+                    break;
+                }
+                case 'End': {
+                    this.selectedIndex = this.length - 1;
+                    break;
+                }
+            }
             ev.preventDefault();
         }
     }

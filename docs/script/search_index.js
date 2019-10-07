@@ -1,8 +1,8 @@
 window.esdocSearchIndex = [
   [
-    "@citykleta/ui-kit/src/listbox/change-event.js~changeevent",
-    "class/src/listbox/change-event.js~ChangeEvent.html",
-    "<span>ChangeEvent</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/listbox/change-event.js</span>",
+    "@citykleta/ui-kit/src/common/change-event.js~changeevent",
+    "class/src/common/change-event.js~ChangeEvent.html",
+    "<span>ChangeEvent</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/common/change-event.js</span>",
     "class"
   ],
   [
@@ -15,6 +15,24 @@ window.esdocSearchIndex = [
     "@citykleta/ui-kit/src/listbox/listbox-option.js~listboxoption",
     "class/src/listbox/listbox-option.js~ListBoxOption.html",
     "<span>ListBoxOption</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/listbox/listbox-option.js</span>",
+    "class"
+  ],
+  [
+    "@citykleta/ui-kit/src/tabs/tab.js~tab",
+    "class/src/tabs/tab.js~Tab.html",
+    "<span>Tab</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/tabs/tab.js</span>",
+    "class"
+  ],
+  [
+    "@citykleta/ui-kit/src/tabs/tab-panel.js~tabpanel",
+    "class/src/tabs/tab-panel.js~TabPanel.html",
+    "<span>TabPanel</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/tabs/tab-panel.js</span>",
+    "class"
+  ],
+  [
+    "@citykleta/ui-kit/src/tabs/tab-set.js~tabset",
+    "class/src/tabs/tab-set.js~TabSet.html",
+    "<span>TabSet</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/tabs/tab-set.js</span>",
     "class"
   ],
   [
@@ -402,28 +420,34 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
+    "src/common/change-event.js",
+    "file/src/common/change-event.js.html",
+    "src/common/change-event.js",
+    "file"
+  ],
+  [
+    "src/common/change-event.js~changeevent#constructor",
+    "class/src/common/change-event.js~ChangeEvent.html#instance-constructor-constructor",
+    "src/common/change-event.js~ChangeEvent#constructor",
+    "method"
+  ],
+  [
+    "src/common/change-event.js~changeevent#selectedindex",
+    "class/src/common/change-event.js~ChangeEvent.html#instance-get-selectedIndex",
+    "src/common/change-event.js~ChangeEvent#selectedIndex",
+    "member"
+  ],
+  [
+    "src/common/utils.js",
+    "file/src/common/utils.js.html",
+    "src/common/utils.js",
+    "file"
+  ],
+  [
     "src/index.js",
     "file/src/index.js.html",
     "src/index.js",
     "file"
-  ],
-  [
-    "src/listbox/change-event.js",
-    "file/src/listbox/change-event.js.html",
-    "src/listbox/change-event.js",
-    "file"
-  ],
-  [
-    "src/listbox/change-event.js~changeevent#constructor",
-    "class/src/listbox/change-event.js~ChangeEvent.html#instance-constructor-constructor",
-    "src/listbox/change-event.js~ChangeEvent#constructor",
-    "method"
-  ],
-  [
-    "src/listbox/change-event.js~changeevent#selectedindex",
-    "class/src/listbox/change-event.js~ChangeEvent.html#instance-get-selectedIndex",
-    "src/listbox/change-event.js~ChangeEvent#selectedIndex",
-    "member"
   ],
   [
     "src/listbox/index.js",
@@ -492,10 +516,94 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/listbox/util.js",
-    "file/src/listbox/util.js.html",
-    "src/listbox/util.js",
+    "src/tabs/index.js",
+    "file/src/tabs/index.js.html",
+    "src/tabs/index.js",
     "file"
+  ],
+  [
+    "src/tabs/tab-panel.js",
+    "file/src/tabs/tab-panel.js.html",
+    "src/tabs/tab-panel.js",
+    "file"
+  ],
+  [
+    "src/tabs/tab-panel.js~tabpanel#active",
+    "class/src/tabs/tab-panel.js~TabPanel.html#instance-get-active",
+    "src/tabs/tab-panel.js~TabPanel#active",
+    "member"
+  ],
+  [
+    "src/tabs/tab-panel.js~tabpanel#connectedcallback",
+    "class/src/tabs/tab-panel.js~TabPanel.html#instance-method-connectedCallback",
+    "src/tabs/tab-panel.js~TabPanel#connectedCallback",
+    "method"
+  ],
+  [
+    "src/tabs/tab-panel.js~tabpanel#constructor",
+    "class/src/tabs/tab-panel.js~TabPanel.html#instance-constructor-constructor",
+    "src/tabs/tab-panel.js~TabPanel#constructor",
+    "method"
+  ],
+  [
+    "src/tabs/tab-set.js",
+    "file/src/tabs/tab-set.js.html",
+    "src/tabs/tab-set.js",
+    "file"
+  ],
+  [
+    "src/tabs/tab-set.js~tabset#connectedcallback",
+    "class/src/tabs/tab-set.js~TabSet.html#instance-method-connectedCallback",
+    "src/tabs/tab-set.js~TabSet#connectedCallback",
+    "method"
+  ],
+  [
+    "src/tabs/tab-set.js~tabset#constructor",
+    "class/src/tabs/tab-set.js~TabSet.html#instance-constructor-constructor",
+    "src/tabs/tab-set.js~TabSet#constructor",
+    "method"
+  ],
+  [
+    "src/tabs/tab-set.js~tabset#length",
+    "class/src/tabs/tab-set.js~TabSet.html#instance-get-length",
+    "src/tabs/tab-set.js~TabSet#length",
+    "member"
+  ],
+  [
+    "src/tabs/tab-set.js~tabset#selectedindex",
+    "class/src/tabs/tab-set.js~TabSet.html#instance-get-selectedIndex",
+    "src/tabs/tab-set.js~TabSet#selectedIndex",
+    "member"
+  ],
+  [
+    "src/tabs/tab-set.js~tabset#selectedindex",
+    "class/src/tabs/tab-set.js~TabSet.html#instance-set-selectedIndex",
+    "src/tabs/tab-set.js~TabSet#selectedIndex",
+    "member"
+  ],
+  [
+    "src/tabs/tab.js",
+    "file/src/tabs/tab.js.html",
+    "src/tabs/tab.js",
+    "file"
+  ],
+  [
+    "src/tabs/tab.js~tab#connectedcallback",
+    "class/src/tabs/tab.js~Tab.html#instance-method-connectedCallback",
+    "src/tabs/tab.js~Tab#connectedCallback",
+    "method"
+  ],
+  [
+    "src/tabs/tab.js~tab#constructor",
+    "class/src/tabs/tab.js~Tab.html#instance-constructor-constructor",
+    "src/tabs/tab.js~Tab#constructor",
+    "method"
+  ],
+  [
+    "src/tabs/tab.js~tab#selected",
+    "class/src/tabs/tab.js~Tab.html#instance-get-selected",
+    "src/tabs/tab.js~Tab#selected",
+    "member"
   ],
   [
     "test/listbox/listbox-option.spec.js",

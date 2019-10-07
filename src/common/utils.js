@@ -1,8 +1,10 @@
-let counter = 0;
 /**
  * @private
  */
-export const generateRandomId = () => `listbox-option-${++counter}`;
+export const generateRandomId = (prefix) => {
+    let counter = 0;
+    return () => `${prefix}-${++counter}`;
+};
 /**
  * @private
  */

@@ -11,7 +11,7 @@
     "build:docs": "rm -rf docs && esdoc",
     "test:ci": "http-serve -s -p 3002 & (npm run test | tap-set-exit)",
     "test": "node ./test/run-test.js",
-    "dev": "npm run serve & npm run test:build -- -w"
+    "dev": "npm run serve & npm run build:test -- -w"
   },
   "files": [
     "dist"

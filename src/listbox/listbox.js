@@ -1,8 +1,9 @@
-import {generateRandomId, isSelectedPredicate} from './util.js';
-import ChangeEvent from './change-event.js';
+import {generateRandomId as idGenerator, isSelectedPredicate} from '../common/utils.js';
+import ChangeEvent from '../common/change-event.js';
+
+const generateRandomId = idGenerator('listbox-option');
 
 const template = document.createElement('template');
-
 template.innerHTML = `<style>:host{position:relative}</style>
 <slot name="options"></slot>
 `;
@@ -163,11 +164,26 @@ export class ListBox extends HTMLElement {
     /** @private */
     _handleKeydownEvent(ev) {
         const {key} = ev;
-        if (['ArrowDown', 'ArrowUp'].includes(key)) {
-            this.selectedIndex = key === 'ArrowDown' ?
-                Math.min(this.selectedIndex + 1, this.length - 1) :
-                (this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0) :
-                    this.length - 1);
+        if (['ArrowDown', 'ArrowUp', 'End', 'Home'].includes(key)) {
+            switch (key) {
+                case 'ArrowDown': {
+                    this.selectedIndex = Math.min(this.selectedIndex + 1, this.length - 1);
+                    break;
+                }
+                case 'ArrowUp': {
+                    this.selectedIndex = this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0)
+                        : this.length - 1;
+                    break;
+                }
+                case 'Home': {
+                    this.selectedIndex = this.length ? 0 : -1;
+                    break;
+                }
+                case 'End': {
+                    this.selectedIndex = this.length - 1;
+                    break;
+                }
+            }
             ev.preventDefault();
         }
     }

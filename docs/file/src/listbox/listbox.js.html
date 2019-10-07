@@ -29,19 +29,23 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#common">common</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#tabs">tabs</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-panel.js~TabPanel.html">TabPanel</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html">TabSet</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab.js~Tab.html">Tab</a></span></span></li>
 </ul>
 </div>
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">src/listbox/listbox.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {generateRandomId, isSelectedPredicate} from &apos;./util.js&apos;;
-import ChangeEvent from &apos;./change-event.js&apos;;
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {generateRandomId as idGenerator, isSelectedPredicate} from &apos;../common/utils.js&apos;;
+import ChangeEvent from &apos;../common/change-event.js&apos;;
+
+const generateRandomId = idGenerator(&apos;listbox-option&apos;);
 
 const template = document.createElement(&apos;template&apos;);
-
 template.innerHTML = `&lt;style&gt;:host{position:relative}&lt;/style&gt;
 &lt;slot name=&quot;options&quot;&gt;&lt;/slot&gt;
 `;
@@ -202,11 +206,26 @@ export class ListBox extends HTMLElement {
     /** @private */
     _handleKeydownEvent(ev) {
         const {key} = ev;
-        if ([&apos;ArrowDown&apos;, &apos;ArrowUp&apos;].includes(key)) {
-            this.selectedIndex = key === &apos;ArrowDown&apos; ?
-                Math.min(this.selectedIndex + 1, this.length - 1) :
-                (this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0) :
-                    this.length - 1);
+        if ([&apos;ArrowDown&apos;, &apos;ArrowUp&apos;, &apos;End&apos;, &apos;Home&apos;].includes(key)) {
+            switch (key) {
+                case &apos;ArrowDown&apos;: {
+                    this.selectedIndex = Math.min(this.selectedIndex + 1, this.length - 1);
+                    break;
+                }
+                case &apos;ArrowUp&apos;: {
+                    this.selectedIndex = this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0)
+                        : this.length - 1;
+                    break;
+                }
+                case &apos;Home&apos;: {
+                    this.selectedIndex = this.length ? 0 : -1;
+                    break;
+                }
+                case &apos;End&apos;: {
+                    this.selectedIndex = this.length - 1;
+                    break;
+                }
+            }
             ev.preventDefault();
         }
     }

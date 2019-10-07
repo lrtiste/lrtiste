@@ -566,35 +566,24 @@
   {
     "__docId__": 48,
     "kind": "file",
-    "name": "src/index.js",
-    "content": "export * from './listbox/index.js';",
+    "name": "src/common/change-event.js",
+    "content": "/**\n * @desc Custom event emitted when the selected option of a {@link ListBox} has changed.\n */\nexport default class ChangeEvent extends CustomEvent {\n\n    /**\n     * @param {Number} index - The index of the newly selected option\n     */\n    constructor(index) {\n        super('change', {\n            detail: {selectedIndex: index}\n        });\n    }\n\n    /**\n     *\n     * @returns {number} the index of the newly selected item (-1 for none)\n     */\n    get selectedIndex() {\n        return this.detail.selectedIndex;\n    }\n}",
     "static": true,
-    "longname": "/Volumes/data/code/ui-kit/src/index.js",
+    "longname": "/Volumes/data/code/ui-kit/src/common/change-event.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
     "__docId__": 49,
-    "kind": "file",
-    "name": "src/listbox/change-event.js",
-    "content": "/**\n * @desc Custom event emitted when the selected option of a {@link ListBox} has changed.\n */\nexport default class ChangeEvent extends CustomEvent {\n\n    /**\n     * @param {Number} index - The index of the newly selected option\n     */\n    constructor(index) {\n        super('change', {\n            detail: {selectedIndex: index}\n        });\n    }\n\n    /**\n     *\n     * @returns {number} the index of the newly selected item (-1 for none)\n     */\n    get selectedIndex() {\n        return this.detail.selectedIndex;\n    }\n}",
-    "static": true,
-    "longname": "/Volumes/data/code/ui-kit/src/listbox/change-event.js",
-    "access": "public",
-    "description": null,
-    "lineNumber": 1
-  },
-  {
-    "__docId__": 50,
     "kind": "class",
     "name": "ChangeEvent",
-    "memberof": "src/listbox/change-event.js",
+    "memberof": "src/common/change-event.js",
     "static": true,
-    "longname": "src/listbox/change-event.js~ChangeEvent",
+    "longname": "src/common/change-event.js~ChangeEvent",
     "access": "public",
     "export": true,
-    "importPath": "@citykleta/ui-kit/src/listbox/change-event.js",
+    "importPath": "@citykleta/ui-kit/src/common/change-event.js",
     "importStyle": "ChangeEvent",
     "description": "Custom event emitted when the selected option of a {@link ListBox} has changed.",
     "lineNumber": 4,
@@ -604,14 +593,14 @@
     ]
   },
   {
-    "__docId__": 51,
+    "__docId__": 50,
     "kind": "constructor",
     "name": "constructor",
-    "memberof": "src/listbox/change-event.js~ChangeEvent",
+    "memberof": "src/common/change-event.js~ChangeEvent",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/listbox/change-event.js~ChangeEvent#constructor",
+    "longname": "src/common/change-event.js~ChangeEvent#constructor",
     "access": "public",
     "description": "",
     "lineNumber": 9,
@@ -629,14 +618,14 @@
     ]
   },
   {
-    "__docId__": 52,
+    "__docId__": 51,
     "kind": "get",
     "name": "selectedIndex",
-    "memberof": "src/listbox/change-event.js~ChangeEvent",
+    "memberof": "src/common/change-event.js~ChangeEvent",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/listbox/change-event.js~ChangeEvent#selectedIndex",
+    "longname": "src/common/change-event.js~ChangeEvent#selectedIndex",
     "access": "public",
     "description": "",
     "lineNumber": 19,
@@ -661,10 +650,88 @@
     }
   },
   {
+    "__docId__": 52,
+    "kind": "file",
+    "name": "src/common/utils.js",
+    "content": "/**\n * @private\n */\nexport const generateRandomId = (prefix) => {\n    let counter = 0;\n    return () => `${prefix}-${++counter}`;\n};\n/**\n * @private\n */\nexport const isSelectedPredicate = i => i.getAttribute('aria-selected') === 'true';\n",
+    "static": true,
+    "longname": "/Volumes/data/code/ui-kit/src/common/utils.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
     "__docId__": 53,
+    "kind": "function",
+    "name": "generateRandomId",
+    "memberof": "src/common/utils.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/common/utils.js~generateRandomId",
+    "access": "private",
+    "export": true,
+    "importPath": "@citykleta/ui-kit/src/common/utils.js",
+    "importStyle": "{generateRandomId}",
+    "description": "",
+    "lineNumber": 4,
+    "ignore": true,
+    "params": [
+      {
+        "name": "prefix",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 54,
+    "kind": "function",
+    "name": "isSelectedPredicate",
+    "memberof": "src/common/utils.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "src/common/utils.js~isSelectedPredicate",
+    "access": "private",
+    "export": true,
+    "importPath": "@citykleta/ui-kit/src/common/utils.js",
+    "importStyle": "{isSelectedPredicate}",
+    "description": "",
+    "lineNumber": 11,
+    "ignore": true,
+    "params": [
+      {
+        "name": "i",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 55,
+    "kind": "file",
+    "name": "src/index.js",
+    "content": "export * from './listbox/index.js';",
+    "static": true,
+    "longname": "/Volumes/data/code/ui-kit/src/index.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 56,
     "kind": "file",
     "name": "src/listbox/index.js",
-    "content": "export * from './listbox.js';\nexport * from './listbox-option.js';\nexport * from './change-event.js';",
+    "content": "export * from './listbox.js';\nexport * from './listbox-option.js';",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/src/listbox/index.js",
     "access": "public",
@@ -672,7 +739,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 54,
+    "__docId__": 57,
     "kind": "file",
     "name": "src/listbox/listbox-option.js",
     "content": "/**\n * @desc An option to be nested within a {@link ListBox} element\n */\nexport class ListBoxOption extends HTMLElement {\n\n    /**\n     * @protected\n     */\n    static get observedAttributes() {\n        return ['label'];\n    }\n\n    /**\n     * @protected\n     */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'label') {\n            if (newValue) {\n                this.setAttribute('aria-label', newValue);\n            } else {\n                this.removeAttribute('aria-label');\n            }\n        }\n    }\n\n    /**\n     * @returns {boolean} whether the option is currently selected or not\n     */\n    get selected() {\n        return this.getAttribute('aria-selected') === 'true';\n    }\n\n    /**\n     * @returns {string} The label or text content to be used by assistive technologies to describe the option\n     */\n    get label() {\n        return this.hasAttribute('label') ? this.getAttribute('label') : this.textContent;\n    }\n\n    /**\n     * @desc Reflects on ``aria-label`` attribute\n     * @param value\n     */\n    set label(value) {\n        this.setAttribute('label', value);\n    }\n\n    /**\n     * @protected\n     */\n    connectedCallback() {\n        this.setAttribute('role', 'option');\n        this.setAttribute('slot', 'options');\n    }\n}",
@@ -683,7 +750,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 55,
+    "__docId__": 58,
     "kind": "class",
     "name": "ListBoxOption",
     "memberof": "src/listbox/listbox-option.js",
@@ -701,7 +768,7 @@
     ]
   },
   {
-    "__docId__": 56,
+    "__docId__": 59,
     "kind": "get",
     "name": "observedAttributes",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -720,7 +787,7 @@
     }
   },
   {
-    "__docId__": 57,
+    "__docId__": 60,
     "kind": "method",
     "name": "attributeChangedCallback",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -755,7 +822,7 @@
     "return": null
   },
   {
-    "__docId__": 58,
+    "__docId__": 61,
     "kind": "get",
     "name": "selected",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -787,7 +854,7 @@
     }
   },
   {
-    "__docId__": 59,
+    "__docId__": 62,
     "kind": "get",
     "name": "label",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -819,7 +886,7 @@
     }
   },
   {
-    "__docId__": 60,
+    "__docId__": 63,
     "kind": "set",
     "name": "label",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -844,7 +911,7 @@
     ]
   },
   {
-    "__docId__": 61,
+    "__docId__": 64,
     "kind": "method",
     "name": "connectedCallback",
     "memberof": "src/listbox/listbox-option.js~ListBoxOption",
@@ -860,10 +927,10 @@
     "return": null
   },
   {
-    "__docId__": 62,
+    "__docId__": 65,
     "kind": "file",
     "name": "src/listbox/listbox.js",
-    "content": "import {generateRandomId, isSelectedPredicate} from './util.js';\nimport ChangeEvent from './change-event.js';\n\nconst template = document.createElement('template');\n\ntemplate.innerHTML = `<style>:host{position:relative}</style>\n<slot name=\"options\"></slot>\n`;\n\n/**\n * @desc Implements the ListBox pattern for single select ListBox where the focus follows the selection.\n *\n * Keyboard interaction is handled for <kbd>Up Arrow</kbd> and <kbd>Down Arrow</kbd>. In the same way if one option is clicked, then it becomes selected\n *\n * @see https://www.w3.org/TR/wai-aria-practices/#Listbox\n * @example\n * <ui-listbox>\n *     <ui-listbox-option><span>Some custom template</span></ui-listbox-option>\n *     <ui-listbox-option selected>Other option selected by default</ui-listbox-option>\n * </ui-listbox>\n *\n * <script type=\"module\">\n *     import {ListBox, ListBoxOption} from 'path/to/lib'\n *\n *     customElements.define('ui-listbox', ListBox);\n *     customElements.define('ui-listbox-option', ListBoxOption);\n * </script>\n */\nexport class ListBox extends HTMLElement {\n\n    /** @protected */\n    static get observedAttributes() {\n        return ['aria-activedescendant'];\n    }\n\n    /**\n     * @returns {ListBoxOption|null} The currently selected ListBoxOption element\n     */\n    get selectedOption() {\n        return this._optionElements.filter(isSelectedPredicate)[0] || null;\n    }\n\n    /**\n     * @returns {number} - The current number of available options\n     */\n    get length() {\n        return this._optionElements.length;\n    }\n\n    /**\n     * @returns {number} The index of the currently selected option, -1 if none is selected\n     */\n    get selectedIndex() {\n        return this._optionElements.findIndex(isSelectedPredicate);\n    }\n\n    /**\n     * @desc Reflects on ``aria-activedescendant`` attribute\n     * @param {Number} index - The index of the new option element to select\n     * @emits {ChangeEvent}\n     * @example\n     * const listbox = document.getElementId('some listbox id');\n     * listbox.addEventListener('change', ev => {\n     *     console.log(ev.selectedIndex);\n     * })\n     *\n     * listbox.selectedIndex = 0; // select first option;\n     * listbox.selectedIndex = 1; // select second option;\n     *\n     * //etc\n     *\n     * listbox.selectedIndex = -1; // unselect all\n     *\n     */\n    set selectedIndex(index) {\n        const options = this._optionElements;\n        if (index < 0 || index >= options.length) {\n            this.setAttribute('aria-activedescendant', '');\n        } else {\n            this.setAttribute('aria-activedescendant', options[index].getAttribute('id'));\n        }\n    }\n\n    /** @protected */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'aria-activedescendant' && oldValue !== newValue) {\n            for (const el of this._optionElements) {\n                el.setAttribute('aria-selected', String(newValue === el.getAttribute('id')));\n            }\n\n            if (this.selectedOption) {\n                const {offsetTop, offsetHeight} = this.selectedOption;\n\n                //before\n                if (offsetTop < this.scrollTop) {\n                    /** @protected*/\n                    this.scrollTop = offsetTop;\n                } else if ((offsetTop + offsetHeight) > (this.scrollTop + this.clientHeight)) {\n                    // after\n                    this.scrollBy(0, (offsetTop + offsetHeight) - (this.scrollTop + this.clientHeight));\n                }\n            }\n\n            this.dispatchEvent(new ChangeEvent(this.selectedIndex));\n        }\n    }\n\n    constructor() {\n        super();\n        /**\n         * @type {ListBoxOption[]}\n         * @private\n         */\n        this._optionElements = [];\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n        this._handleOptionChangeEvent = this._handleOptionChangeEvent.bind(this);\n        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);\n        this._handleOptionClick = this._handleOptionClick.bind(this);\n    }\n\n    /** @protected */\n    connectedCallback() {\n        this.setAttribute('role', 'listbox');\n\n        if (!this.hasAttribute('tabindex')) {\n            this.setAttribute('tabindex', '0');\n        }\n\n        this.shadowRoot\n            .querySelector('slot[name=options]')\n            .addEventListener('slotchange', this._handleOptionChangeEvent);\n\n        this.addEventListener('keydown', this._handleKeydownEvent);\n    }\n\n    /** @private */\n    _handleOptionClick(ev) {\n        const {currentTarget: option} = ev;\n        const index = this._optionElements.indexOf(option);\n        if (index !== -1) {\n            this.selectedIndex = index;\n        }\n    }\n\n    /** @private */\n    _handleOptionChangeEvent(ev) {\n        this._optionElements = this.shadowRoot\n            .querySelector('slot')\n            .assignedNodes()\n            .filter(el => el.getAttribute('role') === 'option');\n\n        for (const opt of this._optionElements) {\n            if (!opt.hasAttribute('id')) {\n                opt.setAttribute('id', generateRandomId());\n            }\n            opt.addEventListener('click', this._handleOptionClick);\n        }\n\n        this.selectedIndex = this._optionElements.findIndex(i => i.hasAttribute('selected'));\n    }\n\n    /** @private */\n    _handleKeydownEvent(ev) {\n        const {key} = ev;\n        if (['ArrowDown', 'ArrowUp'].includes(key)) {\n            this.selectedIndex = key === 'ArrowDown' ?\n                Math.min(this.selectedIndex + 1, this.length - 1) :\n                (this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0) :\n                    this.length - 1);\n            ev.preventDefault();\n        }\n    }\n}",
+    "content": "import {generateRandomId as idGenerator, isSelectedPredicate} from '../common/utils.js';\nimport ChangeEvent from '../common/change-event.js';\n\nconst generateRandomId = idGenerator('listbox-option');\n\nconst template = document.createElement('template');\ntemplate.innerHTML = `<style>:host{position:relative}</style>\n<slot name=\"options\"></slot>\n`;\n\n/**\n * @desc Implements the ListBox pattern for single select ListBox where the focus follows the selection.\n *\n * Keyboard interaction is handled for <kbd>Up Arrow</kbd> and <kbd>Down Arrow</kbd>. In the same way if one option is clicked, then it becomes selected\n *\n * @see https://www.w3.org/TR/wai-aria-practices/#Listbox\n * @example\n * <ui-listbox>\n *     <ui-listbox-option><span>Some custom template</span></ui-listbox-option>\n *     <ui-listbox-option selected>Other option selected by default</ui-listbox-option>\n * </ui-listbox>\n *\n * <script type=\"module\">\n *     import {ListBox, ListBoxOption} from 'path/to/lib'\n *\n *     customElements.define('ui-listbox', ListBox);\n *     customElements.define('ui-listbox-option', ListBoxOption);\n * </script>\n */\nexport class ListBox extends HTMLElement {\n\n    /** @protected */\n    static get observedAttributes() {\n        return ['aria-activedescendant'];\n    }\n\n    /**\n     * @returns {ListBoxOption|null} The currently selected ListBoxOption element\n     */\n    get selectedOption() {\n        return this._optionElements.filter(isSelectedPredicate)[0] || null;\n    }\n\n    /**\n     * @returns {number} - The current number of available options\n     */\n    get length() {\n        return this._optionElements.length;\n    }\n\n    /**\n     * @returns {number} The index of the currently selected option, -1 if none is selected\n     */\n    get selectedIndex() {\n        return this._optionElements.findIndex(isSelectedPredicate);\n    }\n\n    /**\n     * @desc Reflects on ``aria-activedescendant`` attribute\n     * @param {Number} index - The index of the new option element to select\n     * @emits {ChangeEvent}\n     * @example\n     * const listbox = document.getElementId('some listbox id');\n     * listbox.addEventListener('change', ev => {\n     *     console.log(ev.selectedIndex);\n     * })\n     *\n     * listbox.selectedIndex = 0; // select first option;\n     * listbox.selectedIndex = 1; // select second option;\n     *\n     * //etc\n     *\n     * listbox.selectedIndex = -1; // unselect all\n     *\n     */\n    set selectedIndex(index) {\n        const options = this._optionElements;\n        if (index < 0 || index >= options.length) {\n            this.setAttribute('aria-activedescendant', '');\n        } else {\n            this.setAttribute('aria-activedescendant', options[index].getAttribute('id'));\n        }\n    }\n\n    /** @protected */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'aria-activedescendant' && oldValue !== newValue) {\n            for (const el of this._optionElements) {\n                el.setAttribute('aria-selected', String(newValue === el.getAttribute('id')));\n            }\n\n            if (this.selectedOption) {\n                const {offsetTop, offsetHeight} = this.selectedOption;\n\n                //before\n                if (offsetTop < this.scrollTop) {\n                    /** @protected*/\n                    this.scrollTop = offsetTop;\n                } else if ((offsetTop + offsetHeight) > (this.scrollTop + this.clientHeight)) {\n                    // after\n                    this.scrollBy(0, (offsetTop + offsetHeight) - (this.scrollTop + this.clientHeight));\n                }\n            }\n\n            this.dispatchEvent(new ChangeEvent(this.selectedIndex));\n        }\n    }\n\n    constructor() {\n        super();\n        /**\n         * @type {ListBoxOption[]}\n         * @private\n         */\n        this._optionElements = [];\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n        this._handleOptionChangeEvent = this._handleOptionChangeEvent.bind(this);\n        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);\n        this._handleOptionClick = this._handleOptionClick.bind(this);\n    }\n\n    /** @protected */\n    connectedCallback() {\n        this.setAttribute('role', 'listbox');\n\n        if (!this.hasAttribute('tabindex')) {\n            this.setAttribute('tabindex', '0');\n        }\n\n        this.shadowRoot\n            .querySelector('slot[name=options]')\n            .addEventListener('slotchange', this._handleOptionChangeEvent);\n\n        this.addEventListener('keydown', this._handleKeydownEvent);\n    }\n\n    /** @private */\n    _handleOptionClick(ev) {\n        const {currentTarget: option} = ev;\n        const index = this._optionElements.indexOf(option);\n        if (index !== -1) {\n            this.selectedIndex = index;\n        }\n    }\n\n    /** @private */\n    _handleOptionChangeEvent(ev) {\n        this._optionElements = this.shadowRoot\n            .querySelector('slot')\n            .assignedNodes()\n            .filter(el => el.getAttribute('role') === 'option');\n\n        for (const opt of this._optionElements) {\n            if (!opt.hasAttribute('id')) {\n                opt.setAttribute('id', generateRandomId());\n            }\n            opt.addEventListener('click', this._handleOptionClick);\n        }\n\n        this.selectedIndex = this._optionElements.findIndex(i => i.hasAttribute('selected'));\n    }\n\n    /** @private */\n    _handleKeydownEvent(ev) {\n        const {key} = ev;\n        if (['ArrowDown', 'ArrowUp', 'End', 'Home'].includes(key)) {\n            switch (key) {\n                case 'ArrowDown': {\n                    this.selectedIndex = Math.min(this.selectedIndex + 1, this.length - 1);\n                    break;\n                }\n                case 'ArrowUp': {\n                    this.selectedIndex = this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0)\n                        : this.length - 1;\n                    break;\n                }\n                case 'Home': {\n                    this.selectedIndex = this.length ? 0 : -1;\n                    break;\n                }\n                case 'End': {\n                    this.selectedIndex = this.length - 1;\n                    break;\n                }\n            }\n            ev.preventDefault();\n        }\n    }\n}",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/src/listbox/listbox.js",
     "access": "public",
@@ -871,12 +938,12 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 63,
+    "__docId__": 66,
     "kind": "variable",
-    "name": "template",
+    "name": "generateRandomId",
     "memberof": "src/listbox/listbox.js",
     "static": true,
-    "longname": "src/listbox/listbox.js~template",
+    "longname": "src/listbox/listbox.js~generateRandomId",
     "access": "public",
     "export": false,
     "importPath": "@citykleta/ui-kit/src/listbox/listbox.js",
@@ -892,7 +959,28 @@
     "ignore": true
   },
   {
-    "__docId__": 64,
+    "__docId__": 67,
+    "kind": "variable",
+    "name": "template",
+    "memberof": "src/listbox/listbox.js",
+    "static": true,
+    "longname": "src/listbox/listbox.js~template",
+    "access": "public",
+    "export": false,
+    "importPath": "@citykleta/ui-kit/src/listbox/listbox.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 68,
     "kind": "class",
     "name": "ListBox",
     "memberof": "src/listbox/listbox.js",
@@ -909,14 +997,14 @@
     "see": [
       "https://www.w3.org/TR/wai-aria-practices/#Listbox"
     ],
-    "lineNumber": 29,
+    "lineNumber": 30,
     "interface": false,
     "extends": [
       "HTMLElement"
     ]
   },
   {
-    "__docId__": 65,
+    "__docId__": 69,
     "kind": "get",
     "name": "observedAttributes",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -926,7 +1014,7 @@
     "longname": "src/listbox/listbox.js~ListBox.observedAttributes",
     "access": "protected",
     "description": null,
-    "lineNumber": 32,
+    "lineNumber": 33,
     "ignore": true,
     "type": {
       "types": [
@@ -935,7 +1023,7 @@
     }
   },
   {
-    "__docId__": 66,
+    "__docId__": 70,
     "kind": "get",
     "name": "selectedOption",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -945,7 +1033,7 @@
     "longname": "src/listbox/listbox.js~ListBox#selectedOption",
     "access": "public",
     "description": "",
-    "lineNumber": 39,
+    "lineNumber": 40,
     "unknown": [
       {
         "tagName": "@returns",
@@ -968,7 +1056,7 @@
     }
   },
   {
-    "__docId__": 67,
+    "__docId__": 71,
     "kind": "get",
     "name": "length",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -978,7 +1066,7 @@
     "longname": "src/listbox/listbox.js~ListBox#length",
     "access": "public",
     "description": "",
-    "lineNumber": 46,
+    "lineNumber": 47,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1000,7 +1088,7 @@
     }
   },
   {
-    "__docId__": 68,
+    "__docId__": 72,
     "kind": "get",
     "name": "selectedIndex",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1010,7 +1098,7 @@
     "longname": "src/listbox/listbox.js~ListBox#selectedIndex",
     "access": "public",
     "description": "",
-    "lineNumber": 53,
+    "lineNumber": 54,
     "unknown": [
       {
         "tagName": "@returns",
@@ -1032,7 +1120,7 @@
     }
   },
   {
-    "__docId__": 69,
+    "__docId__": 73,
     "kind": "set",
     "name": "selectedIndex",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1045,7 +1133,7 @@
     "examples": [
       "const listbox = document.getElementId('some listbox id');\nlistbox.addEventListener('change', ev => {\n    console.log(ev.selectedIndex);\n})\n\nlistbox.selectedIndex = 0; // select first option;\nlistbox.selectedIndex = 1; // select second option;\n\n//etc\n\nlistbox.selectedIndex = -1; // unselect all"
     ],
-    "lineNumber": 75,
+    "lineNumber": 76,
     "params": [
       {
         "nullable": null,
@@ -1068,7 +1156,7 @@
     ]
   },
   {
-    "__docId__": 70,
+    "__docId__": 74,
     "kind": "method",
     "name": "attributeChangedCallback",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1078,7 +1166,7 @@
     "longname": "src/listbox/listbox.js~ListBox#attributeChangedCallback",
     "access": "protected",
     "description": null,
-    "lineNumber": 85,
+    "lineNumber": 86,
     "ignore": true,
     "params": [
       {
@@ -1103,7 +1191,7 @@
     "return": null
   },
   {
-    "__docId__": 71,
+    "__docId__": 75,
     "kind": "member",
     "name": "scrollTop",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1111,7 +1199,7 @@
     "longname": "src/listbox/listbox.js~ListBox#scrollTop",
     "access": "protected",
     "description": null,
-    "lineNumber": 97,
+    "lineNumber": 98,
     "ignore": true,
     "type": {
       "types": [
@@ -1120,7 +1208,7 @@
     }
   },
   {
-    "__docId__": 72,
+    "__docId__": 76,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1130,11 +1218,11 @@
     "longname": "src/listbox/listbox.js~ListBox#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 108,
+    "lineNumber": 109,
     "undocument": true
   },
   {
-    "__docId__": 73,
+    "__docId__": 77,
     "kind": "member",
     "name": "_optionElements",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1142,7 +1230,7 @@
     "longname": "src/listbox/listbox.js~ListBox#_optionElements",
     "access": "private",
     "description": "",
-    "lineNumber": 114,
+    "lineNumber": 115,
     "type": {
       "nullable": null,
       "types": [
@@ -1154,7 +1242,7 @@
     "ignore": true
   },
   {
-    "__docId__": 77,
+    "__docId__": 81,
     "kind": "method",
     "name": "connectedCallback",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1164,13 +1252,13 @@
     "longname": "src/listbox/listbox.js~ListBox#connectedCallback",
     "access": "protected",
     "description": null,
-    "lineNumber": 123,
+    "lineNumber": 124,
     "ignore": true,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 78,
+    "__docId__": 82,
     "kind": "method",
     "name": "_handleOptionClick",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1180,7 +1268,7 @@
     "longname": "src/listbox/listbox.js~ListBox#_handleOptionClick",
     "access": "private",
     "description": null,
-    "lineNumber": 138,
+    "lineNumber": 139,
     "ignore": true,
     "params": [
       {
@@ -1193,7 +1281,7 @@
     "return": null
   },
   {
-    "__docId__": 80,
+    "__docId__": 84,
     "kind": "method",
     "name": "_handleOptionChangeEvent",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1203,7 +1291,7 @@
     "longname": "src/listbox/listbox.js~ListBox#_handleOptionChangeEvent",
     "access": "private",
     "description": null,
-    "lineNumber": 147,
+    "lineNumber": 148,
     "ignore": true,
     "params": [
       {
@@ -1216,7 +1304,7 @@
     "return": null
   },
   {
-    "__docId__": 83,
+    "__docId__": 87,
     "kind": "method",
     "name": "_handleKeydownEvent",
     "memberof": "src/listbox/listbox.js~ListBox",
@@ -1226,7 +1314,7 @@
     "longname": "src/listbox/listbox.js~ListBox#_handleKeydownEvent",
     "access": "private",
     "description": null,
-    "lineNumber": 164,
+    "lineNumber": 165,
     "ignore": true,
     "params": [
       {
@@ -1239,80 +1327,569 @@
     "return": null
   },
   {
-    "__docId__": 85,
+    "__docId__": 92,
     "kind": "file",
-    "name": "src/listbox/util.js",
-    "content": "let counter = 0;\n/**\n * @private\n */\nexport const generateRandomId = () => `listbox-option-${++counter}`;\n/**\n * @private\n */\nexport const isSelectedPredicate = i => i.getAttribute('aria-selected') === 'true';\n",
+    "name": "src/tabs/index.js",
+    "content": "export * from './tab-set.js';\nexport * from './tab.js';\nexport * from './tab-panel.js';\n",
     "static": true,
-    "longname": "/Volumes/data/code/ui-kit/src/listbox/util.js",
+    "longname": "/Volumes/data/code/ui-kit/src/tabs/index.js",
     "access": "public",
     "description": null,
     "lineNumber": 1
   },
   {
-    "__docId__": 86,
-    "kind": "variable",
-    "name": "counter",
-    "memberof": "src/listbox/util.js",
+    "__docId__": 93,
+    "kind": "file",
+    "name": "src/tabs/tab-panel.js",
+    "content": "const template = document.createElement('template');\ntemplate.innerHTML = `<slot></slot>`;\n\nexport class TabPanel extends HTMLElement {\n\n    get active() {\n        return this.hasAttribute('hidden') === false;\n    }\n\n    constructor() {\n        super();\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n    }\n\n    connectedCallback() {\n        this.setAttribute('role', 'tabpanel');\n        this.setAttribute('slot', 'tabpanels');\n    }\n}",
     "static": true,
-    "longname": "src/listbox/util.js~counter",
+    "longname": "/Volumes/data/code/ui-kit/src/tabs/tab-panel.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 94,
+    "kind": "variable",
+    "name": "template",
+    "memberof": "src/tabs/tab-panel.js",
+    "static": true,
+    "longname": "src/tabs/tab-panel.js~template",
     "access": "public",
     "export": false,
-    "importPath": "@citykleta/ui-kit/src/listbox/util.js",
+    "importPath": "@citykleta/ui-kit/src/tabs/tab-panel.js",
     "importStyle": null,
     "description": null,
     "lineNumber": 1,
     "undocument": true,
     "type": {
       "types": [
-        "number"
+        "*"
       ]
     },
     "ignore": true
   },
   {
-    "__docId__": 87,
-    "kind": "function",
-    "name": "generateRandomId",
-    "memberof": "src/listbox/util.js",
+    "__docId__": 95,
+    "kind": "class",
+    "name": "TabPanel",
+    "memberof": "src/tabs/tab-panel.js",
+    "static": true,
+    "longname": "src/tabs/tab-panel.js~TabPanel",
+    "access": "public",
+    "export": true,
+    "importPath": "@citykleta/ui-kit/src/tabs/tab-panel.js",
+    "importStyle": "{TabPanel}",
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "interface": false,
+    "extends": [
+      "HTMLElement"
+    ]
+  },
+  {
+    "__docId__": 96,
+    "kind": "get",
+    "name": "active",
+    "memberof": "src/tabs/tab-panel.js~TabPanel",
     "generator": false,
     "async": false,
-    "static": true,
-    "longname": "src/listbox/util.js~generateRandomId",
-    "access": "private",
-    "export": true,
-    "importPath": "@citykleta/ui-kit/src/listbox/util.js",
-    "importStyle": "{generateRandomId}",
-    "description": "",
-    "lineNumber": 5,
-    "ignore": true,
+    "static": false,
+    "longname": "src/tabs/tab-panel.js~TabPanel#active",
+    "access": "public",
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 97,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/tabs/tab-panel.js~TabPanel",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-panel.js~TabPanel#constructor",
+    "access": "public",
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true
+  },
+  {
+    "__docId__": 98,
+    "kind": "method",
+    "name": "connectedCallback",
+    "memberof": "src/tabs/tab-panel.js~TabPanel",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-panel.js~TabPanel#connectedCallback",
+    "access": "public",
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 88,
-    "kind": "function",
-    "name": "isSelectedPredicate",
-    "memberof": "src/listbox/util.js",
+    "__docId__": 99,
+    "kind": "file",
+    "name": "src/tabs/tab-set.js",
+    "content": "import {generateRandomId as idGenerator} from '../common/utils.js';\nimport ChangeEvent from '../common/change-event.js';\n\nconst generateTabId = idGenerator('tab');\nconst generateTabPanelId = idGenerator('tabpanel');\n\nconst template = document.createElement('template');\ntemplate.innerHTML = `<style>:host{display: flex;flex-direction: column}::slotted([role=tabpanel]){flex-grow: 1}[role=tablist]{display: flex;justify-content: var(--tab-justify,flex-start);}</style><div role=\"tablist\"><slot name=\"tablist\"></slot></div><slot name=\"tabpanels\"></slot>`;\n\nexport class TabSet extends HTMLElement {\n\n    /** @protected */\n    static get observedAttributes() {\n        return ['selected-tab-index'];\n    }\n\n    get length() {\n        return this._tabs.length;\n    }\n\n    get selectedIndex() {\n        return this._tabs.findIndex(t => t.selected);\n    }\n\n    set selectedIndex(index) {\n        if (index >= 0 < this._tabs.length) {\n            this.setAttribute('selected-tab-index', index);\n        }\n    }\n\n    /** @protected */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'selected-tab-index') {\n            const tabs = this._tabs;\n            tabs.forEach((tab, index) => {\n                const selected = index === Number(newValue);\n                tab.setAttribute('aria-selected', String(selected));\n                tab.setAttribute('tabindex', selected ? '0' : '-1');\n                const tabpanel = this._tabpanels[index];\n                if (selected) {\n                    tabpanel.removeAttribute('hidden');\n                } else {\n                    tabpanel.setAttribute('hidden', '');\n                }\n            });\n\n            this.dispatchEvent(new ChangeEvent(this.selectedIndex));\n        }\n    }\n\n    constructor() {\n        super();\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n        /** @private */\n        this._tabs = [];\n        /** @private */\n        this._tabpanels = [];\n        this._handleTabChangeEvent = this._handleTabChangeEvent.bind(this);\n        this._handleTabPanelChangeEvent = this._handleTabPanelChangeEvent.bind(this);\n        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);\n        this._handleClick = this._handleClick.bind(this);\n    }\n\n    connectedCallback() {\n        this.shadowRoot\n            .querySelector('slot[name=tablist]')\n            .addEventListener('slotchange', this._handleTabChangeEvent);\n\n        this.shadowRoot\n            .querySelector('slot[name=tabpanels]')\n            .addEventListener('slotchange', this._handleTabPanelChangeEvent);\n    }\n\n    /** @private */\n    _handleTabChangeEvent(ev) {\n\n        console.log('tab change');\n\n        this._tabs = [];\n\n        const tabs = this.shadowRoot\n            .querySelector('slot[name=tablist]')\n            .assignedNodes();\n\n        for (const tab of tabs) {\n            if (!tab.hasAttribute('id')) {\n                tab.setAttribute('id', generateTabId());\n            }\n            this._tabs.push(tab);\n            tab.addEventListener('keydown', this._handleKeydownEvent);\n            tab.addEventListener('click', this._handleClick);\n        }\n    }\n\n    /** @private */\n    _handleTabPanelChangeEvent(ev) {\n        console.log('tabpanel change');\n\n        this._tabpanels = [];\n\n        const tabpanels = this.shadowRoot\n            .querySelector('slot[name=tabpanels]')\n            .assignedNodes();\n\n        tabpanels.forEach((tp, index) => {\n            const tab = this._tabs[index];\n\n            if (!tp.hasAttribute('id')) {\n                tp.setAttribute('id', generateTabPanelId());\n            }\n\n            tab.setAttribute('aria-controls', tp.id);\n            tp.setAttribute('aria-labelledby', tab.id);\n\n            this._tabpanels.push(tp);\n        });\n\n        const selectedTabIndex = this._tabs.findIndex(t => t.hasAttribute('selected'));\n\n        this.selectedIndex = selectedTabIndex !== -1 ? selectedTabIndex : 0;\n    }\n\n    /** @private */\n    _handleKeydownEvent(ev) {\n        const {key, currentTarget: tab} = ev;\n        const currentIndex = this._tabs.indexOf(tab);\n        switch (key) {\n            case 'ArrowLeft': {\n                const index = (currentIndex - 1) >= 0 ? currentIndex - 1 : this.length - 1;\n                this._tabs[index].focus();\n                break;\n            }\n            case 'ArrowRight': {\n                const index = (currentIndex + 1) % this.length;\n                this._tabs[index].focus();\n                break;\n            }\n            case 'Home': {\n                const index = 0;\n                this._tabs[index].focus();\n                break;\n            }\n            case 'End': {\n                const index = this.length - 1;\n                this._tabs[index].focus();\n                break;\n            }\n            case ' ':\n            case 'Enter': {\n                this.selectedIndex = currentIndex;\n                break;\n            }\n\n        }\n    }\n\n    /** @private */\n    _handleClick(ev) {\n        const {currentTarget: tab} = ev;\n        this.selectedIndex = this._tabs.indexOf(tab);\n    }\n}",
+    "static": true,
+    "longname": "/Volumes/data/code/ui-kit/src/tabs/tab-set.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 100,
+    "kind": "variable",
+    "name": "generateTabId",
+    "memberof": "src/tabs/tab-set.js",
+    "static": true,
+    "longname": "src/tabs/tab-set.js~generateTabId",
+    "access": "public",
+    "export": false,
+    "importPath": "@citykleta/ui-kit/src/tabs/tab-set.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 101,
+    "kind": "variable",
+    "name": "generateTabPanelId",
+    "memberof": "src/tabs/tab-set.js",
+    "static": true,
+    "longname": "src/tabs/tab-set.js~generateTabPanelId",
+    "access": "public",
+    "export": false,
+    "importPath": "@citykleta/ui-kit/src/tabs/tab-set.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 102,
+    "kind": "variable",
+    "name": "template",
+    "memberof": "src/tabs/tab-set.js",
+    "static": true,
+    "longname": "src/tabs/tab-set.js~template",
+    "access": "public",
+    "export": false,
+    "importPath": "@citykleta/ui-kit/src/tabs/tab-set.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 103,
+    "kind": "class",
+    "name": "TabSet",
+    "memberof": "src/tabs/tab-set.js",
+    "static": true,
+    "longname": "src/tabs/tab-set.js~TabSet",
+    "access": "public",
+    "export": true,
+    "importPath": "@citykleta/ui-kit/src/tabs/tab-set.js",
+    "importStyle": "{TabSet}",
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "interface": false,
+    "extends": [
+      "HTMLElement"
+    ]
+  },
+  {
+    "__docId__": 104,
+    "kind": "get",
+    "name": "observedAttributes",
+    "memberof": "src/tabs/tab-set.js~TabSet",
     "generator": false,
     "async": false,
     "static": true,
-    "longname": "src/listbox/util.js~isSelectedPredicate",
-    "access": "private",
-    "export": true,
-    "importPath": "@citykleta/ui-kit/src/listbox/util.js",
-    "importStyle": "{isSelectedPredicate}",
-    "description": "",
-    "lineNumber": 9,
+    "longname": "src/tabs/tab-set.js~TabSet.observedAttributes",
+    "access": "protected",
+    "description": null,
+    "lineNumber": 13,
+    "ignore": true,
+    "type": {
+      "types": [
+        "string[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 105,
+    "kind": "get",
+    "name": "length",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#length",
+    "access": "public",
+    "description": null,
+    "lineNumber": 17,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 106,
+    "kind": "get",
+    "name": "selectedIndex",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#selectedIndex",
+    "access": "public",
+    "description": null,
+    "lineNumber": 21,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 107,
+    "kind": "set",
+    "name": "selectedIndex",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#selectedIndex",
+    "access": "public",
+    "description": null,
+    "lineNumber": 25,
+    "undocument": true
+  },
+  {
+    "__docId__": 108,
+    "kind": "method",
+    "name": "attributeChangedCallback",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#attributeChangedCallback",
+    "access": "protected",
+    "description": null,
+    "lineNumber": 32,
     "ignore": true,
     "params": [
       {
-        "name": "i",
+        "name": "name",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "oldValue",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "newValue",
         "types": [
           "*"
         ]
       }
     ],
+    "return": null
+  },
+  {
+    "__docId__": 109,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#constructor",
+    "access": "public",
+    "description": null,
+    "lineNumber": 51,
+    "undocument": true
+  },
+  {
+    "__docId__": 110,
+    "kind": "member",
+    "name": "_tabs",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#_tabs",
+    "access": "private",
+    "description": null,
+    "lineNumber": 56,
+    "ignore": true,
+    "type": {
+      "types": [
+        "*[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 111,
+    "kind": "member",
+    "name": "_tabpanels",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#_tabpanels",
+    "access": "private",
+    "description": null,
+    "lineNumber": 58,
+    "ignore": true,
+    "type": {
+      "types": [
+        "*[]"
+      ]
+    }
+  },
+  {
+    "__docId__": 116,
+    "kind": "method",
+    "name": "connectedCallback",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#connectedCallback",
+    "access": "public",
+    "description": null,
+    "lineNumber": 65,
+    "undocument": true,
+    "params": [],
+    "return": null
+  },
+  {
+    "__docId__": 117,
+    "kind": "method",
+    "name": "_handleTabChangeEvent",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#_handleTabChangeEvent",
+    "access": "private",
+    "description": null,
+    "lineNumber": 76,
+    "ignore": true,
+    "params": [
+      {
+        "name": "ev",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 119,
+    "kind": "method",
+    "name": "_handleTabPanelChangeEvent",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#_handleTabPanelChangeEvent",
+    "access": "private",
+    "description": null,
+    "lineNumber": 97,
+    "ignore": true,
+    "params": [
+      {
+        "name": "ev",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 122,
+    "kind": "method",
+    "name": "_handleKeydownEvent",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#_handleKeydownEvent",
+    "access": "private",
+    "description": null,
+    "lineNumber": 125,
+    "ignore": true,
+    "params": [
+      {
+        "name": "ev",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 124,
+    "kind": "method",
+    "name": "_handleClick",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#_handleClick",
+    "access": "private",
+    "description": null,
+    "lineNumber": 159,
+    "ignore": true,
+    "params": [
+      {
+        "name": "ev",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 126,
+    "kind": "file",
+    "name": "src/tabs/tab.js",
+    "content": "const template = document.createElement('template');\ntemplate.innerHTML = `<slot></slot>`;\n\nexport class Tab extends HTMLElement {\n\n    get selected() {\n        return this.getAttribute('aria-selected') === 'true';\n    }\n\n    constructor() {\n        super();\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n    }\n\n    connectedCallback() {\n        this.setAttribute('role', 'tab');\n        this.setAttribute('slot', 'tablist');\n    }\n}",
+    "static": true,
+    "longname": "/Volumes/data/code/ui-kit/src/tabs/tab.js",
+    "access": "public",
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 127,
+    "kind": "variable",
+    "name": "template",
+    "memberof": "src/tabs/tab.js",
+    "static": true,
+    "longname": "src/tabs/tab.js~template",
+    "access": "public",
+    "export": false,
+    "importPath": "@citykleta/ui-kit/src/tabs/tab.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 1,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    },
+    "ignore": true
+  },
+  {
+    "__docId__": 128,
+    "kind": "class",
+    "name": "Tab",
+    "memberof": "src/tabs/tab.js",
+    "static": true,
+    "longname": "src/tabs/tab.js~Tab",
+    "access": "public",
+    "export": true,
+    "importPath": "@citykleta/ui-kit/src/tabs/tab.js",
+    "importStyle": "{Tab}",
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "interface": false,
+    "extends": [
+      "HTMLElement"
+    ]
+  },
+  {
+    "__docId__": 129,
+    "kind": "get",
+    "name": "selected",
+    "memberof": "src/tabs/tab.js~Tab",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab.js~Tab#selected",
+    "access": "public",
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 130,
+    "kind": "constructor",
+    "name": "constructor",
+    "memberof": "src/tabs/tab.js~Tab",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab.js~Tab#constructor",
+    "access": "public",
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true
+  },
+  {
+    "__docId__": 131,
+    "kind": "method",
+    "name": "connectedCallback",
+    "memberof": "src/tabs/tab.js~Tab",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab.js~Tab#connectedCallback",
+    "access": "public",
+    "description": null,
+    "lineNumber": 16,
+    "undocument": true,
+    "params": [],
     "return": null
   },
   {
@@ -1325,14 +1902,14 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"@citykleta/ui-kit\",\n  \"version\": \"0.1.0\",\n  \"description\": \"web components for common widgets used across citykleta organization\",\n  \"main\": \"./dist/index\",\n  \"module\": \"./dist/citykleta-ui-kit.js\",\n  \"scripts\": {\n    \"serve\": \"http-serve -p 3002\",\n    \"build\": \"rollup -c ./rollup/build.js\",\n    \"build:test\": \"rollup -c ./rollup/test.js\",\n    \"build:docs\": \"rm -rf docs && esdoc\",\n    \"test:ci\": \"http-serve -s -p 3002 & (npm run test | tap-set-exit)\",\n    \"test\": \"node ./test/run-test.js\",\n    \"dev\": \"npm run serve & npm run test:build -- -w\"\n  },\n  \"files\": [\n    \"dist\"\n  ],\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/Citykleta/ui-kit.git\"\n  },\n  \"keywords\": [\n    \"ui\",\n    \"ux\",\n    \"components\",\n    \"web-components\",\n    \"webcomponents\",\n    \"aria\",\n    \"ally\",\n    \"wai-aria\",\n    \"widgets\"\n  ],\n  \"author\": \"Laurent RENARD\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/Citykleta/ui-kit/issues\"\n  },\n  \"homepage\": \"https://github.com/Citykleta/ui-kit#readme\",\n  \"devDependencies\": {\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"http-serve\": \"^1.0.1\",\n    \"puppeteer\": \"^1.20.0\",\n    \"rollup\": \"^1.22.0\",\n    \"rollup-plugin-node-resolve\": \"^5.2.0\",\n    \"tap-set-exit\": \"^1.1.1\",\n    \"zora\": \"^3.0.3\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"@citykleta/ui-kit\",\n  \"version\": \"0.1.0\",\n  \"description\": \"web components for common widgets used across citykleta organization\",\n  \"main\": \"./dist/index\",\n  \"module\": \"./dist/citykleta-ui-kit.js\",\n  \"scripts\": {\n    \"serve\": \"http-serve -p 3002\",\n    \"build\": \"rollup -c ./rollup/build.js\",\n    \"build:test\": \"rollup -c ./rollup/test.js\",\n    \"build:docs\": \"rm -rf docs && esdoc\",\n    \"test:ci\": \"http-serve -s -p 3002 & (npm run test | tap-set-exit)\",\n    \"test\": \"node ./test/run-test.js\",\n    \"dev\": \"npm run serve & npm run build:test -- -w\"\n  },\n  \"files\": [\n    \"dist\"\n  ],\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/Citykleta/ui-kit.git\"\n  },\n  \"keywords\": [\n    \"ui\",\n    \"ux\",\n    \"components\",\n    \"web-components\",\n    \"webcomponents\",\n    \"aria\",\n    \"ally\",\n    \"wai-aria\",\n    \"widgets\"\n  ],\n  \"author\": \"Laurent RENARD\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/Citykleta/ui-kit/issues\"\n  },\n  \"homepage\": \"https://github.com/Citykleta/ui-kit#readme\",\n  \"devDependencies\": {\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"http-serve\": \"^1.0.1\",\n    \"puppeteer\": \"^1.20.0\",\n    \"rollup\": \"^1.22.0\",\n    \"rollup-plugin-node-resolve\": \"^5.2.0\",\n    \"tap-set-exit\": \"^1.1.1\",\n    \"zora\": \"^3.0.3\"\n  }\n}\n",
     "longname": "/Volumes/data/code/ui-kit/package.json",
     "name": "package.json",
     "static": true,
     "access": "public"
   },
   {
-    "__docId__": 89,
+    "__docId__": 132,
     "kind": "testFile",
     "name": "test/listbox/listbox-option.spec.js",
     "content": "import {test} from 'zora';\nimport {body, LIST_BOX_OPTION_TAG_NAME} from './util.js';\n\n/**\n * @test {ListBoxOption}\n */\ntest('ListBoxOption component', ({test}) => {\n    test('ListBoxOption component is connected', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('role'), 'option', 'should have set the role');\n        t.eq(el.getAttribute('slot'), 'options', 'should have set the slot attribute');\n        t.eq(el.getAttribute('aria-label'), 'some label', 'should have updated the aria-label attribute');\n    });\n\n    /** @test {ListBoxOption#label} */\n    test('label property getter should default to textContent if attribute is not present', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.textContent = 'I am the text content';\n        body.appendChild(el);\n        t.eq(el.label, 'I am the text content');\n    });\n\n    /** @test {ListBoxOption#label} */\n    test('label property setter should reflect on aria-label attribute', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('aria-label'), 'some label', 'should have updated the aria-label attribute');\n        el.label = 'updated label';\n        t.eq(el.getAttribute('aria-label'), 'updated label', 'should have updated the aria-label attribute');\n    });\n\n    /** @test {ListBoxOption#selected} */\n    test('selected property getter', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.selected, false, 'should be false if no aria-selected is set');\n        el.setAttribute('aria-selected', 'false');\n        t.eq(el.selected, false, 'should be false if aria-selected value is \"false');\n        el.setAttribute('aria-selected', 'true');\n        t.eq(el.selected, true, 'should be true if aria-selected is \"true\"');\n    });\n});",
@@ -1343,7 +1920,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 90,
+    "__docId__": 133,
     "kind": "test",
     "name": "test0",
     "testId": 0,
@@ -1359,7 +1936,7 @@
     ]
   },
   {
-    "__docId__": 91,
+    "__docId__": 134,
     "kind": "test",
     "name": "test1",
     "testId": 1,
@@ -1372,7 +1949,7 @@
     "lineNumber": 8
   },
   {
-    "__docId__": 92,
+    "__docId__": 135,
     "kind": "test",
     "name": "test2",
     "testId": 2,
@@ -1388,7 +1965,7 @@
     ]
   },
   {
-    "__docId__": 93,
+    "__docId__": 136,
     "kind": "test",
     "name": "test3",
     "testId": 3,
@@ -1404,7 +1981,7 @@
     ]
   },
   {
-    "__docId__": 94,
+    "__docId__": 137,
     "kind": "test",
     "name": "test4",
     "testId": 4,
@@ -1420,7 +1997,7 @@
     ]
   },
   {
-    "__docId__": 95,
+    "__docId__": 138,
     "kind": "testFile",
     "name": "test/listbox/listbox.spec.js",
     "content": "import {test} from 'zora';\nimport {body, LIST_BOX_OPTION_TAG_NAME, LIST_BOX_TAG_NAME} from './util.js';\nimport {nextTick} from '../util.js';\n\n/**\n * @test {ListBox}\n */\ntest('ListBox component', ({test}) => {\n\n    test('Empty ListBox is connected', t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, -1, 'no element should be selected');\n        t.eq(el.selectedOption, null, 'no element should be selected');\n        t.eq(el.length, 0, 'length should be 0 as there is no option');\n    });\n\n    test('ListBox with some options but no default value is connected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 3</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 4</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 4, 'should have four options');\n\n        const [opt1, opt2, opt3, opt4] = el.querySelectorAll('[role=option]');\n\n        t.ok(opt1.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt2.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt3.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt4.id.startsWith('listbox-option'), 'should have assigned a generated id');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n        t.eq(opt3.getAttribute('aria-selected'), 'false');\n        t.eq(opt4.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n    });\n\n    test('ListBox with some options and default value is connected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected>option 3</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 4</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, 2, 'should select the option with the \"selected\" attribute');\n        t.eq(el.selectedOption, el.children[2], 'should return the 3rd option element');\n        t.eq(el.length, 4, 'should have four options');\n\n        const [opt1, opt2, opt3, opt4] = el.querySelectorAll('[role=option]');\n\n        t.ok(opt1.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.eq(opt2.id, 'custom-id', 'should use the provided id');\n        t.ok(opt3.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt4.id.startsWith('listbox-option'), 'should have assigned a generated id');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n        t.eq(opt3.getAttribute('aria-selected'), 'true');\n        t.eq(opt4.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), opt3.id, 'should have updated the aria-activedescendant with the selected option id');\n    });\n\n    /** @test {ListBox#selectedIndex} */\n    test('updating the selected index property should update the component', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.selectedIndex = 1;\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.selectedIndex = 666;\n\n        t.eq(el.selectedIndex, -1, 'should have unselected all');\n        t.eq(el.selectedOption, null, 'should have unselected all');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false', 'should have unselected all');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '', 'should have unselected all');\n    });\n\n    test('click an option should select it', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        opt1.click();\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key down should select the next option', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowDown'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key down should keep the last option in case it is already selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowDown'\n        }));\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n    });\n\n    test('arrow key up should select the last option if none is selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n    });\n\n    test('arrow key up should select the previous option', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key up should keep the first option selected if it is already selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('listbox should emit \"change\" event when selected option changes ', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        let selectedIndex = null;\n\n        el.addEventListener('change', ev => {\n            selectedIndex = ev.selectedIndex;\n        });\n\n        t.eq(selectedIndex, null);\n\n        el.selectedIndex = 0;\n\n        t.eq(selectedIndex, 0, 'event should have been emitted');\n    });\n});",
@@ -1431,7 +2008,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 96,
+    "__docId__": 139,
     "kind": "test",
     "name": "test5",
     "testId": 5,
@@ -1447,7 +2024,7 @@
     ]
   },
   {
-    "__docId__": 97,
+    "__docId__": 140,
     "kind": "test",
     "name": "test6",
     "testId": 6,
@@ -1460,7 +2037,7 @@
     "lineNumber": 10
   },
   {
-    "__docId__": 98,
+    "__docId__": 141,
     "kind": "test",
     "name": "test7",
     "testId": 7,
@@ -1473,7 +2050,7 @@
     "lineNumber": 21
   },
   {
-    "__docId__": 99,
+    "__docId__": 142,
     "kind": "test",
     "name": "test8",
     "testId": 8,
@@ -1486,7 +2063,7 @@
     "lineNumber": 55
   },
   {
-    "__docId__": 100,
+    "__docId__": 143,
     "kind": "test",
     "name": "test9",
     "testId": 9,
@@ -1502,7 +2079,7 @@
     ]
   },
   {
-    "__docId__": 101,
+    "__docId__": 144,
     "kind": "test",
     "name": "test10",
     "testId": 10,
@@ -1515,7 +2092,7 @@
     "lineNumber": 133
   },
   {
-    "__docId__": 102,
+    "__docId__": 145,
     "kind": "test",
     "name": "test11",
     "testId": 11,
@@ -1528,7 +2105,7 @@
     "lineNumber": 166
   },
   {
-    "__docId__": 103,
+    "__docId__": 146,
     "kind": "test",
     "name": "test12",
     "testId": 12,
@@ -1541,7 +2118,7 @@
     "lineNumber": 201
   },
   {
-    "__docId__": 104,
+    "__docId__": 147,
     "kind": "test",
     "name": "test13",
     "testId": 13,
@@ -1554,7 +2131,7 @@
     "lineNumber": 235
   },
   {
-    "__docId__": 105,
+    "__docId__": 148,
     "kind": "test",
     "name": "test14",
     "testId": 14,
@@ -1567,7 +2144,7 @@
     "lineNumber": 270
   },
   {
-    "__docId__": 106,
+    "__docId__": 149,
     "kind": "test",
     "name": "test15",
     "testId": 15,
@@ -1580,7 +2157,7 @@
     "lineNumber": 304
   },
   {
-    "__docId__": 107,
+    "__docId__": 150,
     "kind": "test",
     "name": "test16",
     "testId": 16,

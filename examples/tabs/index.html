@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tabs example</title>
+</head>
+<body>
+<style>
+    body {
+        box-sizing: border-box;
+    }
+
+    body * {
+        box-sizing: inherit;
+    }
+
+    ui-tabset {
+        margin: 2em;
+        background: lightblue;
+        width: 400px;
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    ui-tabpanel {
+        padding: 1em;
+        background: yellow;
+    }
+
+    [role=tablist] {
+        display: flex;
+    }
+
+    ui-tab {
+        padding: 0.5em;
+        background: lightgray;
+        outline: none;
+    }
+
+    ui-tab[aria-selected=true] {
+        background: salmon;
+    }
+
+    ui-tab:focus span, ui-tab:hover span {
+        text-decoration: underline;
+    }
+
+</style>
+<ui-tabset>
+    <ui-tab><span>tab 1</span></ui-tab>
+    <ui-tabpanel>Content 1</ui-tabpanel>
+    <ui-tab selected><span>tab 2</span></ui-tab>
+    <ui-tabpanel>Content 2</ui-tabpanel>
+    <ui-tab id="custom-tab-id"><span>tab 3</span></ui-tab>
+    <ui-tabpanel id="custom-tabpanel-id">Content 3</ui-tabpanel>
+</ui-tabset>
+<div>
+    <p>currently selected item index: <strong></strong></p>
+    <button>select third tap</button>
+</div>
+<script type="module">
+    import {Tab, TabPanel, TabSet} from '../../src/tabs/index.js';
+
+    customElements.define('ui-tabset', TabSet);
+    customElements.define('ui-tab', Tab);
+    customElements.define('ui-tabpanel', TabPanel);
+
+    const tabset = document.querySelector('ui-tabset');
+    const val = document.querySelector('strong');
+    const button = document.querySelector('button');
+
+    tabset.addEventListener('change', ev => {
+        const {selectedIndex} = ev;
+        val.textContent = selectedIndex;
+    });
+
+    button.addEventListener('click', ev => {
+        tabset.selectedIndex = 2;
+    });
+</script>
+</body>
+</html>
