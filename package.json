@@ -1,6 +1,6 @@
 {
   "name": "@citykleta/ui-kit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "web components for common widgets used across citykleta organization",
   "main": "./dist/index",
   "module": "./dist/citykleta-ui-kit.js",
