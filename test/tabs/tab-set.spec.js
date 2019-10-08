@@ -1,5 +1,6 @@
 import {test} from 'zora';
 import {body, nextTick, TAB_PANEL_TAG_NAME, TAB_SET_TAG_NAME, TAB_TAG_NAME} from '../util.js';
+import ChangeEvent from '../../src/common/change-event.js';
 
 /**
  * @test {TabSet}
@@ -466,5 +467,23 @@ test('TabSet Component', ({test}) => {
                 {'aria-labelledby': tab2.id, hidden: null}
             ], t);
         });
+    });
+
+    test('selecting a new tab should trigger a `change event`', async t => {
+        const el = createTabSet();
+        body.appendChild(el);
+
+        await nextTick();
+
+        let eventValue = null;
+
+        el.addEventListener('change', ev => eventValue = ev);
+
+        t.eq(el.length, 3);
+        t.eq(el.selectedIndex, 0);
+
+        el.selectedIndex = 2;
+
+        t.eq(eventValue, new ChangeEvent(2));
     });
 });

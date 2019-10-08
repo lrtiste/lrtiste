@@ -40,8 +40,26 @@
 </nav>
 
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p><a href="https://circleci.com/gh/Citykleta/ui-kit"><img src="https://badgen.net/circleci/github/Citykleta/ui-kit" alt="CircleCI"></a></p>
-<h1 id="citykleta-ui-kit">Citykleta UI-Kit</h1><p>Common widgets built with web components and accessibility in mind. Based on the 
+<h1 id="citykleta-ui-kit">Citykleta UI-Kit</h1><p>Common widgets built with native <strong>web components</strong> (no extra lib or framework) and with <strong>accessibility</strong> in mind. Based on the 
 <a href="https://www.w3.org/TR/wai-aria-practices/#combobox">wai-aria authoring recommendations</a></p>
+<h2 id="usage">Usage</h2><h3 id="installation">Installation</h3><p><code>npm install --save @citykleta/ui-kit</code></p>
+<h3 id="getting-started">Getting Started</h3><p>You&apos;ll need first to register the component with namespace of your choice. Then simply add the tags in your markup </p>
+<pre><code class="lang-html"><code class="source-code prettyprint">&lt;ui-listbox&gt;
+    &lt;ui-listbox-option selected&gt;option 1&lt;/ui-listbox-option&gt;
+    &lt;ui-listbox-option&gt;option 2&lt;/ui-listbox-option&gt;
+    &lt;ui-listbox-option&gt;option 3&lt;/ui-listbox-option&gt;
+    &lt;ui-listbox-option&gt;option 4&lt;/ui-listbox-option&gt;
+&lt;/ui-listbox&gt;
+
+&lt;script type=&quot;module&quot; async&gt;
+import {ListBox, ListBoxOption} from &apos;path/to/lib&apos;;
+customElements.define(&apos;ui-listbox&apos;,ListBox);
+customElements.define(&apos;ui-listbox-option&apos;,ListBoxOption);
+&lt;/script&gt;</code>
+</code></pre>
+<h3 id="with-framework-x">With framework X</h3><p>All these web components can be configured and updated with attributes which make it very easy to integrate with any vue engine (such <a href>React</a> for example)</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint"></code>
+</code></pre>
 </div>
 </div>
 

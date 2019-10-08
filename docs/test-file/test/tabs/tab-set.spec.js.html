@@ -42,6 +42,7 @@
 <div class="content" data-ice="content"><h1 data-ice="title">test/tabs/tab-set.spec.js</h1>
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {test} from &apos;zora&apos;;
 import {body, nextTick, TAB_PANEL_TAG_NAME, TAB_SET_TAG_NAME, TAB_TAG_NAME} from &apos;../util.js&apos;;
+import ChangeEvent from &apos;../../src/common/change-event.js&apos;;
 
 /**
  * @test {TabSet}
@@ -508,6 +509,24 @@ test(&apos;TabSet Component&apos;, ({test}) =&gt; {
                 {&apos;aria-labelledby&apos;: tab2.id, hidden: null}
             ], t);
         });
+    });
+
+    test(&apos;selecting a new tab should trigger a `change event`&apos;, async t =&gt; {
+        const el = createTabSet();
+        body.appendChild(el);
+
+        await nextTick();
+
+        let eventValue = null;
+
+        el.addEventListener(&apos;change&apos;, ev =&gt; eventValue = ev);
+
+        t.eq(el.length, 3);
+        t.eq(el.selectedIndex, 0);
+
+        el.selectedIndex = 2;
+
+        t.eq(eventValue, new ChangeEvent(2));
     });
 });</code></pre>
 

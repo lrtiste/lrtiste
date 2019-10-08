@@ -175,74 +175,80 @@ window.esdocSearchIndex = [
   ],
   [
     "tabset src/tabs/tab-set.js~tabset,tabset",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber32",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber33",
     "TabSet Component",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber34",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber35",
     "TabSet Component TabSet is connected: it should select the first tab if none has the `selected` attribute",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber59",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber60",
     "TabSet Component TabSet is connected: it should select the tab with the `selected` attribute",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber86",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber87",
     "TabSet Component click should select the new tab",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber127",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber128",
     "TabSet Component keyboard navigation with `follow-focus` attribute",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber200",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber201",
     "TabSet Component keyboard navigation with `follow-focus` attribute LeftArrow navigation",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber141",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber142",
     "TabSet Component keyboard navigation with `follow-focus` attribute RightArrow navigation",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber261",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber262",
     "TabSet Component keyboard navigation without `follow-focus` attribute",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber333",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber334",
     "TabSet Component keyboard navigation without `follow-focus` attribute LeftArrow navigation",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber274",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber275",
     "TabSet Component keyboard navigation without `follow-focus` attribute RightArrow navigation",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber392",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber393",
     "TabSet Component keyboard navigation without `follow-focus` attribute select tab on Enter keydown",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber431",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber432",
     "TabSet Component keyboard navigation without `follow-focus` attribute select tab on Space keydown",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber472",
+    "TabSet Component selecting a new tab should trigger a `change event`",
     "test"
   ],
   [
