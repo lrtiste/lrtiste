@@ -1,2 +1,2 @@
-import * as listbox from './listbox.spec.js';
-import * as listboxoption from './listbox-option.spec.js'
+export * from './listbox.spec.js';
+export * from './listbox-option.spec.js'

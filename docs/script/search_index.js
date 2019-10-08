@@ -37,73 +37,73 @@ window.esdocSearchIndex = [
   ],
   [
     "listbox src/listbox/listbox.js~listbox,listbox",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber8",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber7",
     "ListBox component",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber10",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber9",
     "ListBox component Empty ListBox is connected",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber55",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber54",
     "ListBox component ListBox with some options and default value is connected",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber21",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber20",
     "ListBox component ListBox with some options but no default value is connected",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber201",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber200",
     "ListBox component arrow key down should keep the last option in case it is already selected",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber166",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber165",
     "ListBox component arrow key down should select the next option",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber304",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber303",
     "ListBox component arrow key up should keep the first option selected if it is already selected",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber235",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber234",
     "ListBox component arrow key up should select the last option if none is selected",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber270",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber269",
     "ListBox component arrow key up should select the previous option",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber133",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber132",
     "ListBox component click an option should select it",
     "test"
   ],
   [
     "",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber338",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber337",
     "ListBox component listbox should emit \"change\" event when selected option changes ",
     "test"
   ],
   [
     "listbox#selectedindex src/listbox/listbox.js~listbox#selectedindex,listbox#selectedindex",
-    "test-file/test/listbox/listbox.spec.js.html#lineNumber90",
+    "test-file/test/listbox/listbox.spec.js.html#lineNumber89",
     "ListBox component updating the selected index property should update the component",
     "test"
   ],
@@ -135,6 +135,114 @@ window.esdocSearchIndex = [
     "listboxoption#selected src/listbox/listbox-option.js~listboxoption#selected,listboxoption#selected",
     "test-file/test/listbox/listbox-option.spec.js.html#lineNumber38",
     "ListBoxOption component selected property getter",
+    "test"
+  ],
+  [
+    "tab src/tabs/tab.js~tab,tab",
+    "test-file/test/tabs/tab.spec.js.html#lineNumber7",
+    "Tab Component",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab.spec.js.html#lineNumber9",
+    "Tab Component Tab is connected",
+    "test"
+  ],
+  [
+    "tab#selected src/tabs/tab.js~tab#selected,tab#selected",
+    "test-file/test/tabs/tab.spec.js.html#lineNumber19",
+    "Tab Component selected getter should follow aria-selected attribute",
+    "test"
+  ],
+  [
+    "tabpanel src/tabs/tab-panel.js~tabpanel,tabpanel",
+    "test-file/test/tabs/tab-panel.spec.js.html#lineNumber7",
+    "TabPanel Component",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-panel.spec.js.html#lineNumber9",
+    "TabPanel Component TabPanel is connected",
+    "test"
+  ],
+  [
+    "tab#active tab#active,tab#active",
+    "test-file/test/tabs/tab-panel.spec.js.html#lineNumber19",
+    "TabPanel Component active getter should follow the `hidden` attribute",
+    "test"
+  ],
+  [
+    "tabset src/tabs/tab-set.js~tabset,tabset",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber32",
+    "TabSet Component",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber34",
+    "TabSet Component TabSet is connected: it should select the first tab if none has the `selected` attribute",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber59",
+    "TabSet Component TabSet is connected: it should select the tab with the `selected` attribute",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber86",
+    "TabSet Component click should select the new tab",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber127",
+    "TabSet Component keyboard navigation with `follow-focus` attribute",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber200",
+    "TabSet Component keyboard navigation with `follow-focus` attribute LeftArrow navigation",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber141",
+    "TabSet Component keyboard navigation with `follow-focus` attribute RightArrow navigation",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber261",
+    "TabSet Component keyboard navigation without `follow-focus` attribute",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber333",
+    "TabSet Component keyboard navigation without `follow-focus` attribute LeftArrow navigation",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber274",
+    "TabSet Component keyboard navigation without `follow-focus` attribute RightArrow navigation",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber392",
+    "TabSet Component keyboard navigation without `follow-focus` attribute select tab on Enter keydown",
+    "test"
+  ],
+  [
+    "",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber431",
+    "TabSet Component keyboard navigation without `follow-focus` attribute select tab on Space keydown",
     "test"
   ],
   [
@@ -534,12 +642,6 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
-    "src/tabs/tab-panel.js~tabpanel#connectedcallback",
-    "class/src/tabs/tab-panel.js~TabPanel.html#instance-method-connectedCallback",
-    "src/tabs/tab-panel.js~TabPanel#connectedCallback",
-    "method"
-  ],
-  [
     "src/tabs/tab-panel.js~tabpanel#constructor",
     "class/src/tabs/tab-panel.js~TabPanel.html#instance-constructor-constructor",
     "src/tabs/tab-panel.js~TabPanel#constructor",
@@ -552,16 +654,16 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/tabs/tab-set.js~tabset#connectedcallback",
-    "class/src/tabs/tab-set.js~TabSet.html#instance-method-connectedCallback",
-    "src/tabs/tab-set.js~TabSet#connectedCallback",
-    "method"
-  ],
-  [
     "src/tabs/tab-set.js~tabset#constructor",
     "class/src/tabs/tab-set.js~TabSet.html#instance-constructor-constructor",
     "src/tabs/tab-set.js~TabSet#constructor",
     "method"
+  ],
+  [
+    "src/tabs/tab-set.js~tabset#followfocus",
+    "class/src/tabs/tab-set.js~TabSet.html#instance-get-followFocus",
+    "src/tabs/tab-set.js~TabSet#followFocus",
+    "member"
   ],
   [
     "src/tabs/tab-set.js~tabset#length",
@@ -588,12 +690,6 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/tabs/tab.js~tab#connectedcallback",
-    "class/src/tabs/tab.js~Tab.html#instance-method-connectedCallback",
-    "src/tabs/tab.js~Tab#connectedCallback",
-    "method"
-  ],
-  [
     "src/tabs/tab.js~tab#constructor",
     "class/src/tabs/tab.js~Tab.html#instance-constructor-constructor",
     "src/tabs/tab.js~Tab#constructor",
@@ -615,6 +711,24 @@ window.esdocSearchIndex = [
     "test/listbox/listbox.spec.js",
     "test-file/test/listbox/listbox.spec.js.html",
     "test/listbox/listbox.spec.js",
+    "testFile"
+  ],
+  [
+    "test/tabs/tab-panel.spec.js",
+    "test-file/test/tabs/tab-panel.spec.js.html",
+    "test/tabs/tab-panel.spec.js",
+    "testFile"
+  ],
+  [
+    "test/tabs/tab-set.spec.js",
+    "test-file/test/tabs/tab-set.spec.js.html",
+    "test/tabs/tab-set.spec.js",
+    "testFile"
+  ],
+  [
+    "test/tabs/tab.spec.js",
+    "test-file/test/tabs/tab.spec.js.html",
+    "test/tabs/tab.spec.js",
     "testFile"
   ]
 ]

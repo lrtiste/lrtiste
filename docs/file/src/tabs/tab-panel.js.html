@@ -43,8 +43,15 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">const template = document.createElement(&apos;template&apos;);
 template.innerHTML = `&lt;slot&gt;&lt;/slot&gt;`;
 
+/**
+ * @desc A tab panel to be nested inside a {@link TabSet} element. The order is important:
+ * the nth tab will match the nth {@link Tab}
+ */
 export class TabPanel extends HTMLElement {
 
+    /**
+     * @returns {boolean} Whether the panel is currently active
+     */
     get active() {
         return this.hasAttribute(&apos;hidden&apos;) === false;
     }
@@ -55,6 +62,7 @@ export class TabPanel extends HTMLElement {
         this.shadowRoot.appendChild(template.content.cloneNode(true));
     }
 
+    /** @protected */
     connectedCallback() {
         this.setAttribute(&apos;role&apos;, &apos;tabpanel&apos;);
         this.setAttribute(&apos;slot&apos;, &apos;tabpanels&apos;);

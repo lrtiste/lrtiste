@@ -49,6 +49,39 @@ const generateTabPanelId = idGenerator(&apos;tabpanel&apos;);
 const template = document.createElement(&apos;template&apos;);
 template.innerHTML = `&lt;style&gt;:host{display: flex;flex-direction: column}::slotted([role=tabpanel]){flex-grow: 1}[role=tablist]{display: flex;justify-content: var(--tab-justify,flex-start);}&lt;/style&gt;&lt;div role=&quot;tablist&quot;&gt;&lt;slot name=&quot;tablist&quot;&gt;&lt;/slot&gt;&lt;/div&gt;&lt;slot name=&quot;tabpanels&quot;&gt;&lt;/slot&gt;`;
 
+/**
+ * @desc Implements the Tabs pattern
+ *
+ * Keyboard interaction is handled for &lt;kbd&gt;Left Arrow&lt;/kbd&gt;, &lt;kbd&gt;Right Arrow&lt;/kbd&gt;, &lt;kbd&gt;Home&lt;/kbd&gt;, &lt;kbd&gt;End&lt;/kbd&gt;, &lt;kbd&gt;Space&lt;/kbd&gt; and &lt;kbd&gt;Enter&lt;/kbd&gt;
+ *
+ * Click on a tab is also handled
+ *
+ * Note, by default the tab is activated on user&apos;s demand ie it does not follow the focus. If you wish to automatically select the tab on focus,
+ * add the ``follow-focus`` attribute
+ *
+ * @see https://www.w3.org/TR/wai-aria-practices/#tabpanel
+ * @example
+ * &lt;ui-tabset&gt;
+ *     &lt;ui-tab&gt;&lt;span&gt;some sophisticated template&lt;/span&gt;&lt;/ui-tab&gt;
+ *     &lt;ui-tabpanel&gt;
+ *         &lt;p&gt;
+ *             Some content very &lt;strong&gt;interesting&lt;/strong&gt;
+ *             The tab panel can come directly after its related tab
+ *         &lt;/p&gt;
+ *     &lt;/ui-tabpanel&gt;
+ *     &lt;ui-tab selected&gt;selected by default&lt;/ui-tab&gt;
+ *     &lt;ui-tab id=&quot;custom_id&quot;&gt;third tab&lt;/ui-tab&gt;
+ *     &lt;ui-tabpanel&gt;Or later, just the index matters&lt;/ui-tabpanel&gt;
+ *     &lt;ui-tabpanel&gt;Content for the third panel&lt;/ui-tabpanel&gt;
+ * &lt;/ui-tabset&gt;
+ *
+ * &lt;script type=&quot;module&quot;&gt;
+ *     import {TabSet, Tab, TabPanel} from &apos;path/to/lib&apos;
+ *     customElements.define(&apos;ui-tabset&apos;, TabSet);
+ *     customElements.define(&apos;ui-tab&apos;, Tab);
+ *     customElements.define(&apos;ui-tabpanel&apos;, TabPanel);
+ * &lt;/script&gt;
+ */
 export class TabSet extends HTMLElement {
 
     /** @protected */
@@ -56,14 +89,32 @@ export class TabSet extends HTMLElement {
         return [&apos;selected-tab-index&apos;];
     }
 
+    /**
+     * @returns {boolean} Configure whether the tab activation should follow the focus
+     */
+    get followFocus() {
+        return this.hasAttribute(&apos;follow-focus&apos;);
+    }
+
+    /**
+     * @returns {number} The number of tabs in the set
+     */
     get length() {
         return this._tabs.length;
     }
 
+    /**
+     * @returns {number} the index of the currently selected tab
+     */
     get selectedIndex() {
         return this._tabs.findIndex(t =&gt; t.selected);
     }
 
+    /**
+     * @desc Reflects on ``selected-tab-index`` attribute
+     * @param index
+     * @emits {ChangeEvent}
+     */
     set selectedIndex(index) {
         if (index &gt;= 0 &lt; this._tabs.length) {
             this.setAttribute(&apos;selected-tab-index&apos;, index);
@@ -104,6 +155,7 @@ export class TabSet extends HTMLElement {
         this._handleClick = this._handleClick.bind(this);
     }
 
+    /** @protected */
     connectedCallback() {
         this.shadowRoot
             .querySelector(&apos;slot[name=tablist]&apos;)
@@ -116,9 +168,6 @@ export class TabSet extends HTMLElement {
 
     /** @private */
     _handleTabChangeEvent(ev) {
-
-        console.log(&apos;tab change&apos;);
-
         this._tabs = [];
 
         const tabs = this.shadowRoot
@@ -137,8 +186,6 @@ export class TabSet extends HTMLElement {
 
     /** @private */
     _handleTabPanelChangeEvent(ev) {
-        console.log(&apos;tabpanel change&apos;);
-
         this._tabpanels = [];
 
         const tabpanels = this.shadowRoot
@@ -167,33 +214,32 @@ export class TabSet extends HTMLElement {
     _handleKeydownEvent(ev) {
         const {key, currentTarget: tab} = ev;
         const currentIndex = this._tabs.indexOf(tab);
-        switch (key) {
-            case &apos;ArrowLeft&apos;: {
-                const index = (currentIndex - 1) &gt;= 0 ? currentIndex - 1 : this.length - 1;
-                this._tabs[index].focus();
-                break;
+        if ([&apos;ArrowLeft&apos;, &apos;ArrowRight&apos;, &apos;Home&apos;, &apos;End&apos;].includes(key)) {
+            let index = currentIndex;
+            switch (key) {
+                case &apos;ArrowLeft&apos;: {
+                    index = (currentIndex - 1) &gt;= 0 ? currentIndex - 1 : this.length - 1;
+                    break;
+                }
+                case &apos;ArrowRight&apos;: {
+                    index = (currentIndex + 1) % this.length;
+                    break;
+                }
+                case &apos;Home&apos;: {
+                    index = 0;
+                    break;
+                }
+                case &apos;End&apos;: {
+                    index = this.length - 1;
+                    break;
+                }
             }
-            case &apos;ArrowRight&apos;: {
-                const index = (currentIndex + 1) % this.length;
-                this._tabs[index].focus();
-                break;
+            this._tabs[index].focus();
+            if (this.followFocus) {
+                this.selectedIndex = index;
             }
-            case &apos;Home&apos;: {
-                const index = 0;
-                this._tabs[index].focus();
-                break;
-            }
-            case &apos;End&apos;: {
-                const index = this.length - 1;
-                this._tabs[index].focus();
-                break;
-            }
-            case &apos; &apos;:
-            case &apos;Enter&apos;: {
-                this.selectedIndex = currentIndex;
-                break;
-            }
-
+        } else if (key === &apos; &apos; || key === &apos;Enter&apos;) {
+            this.selectedIndex = currentIndex;
         }
     }
 

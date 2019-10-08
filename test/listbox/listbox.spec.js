@@ -1,6 +1,5 @@
 import {test} from 'zora';
-import {body, LIST_BOX_OPTION_TAG_NAME, LIST_BOX_TAG_NAME} from './util.js';
-import {nextTick} from '../util.js';
+import {nextTick, body, LIST_BOX_OPTION_TAG_NAME, LIST_BOX_TAG_NAME} from '../util.js';
 
 /**
  * @test {ListBox}

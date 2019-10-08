@@ -1,5 +1,5 @@
 /**
- * @desc Custom event emitted when the selected option of a {@link ListBox} has changed.
+ * @desc Custom event emitted when the selected option of a {@link ListBox} or a {@link TabSet} has changed.
  */
 export default class ChangeEvent extends CustomEvent {
 

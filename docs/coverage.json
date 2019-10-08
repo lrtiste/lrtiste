@@ -1,7 +1,7 @@
 {
-  "coverage": "60%",
-  "expectCount": 55,
-  "actualCount": 33,
+  "coverage": "80.35%",
+  "expectCount": 56,
+  "actualCount": 45,
   "files": {
     "src/common/change-event.js": {
       "expectCount": 3,
@@ -29,39 +29,28 @@
     },
     "src/tabs/tab-panel.js": {
       "expectCount": 5,
-      "actualCount": 0,
+      "actualCount": 3,
       "undocumentLines": [
         1,
-        4,
-        6,
-        10,
-        16
+        17
       ]
     },
     "src/tabs/tab-set.js": {
-      "expectCount": 17,
-      "actualCount": 8,
+      "expectCount": 18,
+      "actualCount": 14,
       "undocumentLines": [
         4,
         5,
         7,
-        10,
-        17,
-        21,
-        25,
-        51,
-        65
+        102
       ]
     },
     "src/tabs/tab.js": {
       "expectCount": 5,
-      "actualCount": 0,
+      "actualCount": 3,
       "undocumentLines": [
         1,
-        4,
-        6,
-        10,
-        16
+        17
       ]
     }
   }

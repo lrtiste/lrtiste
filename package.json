@@ -6,7 +6,7 @@
   "module": "./dist/citykleta-ui-kit.js",
   "scripts": {
     "serve": "http-serve -p 3002",
-    "build": "rollup -c ./rollup/build.js",
+    "build": "rollup -c ./rollup/build.js && npm run build:docs",
     "build:test": "rollup -c ./rollup/test.js",
     "build:docs": "rm -rf docs && esdoc",
     "test:ci": "http-serve -s -p 3002 & (npm run test | tap-set-exit)",

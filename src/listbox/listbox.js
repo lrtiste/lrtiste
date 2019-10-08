@@ -11,7 +11,7 @@ template.innerHTML = `<style>:host{position:relative}</style>
 /**
  * @desc Implements the ListBox pattern for single select ListBox where the focus follows the selection.
  *
- * Keyboard interaction is handled for <kbd>Up Arrow</kbd> and <kbd>Down Arrow</kbd>. In the same way if one option is clicked, then it becomes selected
+ * Keyboard interaction is handled for <kbd>Up Arrow</kbd>, <kbd>Down Arrow</kbd>, <kbd>Home</kbd> and <kbd>End</kbd>. In the same way if an option is clicked, then it becomes selected
  *
  * @see https://www.w3.org/TR/wai-aria-practices/#Listbox
  * @example

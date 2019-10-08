@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">test/tabs/tab-set.spec.js | @citykleta/ui-kit</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="web components for common widgets used across citykleta organization"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="@citykleta/ui-kit"><meta property="twitter:description" content="web components for common widgets used across citykleta organization"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/Citykleta/ui-kit"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#common">common</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#tabs">tabs</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-panel.js~TabPanel.html">TabPanel</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html">TabSet</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab.js~Tab.html">Tab</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/tabs/tab-set.spec.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {test} from &apos;zora&apos;;
+import {body, nextTick, TAB_PANEL_TAG_NAME, TAB_SET_TAG_NAME, TAB_TAG_NAME} from &apos;../util.js&apos;;
+
+/**
+ * @test {TabSet}
+ */
+
+const createTabSet = () =&gt; {
+    const tabset = document.createElement(TAB_SET_TAG_NAME);
+    tabset.innerHTML = `
+  &lt;${TAB_TAG_NAME}&gt;&lt;span&gt;tab 1&lt;/span&gt;&lt;/${TAB_TAG_NAME}&gt;
+  &lt;${TAB_TAG_NAME} id=&quot;custom-tab-id&quot;&gt;tab 2&lt;/${TAB_TAG_NAME}&gt;
+  &lt;${TAB_TAG_NAME}&gt;tab 3&lt;/${TAB_TAG_NAME}&gt;
+  &lt;${TAB_PANEL_TAG_NAME} id=&quot;custom-tab-panel-id-1&quot;&gt;content panel 1&lt;/${TAB_PANEL_TAG_NAME}&gt;
+  &lt;${TAB_PANEL_TAG_NAME} id=&quot;custom-tab-panel-id-2&quot;&gt;content &lt;strong&gt;panel 2&lt;/strong&gt;&lt;/${TAB_PANEL_TAG_NAME}&gt;
+  &lt;${TAB_PANEL_TAG_NAME}&gt;content panel 3&lt;/${TAB_PANEL_TAG_NAME}&gt;
+  `;
+    return tabset;
+};
+
+const checkAttributes = (items, expected, assert) =&gt; {
+    items.forEach((item, index) =&gt; {
+        for (const [attribute, value] of Object.entries(expected[index])) {
+            assert.eq(item.getAttribute(attribute), value);
+        }
+    });
+};
+
+/**
+ * @test {TabSet}
+ */
+test(&apos;TabSet Component&apos;, ({test}) =&gt; {
+
+    test(&apos;TabSet is connected: it should select the first tab if none has the `selected` attribute&apos;, async t =&gt; {
+        const el = createTabSet();
+        body.appendChild(el);
+
+        await nextTick();
+
+        t.eq(el.length, 3);
+        t.eq(el.selectedIndex, 0);
+
+        const [tab1, tab2, tab3] = el.querySelectorAll(TAB_TAG_NAME);
+        const [tabpanel1, tabpanel2, tabpanel3] = el.querySelectorAll(TAB_PANEL_TAG_NAME);
+
+        checkAttributes([tab1, tab2, tab3], [
+            {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+            {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;},
+            {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel3.id, tabindex: &apos;-1&apos;}
+        ], t);
+
+        checkAttributes([tabpanel1, tabpanel2, tabpanel3], [
+            {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+            {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;},
+            {&apos;aria-labelledby&apos;: tab3.id, hidden: &apos;&apos;}
+        ], t);
+    });
+
+    test(&apos;TabSet is connected: it should select the tab with the `selected` attribute&apos;, async t =&gt; {
+        const el = createTabSet();
+        body.appendChild(el);
+
+        el.querySelectorAll(TAB_TAG_NAME)[1].setAttribute(&apos;selected&apos;, &apos;&apos;);
+
+        await nextTick();
+
+        t.eq(el.length, 3);
+        t.eq(el.selectedIndex, 1);
+
+        const [tab1, tab2, tab3] = el.querySelectorAll(TAB_TAG_NAME);
+        const [tabpanel1, tabpanel2, tabpanel3] = el.querySelectorAll(TAB_PANEL_TAG_NAME);
+
+        checkAttributes([tab1, tab2, tab3], [
+            {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;-1&apos;},
+            {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;0&apos;},
+            {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel3.id, tabindex: &apos;-1&apos;}
+        ], t);
+
+        checkAttributes([tabpanel1, tabpanel2, tabpanel3], [
+            {&apos;aria-labelledby&apos;: tab1.id, hidden: &apos;&apos;},
+            {&apos;aria-labelledby&apos;: tab2.id, hidden: null},
+            {&apos;aria-labelledby&apos;: tab3.id, hidden: &apos;&apos;}
+        ], t);
+    });
+
+    test(&apos;click should select the new tab&apos;, async t =&gt; {
+        const el = createTabSet();
+        body.appendChild(el);
+
+        await nextTick();
+
+        t.eq(el.length, 3);
+        t.eq(el.selectedIndex, 0);
+
+        const [tab1, tab2, tab3] = el.querySelectorAll(TAB_TAG_NAME);
+        const [tabpanel1, tabpanel2, tabpanel3] = el.querySelectorAll(TAB_PANEL_TAG_NAME);
+
+        checkAttributes([tab1, tab2, tab3], [
+            {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+            {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;},
+            {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel3.id, tabindex: &apos;-1&apos;}
+        ], t);
+
+        checkAttributes([tabpanel1, tabpanel2, tabpanel3], [
+            {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+            {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;},
+            {&apos;aria-labelledby&apos;: tab3.id, hidden: &apos;&apos;}
+        ], t);
+
+        tab2.click();
+
+        checkAttributes([tab1, tab2, tab3], [
+            {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;-1&apos;},
+            {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;0&apos;},
+            {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel3.id, tabindex: &apos;-1&apos;}
+        ], t);
+
+        checkAttributes([tabpanel1, tabpanel2, tabpanel3], [
+            {&apos;aria-labelledby&apos;: tab1.id, hidden: &apos;&apos;},
+            {&apos;aria-labelledby&apos;: tab2.id, hidden: null},
+            {&apos;aria-labelledby&apos;: tab3.id, hidden: &apos;&apos;}
+        ], t);
+
+        t.eq(el.selectedIndex, 1);
+    });
+
+    test(&apos;keyboard navigation with `follow-focus` attribute&apos;, ({test}) =&gt; {
+
+        const createTabSet = () =&gt; {
+            const tabset = document.createElement(TAB_SET_TAG_NAME);
+            tabset.innerHTML = `
+  &lt;${TAB_TAG_NAME}&gt;&lt;span&gt;tab 1&lt;/span&gt;&lt;/${TAB_TAG_NAME}&gt;
+  &lt;${TAB_TAG_NAME}&gt;tab 2&lt;/${TAB_TAG_NAME}&gt;
+  &lt;${TAB_PANEL_TAG_NAME}&gt;content panel 1&lt;/${TAB_PANEL_TAG_NAME}&gt;
+  &lt;${TAB_PANEL_TAG_NAME}&gt;content &lt;strong&gt;panel 2&lt;/strong&gt;&lt;/${TAB_PANEL_TAG_NAME}&gt;
+  `;
+            tabset.setAttribute(&apos;follow-focus&apos;, &apos;&apos;);
+            return tabset;
+        };
+
+        test(&apos;RightArrow navigation&apos;, async t =&gt; {
+            const el = createTabSet();
+            body.appendChild(el);
+
+            await nextTick();
+
+            t.eq(el.length, 2);
+            t.eq(el.selectedIndex, 0);
+
+            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);
+            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            tab1.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;ArrowRight&apos;
+            }));
+
+            t.eq(el.selectedIndex, 1);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;-1&apos;},
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;0&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: &apos;&apos;},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: null}
+            ], t);
+
+            t.is(el.querySelector(&apos;:focus&apos;), tab2);
+
+            tab2.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;ArrowRight&apos;
+            }));
+
+            t.eq(el.selectedIndex, 0);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            t.is(el.querySelector(&apos;:focus&apos;), tab1);
+        });
+
+        test(&apos;LeftArrow navigation&apos;, async t =&gt; {
+            const el = createTabSet();
+            body.appendChild(el);
+
+            await nextTick();
+
+            t.eq(el.length, 2);
+            t.eq(el.selectedIndex, 0);
+
+            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);
+            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            tab1.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;ArrowLeft&apos;
+            }));
+
+            t.eq(el.selectedIndex, 1);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;-1&apos;},
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;0&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: &apos;&apos;},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: null}
+            ], t);
+
+            t.is(el.querySelector(&apos;:focus&apos;), tab2);
+
+            tab2.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;ArrowLeft&apos;
+            }));
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            t.eq(el.selectedIndex, 0);
+
+            t.is(el.querySelector(&apos;:focus&apos;), tab1);
+        });
+
+    });
+
+    test(&apos;keyboard navigation without `follow-focus` attribute&apos;, ({test}) =&gt; {
+
+        const createTabSet = () =&gt; {
+            const tabset = document.createElement(TAB_SET_TAG_NAME);
+            tabset.innerHTML = `
+  &lt;${TAB_TAG_NAME}&gt;&lt;span&gt;tab 1&lt;/span&gt;&lt;/${TAB_TAG_NAME}&gt;
+  &lt;${TAB_TAG_NAME}&gt;tab 2&lt;/${TAB_TAG_NAME}&gt;
+  &lt;${TAB_PANEL_TAG_NAME}&gt;content panel 1&lt;/${TAB_PANEL_TAG_NAME}&gt;
+  &lt;${TAB_PANEL_TAG_NAME}&gt;content &lt;strong&gt;panel 2&lt;/strong&gt;&lt;/${TAB_PANEL_TAG_NAME}&gt;
+  `;
+            return tabset;
+        };
+
+        test(&apos;RightArrow navigation&apos;, async t =&gt; {
+            const el = createTabSet();
+            body.appendChild(el);
+
+            await nextTick();
+
+            t.eq(el.length, 2);
+            t.eq(el.selectedIndex, 0);
+
+            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);
+            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            tab1.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;ArrowRight&apos;
+            }));
+
+            t.eq(el.selectedIndex, 0);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            t.is(el.querySelector(&apos;:focus&apos;), tab2);
+
+            tab2.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;ArrowRight&apos;
+            }));
+
+            t.eq(el.selectedIndex, 0);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            t.is(el.querySelector(&apos;:focus&apos;), tab1);
+        });
+
+        test(&apos;LeftArrow navigation&apos;, async t =&gt; {
+            const el = createTabSet();
+            body.appendChild(el);
+
+            await nextTick();
+
+            t.eq(el.length, 2);
+            t.eq(el.selectedIndex, 0);
+
+            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);
+            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            tab1.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;ArrowLeft&apos;
+            }));
+
+            t.eq(el.selectedIndex, 0);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            t.is(el.querySelector(&apos;:focus&apos;), tab2);
+
+            tab2.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;ArrowLeft&apos;
+            }));
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            t.eq(el.selectedIndex, 0);
+
+            t.is(el.querySelector(&apos;:focus&apos;), tab1);
+        });
+
+        test(&apos;select tab on Enter keydown&apos;, async t =&gt; {
+            const el = createTabSet();
+            body.appendChild(el);
+
+            await nextTick();
+
+            t.eq(el.length, 2);
+            t.eq(el.selectedIndex, 0);
+
+            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);
+            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            tab2.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;Enter&apos;
+            }));
+
+            t.eq(el.selectedIndex, 1);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;-1&apos;},
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;0&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: &apos;&apos;},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: null}
+            ], t);
+        });
+
+        test(&apos;select tab on Space keydown&apos;, async t =&gt; {
+            const el = createTabSet();
+            body.appendChild(el);
+
+            await nextTick();
+
+            t.eq(el.length, 2);
+            t.eq(el.selectedIndex, 0);
+
+            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);
+            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;0&apos;},
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;-1&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: null},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
+            ], t);
+
+            tab2.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos; &apos;
+            }));
+
+            t.eq(el.selectedIndex, 1);
+
+            checkAttributes([tab1, tab2], [
+                {&apos;aria-selected&apos;: &apos;false&apos;, &apos;aria-controls&apos;: tabpanel1.id, tabindex: &apos;-1&apos;},
+                {&apos;aria-selected&apos;: &apos;true&apos;, &apos;aria-controls&apos;: tabpanel2.id, tabindex: &apos;0&apos;}
+            ], t);
+
+            checkAttributes([tabpanel1, tabpanel2], [
+                {&apos;aria-labelledby&apos;: tab1.id, hidden: &apos;&apos;},
+                {&apos;aria-labelledby&apos;: tab2.id, hidden: null}
+            ], t);
+        });
+    });
+});</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

@@ -40,13 +40,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {TabSet} from &apos;<span><a href="file/src/tabs/tab-set.js.html#lineNumber10">@citykleta/ui-kit/src/tabs/tab-set.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {TabSet} from &apos;<span><a href="file/src/tabs/tab-set.js.html#lineNumber43">@citykleta/ui-kit/src/tabs/tab-set.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/tabs/tab-set.js.html#lineNumber10">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/tabs/tab-set.js.html#lineNumber43">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -66,14 +66,51 @@
 
   
   
-  
+  <div class="description" data-ice="description"><p>Implements the Tabs pattern</p>
+<p>Keyboard interaction is handled for <kbd>Left Arrow</kbd>, <kbd>Right Arrow</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Space</kbd> and <kbd>Enter</kbd></p>
+<p>Click on a tab is also handled</p>
+<p>Note, by default the tab is activated on user&apos;s demand ie it does not follow the focus. If you wish to automatically select the tab on focus,
+add the <code>follow-focus</code> attribute</p>
+</div>
   
 
-  
+  <div data-ice="see"><h4>See:</h4><ul><li><span><a href="https://www.w3.org/TR/wai-aria-practices/#tabpanel">https://www.w3.org/TR/wai-aria-practices/#tabpanel</a></span></li></ul></div>
 
-  
+  <div data-ice="exampleDocs">
+    <h4>Example:</h4>
+    
+  <div class="example-doc" data-ice="exampleDoc">
+      
+      <pre class="prettyprint source-code"><code data-ice="exampleCode">&lt;ui-tabset&gt;
+    &lt;ui-tab&gt;&lt;span&gt;some sophisticated template&lt;/span&gt;&lt;/ui-tab&gt;
+    &lt;ui-tabpanel&gt;
+        &lt;p&gt;
+            Some content very &lt;strong&gt;interesting&lt;/strong&gt;
+            The tab panel can come directly after its related tab
+        &lt;/p&gt;
+    &lt;/ui-tabpanel&gt;
+    &lt;ui-tab selected&gt;selected by default&lt;/ui-tab&gt;
+    &lt;ui-tab id=&quot;custom_id&quot;&gt;third tab&lt;/ui-tab&gt;
+    &lt;ui-tabpanel&gt;Or later, just the index matters&lt;/ui-tabpanel&gt;
+    &lt;ui-tabpanel&gt;Content for the third panel&lt;/ui-tabpanel&gt;
+&lt;/ui-tabset&gt;
 
-  
+&lt;script type=&quot;module&quot;&gt;
+    import {TabSet, Tab, TabPanel} from &apos;path/to/lib&apos;
+    customElements.define(&apos;ui-tabset&apos;, TabSet);
+    customElements.define(&apos;ui-tab&apos;, Tab);
+    customElements.define(&apos;ui-tabpanel&apos;, TabPanel);
+&lt;/script&gt;</code></pre>
+    </div>
+</div>
+
+  <div data-ice="tests">
+    <h4>Test:</h4>
+    <ul>
+      
+    <li data-ice="test"><span><a href="test-file/test/tabs/tab-set.spec.js.html#lineNumber32">TabSet Component</a></span></li>
+</ul>
+  </div>
 
   
 </div>
@@ -133,7 +170,7 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html#instance-get-length">length</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html#instance-get-followFocus">followFocus</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -161,7 +198,35 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html#instance-get-selectedIndex">selectedIndex</a></span></span><span class="code" data-ice="signature">: <span>*</span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html#instance-get-length">length</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      <span class="kind" data-ice="kind">get</span>
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+          
+          
+          
+          <span class="code" data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html#instance-get-selectedIndex">selectedIndex</a></span></span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
         </p>
       </div>
       <div>
@@ -189,13 +254,14 @@
           
           
           
-          <span class="code" data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html#instance-set-selectedIndex">selectedIndex</a></span></span>
+          <span class="code" data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html#instance-set-selectedIndex">selectedIndex</a></span></span><span class="code" data-ice="signature">(index: <span>*</span>)</span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Reflects on <code>selected-tab-index</code> attribute</p>
+</div>
       </div>
     </td>
     <td>
@@ -206,41 +272,7 @@
 </tbody>
 </table>
 </div>
-<div data-ice="methodSummary"><h2>Method Summary</h2><table class="summary" data-ice="summary">
-  <thead><tr><td data-ice="title" colspan="3">Public Methods</td></tr></thead>
-  <tbody>
-  
-  <tr data-ice="target">
-    <td>
-      <span class="access" data-ice="access">public</span>
-      
-      
-      
-      <span class="override" data-ice="override"></span>
-    </td>
-    <td>
-      <div>
-        <p>
-          
-          
-          
-          <span class="code" data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html#instance-method-connectedCallback">connectedCallback</a></span></span><span class="code" data-ice="signature">()</span>
-        </p>
-      </div>
-      <div>
-        
-        
-        
-      </div>
-    </td>
-    <td>
-      
-      
-    </td>
-  </tr>
-</tbody>
-</table>
-</div>
+
 
 
 
@@ -260,7 +292,7 @@
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/tabs/tab-set.js.html#lineNumber51">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/tabs/tab-set.js.html#lineNumber102">source</a></span></span>
     </span>
   </h3>
 
@@ -295,18 +327,18 @@
 <div data-ice="memberDetails"><h2 data-ice="title">Public Members</h2>
 
 <div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-get-length">
+  <h3 data-ice="anchor" id="instance-get-followFocus">
     <span class="access" data-ice="access">public</span>
     
     <span class="kind" data-ice="kind">get</span>
     
     
     
-    <span class="code" data-ice="name">length</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">followFocus</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/tabs/tab-set.js.html#lineNumber17">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/tabs/tab-set.js.html#lineNumber53">source</a></span></span>
     </span>
   </h3>
 
@@ -320,7 +352,76 @@
   <div data-ice="properties">
 </div>
 
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>Configure whether the tab activation should follow the focus</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
+
   
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-get-length">
+    <span class="access" data-ice="access">public</span>
+    
+    <span class="kind" data-ice="kind">get</span>
+    
+    
+    
+    <span class="code" data-ice="name">length</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/tabs/tab-set.js.html#lineNumber60">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>The number of tabs in the set</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
 
   
 
@@ -345,11 +446,11 @@
     
     
     
-    <span class="code" data-ice="name">selectedIndex</span><span class="code" data-ice="signature">: <span>*</span></span>
+    <span class="code" data-ice="name">selectedIndex</span><span class="code" data-ice="signature">: <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span>: <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/tabs/tab-set.js.html#lineNumber21">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/tabs/tab-set.js.html#lineNumber67">source</a></span></span>
     </span>
   </h3>
 
@@ -363,7 +464,20 @@
   <div data-ice="properties">
 </div>
 
-  
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type code" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">number</a></span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>the index of the currently selected tab</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
 
   
 
@@ -388,18 +502,19 @@
     
     
     
-    <span class="code" data-ice="name">selectedIndex</span>
+    <span class="code" data-ice="name">selectedIndex</span><span class="code" data-ice="signature">(index: <span>*</span>)</span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/tabs/tab-set.js.html#lineNumber25">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/tabs/tab-set.js.html#lineNumber76">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Reflects on <code>selected-tab-index</code> attribute</p>
+</div>
 
   
 
@@ -408,53 +523,18 @@
 
   
 
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  
-</div>
-</div>
-<div data-ice="methodDetails"><h2 data-ice="title">Public Methods</h2>
-
-<div class="detail" data-ice="detail">
-  <h3 data-ice="anchor" id="instance-method-connectedCallback">
-    <span class="access" data-ice="access">public</span>
-    
-    
-    
-    
-    
-    <span class="code" data-ice="name">connectedCallback</span><span class="code" data-ice="signature">()</span>
-    <span class="right-info">
+  <div data-ice="emitWrap">
+    <h4>Emit:</h4>
+    <table>
+      <tbody>
       
-      
-      <span data-ice="source"><span><a href="file/src/tabs/tab-set.js.html#lineNumber65">source</a></span></span>
-    </span>
-  </h3>
-
-  
-  
-  
-  
-
-  
-
-  <div data-ice="properties">
-</div>
-
-  
-
-  
+      <tr class="emit" data-ice="emit">
+        <td><p data-ice="emitName"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></p></td>
+        
+      </tr>
+</tbody>
+    </table>
+  </div>
 
   
 
@@ -470,6 +550,7 @@
   
 </div>
 </div>
+
 </div>
 
 <footer class="footer">

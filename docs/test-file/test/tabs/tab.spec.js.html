@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <base data-ice="baseUrl" href="../../">
-  <title data-ice="title">src/utils.js | @citykleta/ui-kit</title>
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">test/tabs/tab.spec.js | @citykleta/ui-kit</title>
   <link type="text/css" rel="stylesheet" href="css/style.css">
   <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
   <script src="script/prettify/prettify.js"></script>
@@ -29,8 +29,8 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
-<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#common">common</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#tabs">tabs</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-panel.js~TabPanel.html">TabPanel</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html">TabSet</a></span></span></li>
@@ -39,19 +39,34 @@
 </div>
 </nav>
 
-<div class="content" data-ice="content"><h1 data-ice="title">src/utils.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
- * @private
- */
-export const generateRandomId = (prefix) =&gt; {
-    let counter = 0;
-    return () =&gt; `${prefix}-${++counter}`;
-};
+<div class="content" data-ice="content"><h1 data-ice="title">test/tabs/tab.spec.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {test} from &apos;zora&apos;;
+import {body, TAB_TAG_NAME} from &apos;../util.js&apos;;
+
 /**
- * @private
+ * @test {Tab}
  */
-export const isSelectedPredicate = i =&gt; i.getAttribute(&apos;aria-selected&apos;) === &apos;true&apos;;
-</code></pre>
+test(&apos;Tab Component&apos;, ({test}) =&gt; {
+
+    test(&apos;Tab is connected&apos;, t =&gt; {
+        const el = document.createElement(TAB_TAG_NAME);
+        body.appendChild(el);
+        t.eq(el.getAttribute(&apos;role&apos;), &apos;tab&apos;, &apos;should have the role tab&apos;);
+        t.eq(el.getAttribute(&apos;slot&apos;), &apos;tablist&apos;, &apos;should be put in the tablist slot&apos;);
+    });
+
+    /**
+     * @test {Tab#selected}
+     */
+    test(&apos;selected getter should follow aria-selected attribute&apos;, t =&gt; {
+        const el = document.createElement(TAB_TAG_NAME);
+        t.eq(el.selected, false);
+        el.setAttribute(&apos;aria-selected&apos;, &apos;true&apos;);
+        t.eq(el.selected, true);
+        el.setAttribute(&apos;aria-selected&apos;, &apos;false&apos;);
+        t.eq(el.selected, false);
+    });
+});</code></pre>
 
 </div>
 

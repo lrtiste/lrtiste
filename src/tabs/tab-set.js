@@ -7,6 +7,39 @@ const generateTabPanelId = idGenerator('tabpanel');
 const template = document.createElement('template');
 template.innerHTML = `<style>:host{display: flex;flex-direction: column}::slotted([role=tabpanel]){flex-grow: 1}[role=tablist]{display: flex;justify-content: var(--tab-justify,flex-start);}</style><div role="tablist"><slot name="tablist"></slot></div><slot name="tabpanels"></slot>`;
 
+/**
+ * @desc Implements the Tabs pattern
+ *
+ * Keyboard interaction is handled for <kbd>Left Arrow</kbd>, <kbd>Right Arrow</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Space</kbd> and <kbd>Enter</kbd>
+ *
+ * Click on a tab is also handled
+ *
+ * Note, by default the tab is activated on user's demand ie it does not follow the focus. If you wish to automatically select the tab on focus,
+ * add the ``follow-focus`` attribute
+ *
+ * @see https://www.w3.org/TR/wai-aria-practices/#tabpanel
+ * @example
+ * <ui-tabset>
+ *     <ui-tab><span>some sophisticated template</span></ui-tab>
+ *     <ui-tabpanel>
+ *         <p>
+ *             Some content very <strong>interesting</strong>
+ *             The tab panel can come directly after its related tab
+ *         </p>
+ *     </ui-tabpanel>
+ *     <ui-tab selected>selected by default</ui-tab>
+ *     <ui-tab id="custom_id">third tab</ui-tab>
+ *     <ui-tabpanel>Or later, just the index matters</ui-tabpanel>
+ *     <ui-tabpanel>Content for the third panel</ui-tabpanel>
+ * </ui-tabset>
+ *
+ * <script type="module">
+ *     import {TabSet, Tab, TabPanel} from 'path/to/lib'
+ *     customElements.define('ui-tabset', TabSet);
+ *     customElements.define('ui-tab', Tab);
+ *     customElements.define('ui-tabpanel', TabPanel);
+ * </script>
+ */
 export class TabSet extends HTMLElement {
 
     /** @protected */
@@ -14,14 +47,32 @@ export class TabSet extends HTMLElement {
         return ['selected-tab-index'];
     }
 
+    /**
+     * @returns {boolean} Configure whether the tab activation should follow the focus
+     */
+    get followFocus() {
+        return this.hasAttribute('follow-focus');
+    }
+
+    /**
+     * @returns {number} The number of tabs in the set
+     */
     get length() {
         return this._tabs.length;
     }
 
+    /**
+     * @returns {number} the index of the currently selected tab
+     */
     get selectedIndex() {
         return this._tabs.findIndex(t => t.selected);
     }
 
+    /**
+     * @desc Reflects on ``selected-tab-index`` attribute
+     * @param index
+     * @emits {ChangeEvent}
+     */
     set selectedIndex(index) {
         if (index >= 0 < this._tabs.length) {
             this.setAttribute('selected-tab-index', index);
@@ -62,6 +113,7 @@ export class TabSet extends HTMLElement {
         this._handleClick = this._handleClick.bind(this);
     }
 
+    /** @protected */
     connectedCallback() {
         this.shadowRoot
             .querySelector('slot[name=tablist]')
@@ -74,9 +126,6 @@ export class TabSet extends HTMLElement {
 
     /** @private */
     _handleTabChangeEvent(ev) {
-
-        console.log('tab change');
-
         this._tabs = [];
 
         const tabs = this.shadowRoot
@@ -95,8 +144,6 @@ export class TabSet extends HTMLElement {
 
     /** @private */
     _handleTabPanelChangeEvent(ev) {
-        console.log('tabpanel change');
-
         this._tabpanels = [];
 
         const tabpanels = this.shadowRoot
@@ -125,33 +172,32 @@ export class TabSet extends HTMLElement {
     _handleKeydownEvent(ev) {
         const {key, currentTarget: tab} = ev;
         const currentIndex = this._tabs.indexOf(tab);
-        switch (key) {
-            case 'ArrowLeft': {
-                const index = (currentIndex - 1) >= 0 ? currentIndex - 1 : this.length - 1;
-                this._tabs[index].focus();
-                break;
+        if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) {
+            let index = currentIndex;
+            switch (key) {
+                case 'ArrowLeft': {
+                    index = (currentIndex - 1) >= 0 ? currentIndex - 1 : this.length - 1;
+                    break;
+                }
+                case 'ArrowRight': {
+                    index = (currentIndex + 1) % this.length;
+                    break;
+                }
+                case 'Home': {
+                    index = 0;
+                    break;
+                }
+                case 'End': {
+                    index = this.length - 1;
+                    break;
+                }
             }
-            case 'ArrowRight': {
-                const index = (currentIndex + 1) % this.length;
-                this._tabs[index].focus();
-                break;
+            this._tabs[index].focus();
+            if (this.followFocus) {
+                this.selectedIndex = index;
             }
-            case 'Home': {
-                const index = 0;
-                this._tabs[index].focus();
-                break;
-            }
-            case 'End': {
-                const index = this.length - 1;
-                this._tabs[index].focus();
-                break;
-            }
-            case ' ':
-            case 'Enter': {
-                this.selectedIndex = currentIndex;
-                break;
-            }
-
+        } else if (key === ' ' || key === 'Enter') {
+            this.selectedIndex = currentIndex;
         }
     }
 

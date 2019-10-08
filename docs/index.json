@@ -567,7 +567,7 @@
     "__docId__": 48,
     "kind": "file",
     "name": "src/common/change-event.js",
-    "content": "/**\n * @desc Custom event emitted when the selected option of a {@link ListBox} has changed.\n */\nexport default class ChangeEvent extends CustomEvent {\n\n    /**\n     * @param {Number} index - The index of the newly selected option\n     */\n    constructor(index) {\n        super('change', {\n            detail: {selectedIndex: index}\n        });\n    }\n\n    /**\n     *\n     * @returns {number} the index of the newly selected item (-1 for none)\n     */\n    get selectedIndex() {\n        return this.detail.selectedIndex;\n    }\n}",
+    "content": "/**\n * @desc Custom event emitted when the selected option of a {@link ListBox} or a {@link TabSet} has changed.\n */\nexport default class ChangeEvent extends CustomEvent {\n\n    /**\n     * @param {Number} index - The index of the newly selected option\n     */\n    constructor(index) {\n        super('change', {\n            detail: {selectedIndex: index}\n        });\n    }\n\n    /**\n     *\n     * @returns {number} the index of the newly selected item (-1 for none)\n     */\n    get selectedIndex() {\n        return this.detail.selectedIndex;\n    }\n}",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/src/common/change-event.js",
     "access": "public",
@@ -585,7 +585,7 @@
     "export": true,
     "importPath": "@citykleta/ui-kit/src/common/change-event.js",
     "importStyle": "ChangeEvent",
-    "description": "Custom event emitted when the selected option of a {@link ListBox} has changed.",
+    "description": "Custom event emitted when the selected option of a {@link ListBox} or a {@link TabSet} has changed.",
     "lineNumber": 4,
     "interface": false,
     "extends": [
@@ -720,7 +720,7 @@
     "__docId__": 55,
     "kind": "file",
     "name": "src/index.js",
-    "content": "export * from './listbox/index.js';",
+    "content": "export * from './listbox/index.js';\nexport * from './tabs/index.js';",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/src/index.js",
     "access": "public",
@@ -930,7 +930,7 @@
     "__docId__": 65,
     "kind": "file",
     "name": "src/listbox/listbox.js",
-    "content": "import {generateRandomId as idGenerator, isSelectedPredicate} from '../common/utils.js';\nimport ChangeEvent from '../common/change-event.js';\n\nconst generateRandomId = idGenerator('listbox-option');\n\nconst template = document.createElement('template');\ntemplate.innerHTML = `<style>:host{position:relative}</style>\n<slot name=\"options\"></slot>\n`;\n\n/**\n * @desc Implements the ListBox pattern for single select ListBox where the focus follows the selection.\n *\n * Keyboard interaction is handled for <kbd>Up Arrow</kbd> and <kbd>Down Arrow</kbd>. In the same way if one option is clicked, then it becomes selected\n *\n * @see https://www.w3.org/TR/wai-aria-practices/#Listbox\n * @example\n * <ui-listbox>\n *     <ui-listbox-option><span>Some custom template</span></ui-listbox-option>\n *     <ui-listbox-option selected>Other option selected by default</ui-listbox-option>\n * </ui-listbox>\n *\n * <script type=\"module\">\n *     import {ListBox, ListBoxOption} from 'path/to/lib'\n *\n *     customElements.define('ui-listbox', ListBox);\n *     customElements.define('ui-listbox-option', ListBoxOption);\n * </script>\n */\nexport class ListBox extends HTMLElement {\n\n    /** @protected */\n    static get observedAttributes() {\n        return ['aria-activedescendant'];\n    }\n\n    /**\n     * @returns {ListBoxOption|null} The currently selected ListBoxOption element\n     */\n    get selectedOption() {\n        return this._optionElements.filter(isSelectedPredicate)[0] || null;\n    }\n\n    /**\n     * @returns {number} - The current number of available options\n     */\n    get length() {\n        return this._optionElements.length;\n    }\n\n    /**\n     * @returns {number} The index of the currently selected option, -1 if none is selected\n     */\n    get selectedIndex() {\n        return this._optionElements.findIndex(isSelectedPredicate);\n    }\n\n    /**\n     * @desc Reflects on ``aria-activedescendant`` attribute\n     * @param {Number} index - The index of the new option element to select\n     * @emits {ChangeEvent}\n     * @example\n     * const listbox = document.getElementId('some listbox id');\n     * listbox.addEventListener('change', ev => {\n     *     console.log(ev.selectedIndex);\n     * })\n     *\n     * listbox.selectedIndex = 0; // select first option;\n     * listbox.selectedIndex = 1; // select second option;\n     *\n     * //etc\n     *\n     * listbox.selectedIndex = -1; // unselect all\n     *\n     */\n    set selectedIndex(index) {\n        const options = this._optionElements;\n        if (index < 0 || index >= options.length) {\n            this.setAttribute('aria-activedescendant', '');\n        } else {\n            this.setAttribute('aria-activedescendant', options[index].getAttribute('id'));\n        }\n    }\n\n    /** @protected */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'aria-activedescendant' && oldValue !== newValue) {\n            for (const el of this._optionElements) {\n                el.setAttribute('aria-selected', String(newValue === el.getAttribute('id')));\n            }\n\n            if (this.selectedOption) {\n                const {offsetTop, offsetHeight} = this.selectedOption;\n\n                //before\n                if (offsetTop < this.scrollTop) {\n                    /** @protected*/\n                    this.scrollTop = offsetTop;\n                } else if ((offsetTop + offsetHeight) > (this.scrollTop + this.clientHeight)) {\n                    // after\n                    this.scrollBy(0, (offsetTop + offsetHeight) - (this.scrollTop + this.clientHeight));\n                }\n            }\n\n            this.dispatchEvent(new ChangeEvent(this.selectedIndex));\n        }\n    }\n\n    constructor() {\n        super();\n        /**\n         * @type {ListBoxOption[]}\n         * @private\n         */\n        this._optionElements = [];\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n        this._handleOptionChangeEvent = this._handleOptionChangeEvent.bind(this);\n        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);\n        this._handleOptionClick = this._handleOptionClick.bind(this);\n    }\n\n    /** @protected */\n    connectedCallback() {\n        this.setAttribute('role', 'listbox');\n\n        if (!this.hasAttribute('tabindex')) {\n            this.setAttribute('tabindex', '0');\n        }\n\n        this.shadowRoot\n            .querySelector('slot[name=options]')\n            .addEventListener('slotchange', this._handleOptionChangeEvent);\n\n        this.addEventListener('keydown', this._handleKeydownEvent);\n    }\n\n    /** @private */\n    _handleOptionClick(ev) {\n        const {currentTarget: option} = ev;\n        const index = this._optionElements.indexOf(option);\n        if (index !== -1) {\n            this.selectedIndex = index;\n        }\n    }\n\n    /** @private */\n    _handleOptionChangeEvent(ev) {\n        this._optionElements = this.shadowRoot\n            .querySelector('slot')\n            .assignedNodes()\n            .filter(el => el.getAttribute('role') === 'option');\n\n        for (const opt of this._optionElements) {\n            if (!opt.hasAttribute('id')) {\n                opt.setAttribute('id', generateRandomId());\n            }\n            opt.addEventListener('click', this._handleOptionClick);\n        }\n\n        this.selectedIndex = this._optionElements.findIndex(i => i.hasAttribute('selected'));\n    }\n\n    /** @private */\n    _handleKeydownEvent(ev) {\n        const {key} = ev;\n        if (['ArrowDown', 'ArrowUp', 'End', 'Home'].includes(key)) {\n            switch (key) {\n                case 'ArrowDown': {\n                    this.selectedIndex = Math.min(this.selectedIndex + 1, this.length - 1);\n                    break;\n                }\n                case 'ArrowUp': {\n                    this.selectedIndex = this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0)\n                        : this.length - 1;\n                    break;\n                }\n                case 'Home': {\n                    this.selectedIndex = this.length ? 0 : -1;\n                    break;\n                }\n                case 'End': {\n                    this.selectedIndex = this.length - 1;\n                    break;\n                }\n            }\n            ev.preventDefault();\n        }\n    }\n}",
+    "content": "import {generateRandomId as idGenerator, isSelectedPredicate} from '../common/utils.js';\nimport ChangeEvent from '../common/change-event.js';\n\nconst generateRandomId = idGenerator('listbox-option');\n\nconst template = document.createElement('template');\ntemplate.innerHTML = `<style>:host{position:relative}</style>\n<slot name=\"options\"></slot>\n`;\n\n/**\n * @desc Implements the ListBox pattern for single select ListBox where the focus follows the selection.\n *\n * Keyboard interaction is handled for <kbd>Up Arrow</kbd>, <kbd>Down Arrow</kbd>, <kbd>Home</kbd> and <kbd>End</kbd>. In the same way if an option is clicked, then it becomes selected\n *\n * @see https://www.w3.org/TR/wai-aria-practices/#Listbox\n * @example\n * <ui-listbox>\n *     <ui-listbox-option><span>Some custom template</span></ui-listbox-option>\n *     <ui-listbox-option selected>Other option selected by default</ui-listbox-option>\n * </ui-listbox>\n *\n * <script type=\"module\">\n *     import {ListBox, ListBoxOption} from 'path/to/lib'\n *\n *     customElements.define('ui-listbox', ListBox);\n *     customElements.define('ui-listbox-option', ListBoxOption);\n * </script>\n */\nexport class ListBox extends HTMLElement {\n\n    /** @protected */\n    static get observedAttributes() {\n        return ['aria-activedescendant'];\n    }\n\n    /**\n     * @returns {ListBoxOption|null} The currently selected ListBoxOption element\n     */\n    get selectedOption() {\n        return this._optionElements.filter(isSelectedPredicate)[0] || null;\n    }\n\n    /**\n     * @returns {number} - The current number of available options\n     */\n    get length() {\n        return this._optionElements.length;\n    }\n\n    /**\n     * @returns {number} The index of the currently selected option, -1 if none is selected\n     */\n    get selectedIndex() {\n        return this._optionElements.findIndex(isSelectedPredicate);\n    }\n\n    /**\n     * @desc Reflects on ``aria-activedescendant`` attribute\n     * @param {Number} index - The index of the new option element to select\n     * @emits {ChangeEvent}\n     * @example\n     * const listbox = document.getElementId('some listbox id');\n     * listbox.addEventListener('change', ev => {\n     *     console.log(ev.selectedIndex);\n     * })\n     *\n     * listbox.selectedIndex = 0; // select first option;\n     * listbox.selectedIndex = 1; // select second option;\n     *\n     * //etc\n     *\n     * listbox.selectedIndex = -1; // unselect all\n     *\n     */\n    set selectedIndex(index) {\n        const options = this._optionElements;\n        if (index < 0 || index >= options.length) {\n            this.setAttribute('aria-activedescendant', '');\n        } else {\n            this.setAttribute('aria-activedescendant', options[index].getAttribute('id'));\n        }\n    }\n\n    /** @protected */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'aria-activedescendant' && oldValue !== newValue) {\n            for (const el of this._optionElements) {\n                el.setAttribute('aria-selected', String(newValue === el.getAttribute('id')));\n            }\n\n            if (this.selectedOption) {\n                const {offsetTop, offsetHeight} = this.selectedOption;\n\n                //before\n                if (offsetTop < this.scrollTop) {\n                    /** @protected*/\n                    this.scrollTop = offsetTop;\n                } else if ((offsetTop + offsetHeight) > (this.scrollTop + this.clientHeight)) {\n                    // after\n                    this.scrollBy(0, (offsetTop + offsetHeight) - (this.scrollTop + this.clientHeight));\n                }\n            }\n\n            this.dispatchEvent(new ChangeEvent(this.selectedIndex));\n        }\n    }\n\n    constructor() {\n        super();\n        /**\n         * @type {ListBoxOption[]}\n         * @private\n         */\n        this._optionElements = [];\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n        this._handleOptionChangeEvent = this._handleOptionChangeEvent.bind(this);\n        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);\n        this._handleOptionClick = this._handleOptionClick.bind(this);\n    }\n\n    /** @protected */\n    connectedCallback() {\n        this.setAttribute('role', 'listbox');\n\n        if (!this.hasAttribute('tabindex')) {\n            this.setAttribute('tabindex', '0');\n        }\n\n        this.shadowRoot\n            .querySelector('slot[name=options]')\n            .addEventListener('slotchange', this._handleOptionChangeEvent);\n\n        this.addEventListener('keydown', this._handleKeydownEvent);\n    }\n\n    /** @private */\n    _handleOptionClick(ev) {\n        const {currentTarget: option} = ev;\n        const index = this._optionElements.indexOf(option);\n        if (index !== -1) {\n            this.selectedIndex = index;\n        }\n    }\n\n    /** @private */\n    _handleOptionChangeEvent(ev) {\n        this._optionElements = this.shadowRoot\n            .querySelector('slot')\n            .assignedNodes()\n            .filter(el => el.getAttribute('role') === 'option');\n\n        for (const opt of this._optionElements) {\n            if (!opt.hasAttribute('id')) {\n                opt.setAttribute('id', generateRandomId());\n            }\n            opt.addEventListener('click', this._handleOptionClick);\n        }\n\n        this.selectedIndex = this._optionElements.findIndex(i => i.hasAttribute('selected'));\n    }\n\n    /** @private */\n    _handleKeydownEvent(ev) {\n        const {key} = ev;\n        if (['ArrowDown', 'ArrowUp', 'End', 'Home'].includes(key)) {\n            switch (key) {\n                case 'ArrowDown': {\n                    this.selectedIndex = Math.min(this.selectedIndex + 1, this.length - 1);\n                    break;\n                }\n                case 'ArrowUp': {\n                    this.selectedIndex = this.selectedOption !== null ? Math.max(this.selectedIndex - 1, 0)\n                        : this.length - 1;\n                    break;\n                }\n                case 'Home': {\n                    this.selectedIndex = this.length ? 0 : -1;\n                    break;\n                }\n                case 'End': {\n                    this.selectedIndex = this.length - 1;\n                    break;\n                }\n            }\n            ev.preventDefault();\n        }\n    }\n}",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/src/listbox/listbox.js",
     "access": "public",
@@ -990,7 +990,7 @@
     "export": true,
     "importPath": "@citykleta/ui-kit/src/listbox/listbox.js",
     "importStyle": "{ListBox}",
-    "description": "Implements the ListBox pattern for single select ListBox where the focus follows the selection.\n\nKeyboard interaction is handled for <kbd>Up Arrow</kbd> and <kbd>Down Arrow</kbd>. In the same way if one option is clicked, then it becomes selected",
+    "description": "Implements the ListBox pattern for single select ListBox where the focus follows the selection.\n\nKeyboard interaction is handled for <kbd>Up Arrow</kbd>, <kbd>Down Arrow</kbd>, <kbd>Home</kbd> and <kbd>End</kbd>. In the same way if an option is clicked, then it becomes selected",
     "examples": [
       "<ui-listbox>\n    <ui-listbox-option><span>Some custom template</span></ui-listbox-option>\n    <ui-listbox-option selected>Other option selected by default</ui-listbox-option>\n</ui-listbox>\n\n<script type=\"module\">\n    import {ListBox, ListBoxOption} from 'path/to/lib'\n\n    customElements.define('ui-listbox', ListBox);\n    customElements.define('ui-listbox-option', ListBoxOption);\n</script>"
     ],
@@ -1341,7 +1341,7 @@
     "__docId__": 93,
     "kind": "file",
     "name": "src/tabs/tab-panel.js",
-    "content": "const template = document.createElement('template');\ntemplate.innerHTML = `<slot></slot>`;\n\nexport class TabPanel extends HTMLElement {\n\n    get active() {\n        return this.hasAttribute('hidden') === false;\n    }\n\n    constructor() {\n        super();\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n    }\n\n    connectedCallback() {\n        this.setAttribute('role', 'tabpanel');\n        this.setAttribute('slot', 'tabpanels');\n    }\n}",
+    "content": "const template = document.createElement('template');\ntemplate.innerHTML = `<slot></slot>`;\n\n/**\n * @desc A tab panel to be nested inside a {@link TabSet} element. The order is important:\n * the nth tab will match the nth {@link Tab}\n */\nexport class TabPanel extends HTMLElement {\n\n    /**\n     * @returns {boolean} Whether the panel is currently active\n     */\n    get active() {\n        return this.hasAttribute('hidden') === false;\n    }\n\n    constructor() {\n        super();\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n    }\n\n    /** @protected */\n    connectedCallback() {\n        this.setAttribute('role', 'tabpanel');\n        this.setAttribute('slot', 'tabpanels');\n    }\n}",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/src/tabs/tab-panel.js",
     "access": "public",
@@ -1380,9 +1380,8 @@
     "export": true,
     "importPath": "@citykleta/ui-kit/src/tabs/tab-panel.js",
     "importStyle": "{TabPanel}",
-    "description": null,
-    "lineNumber": 4,
-    "undocument": true,
+    "description": "A tab panel to be nested inside a {@link TabSet} element. The order is important:\nthe nth tab will match the nth {@link Tab}",
+    "lineNumber": 8,
     "interface": false,
     "extends": [
       "HTMLElement"
@@ -1398,9 +1397,22 @@
     "static": false,
     "longname": "src/tabs/tab-panel.js~TabPanel#active",
     "access": "public",
-    "description": null,
-    "lineNumber": 6,
-    "undocument": true,
+    "description": "",
+    "lineNumber": 13,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{boolean} Whether the panel is currently active"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": "Whether the panel is currently active"
+    },
     "type": {
       "types": [
         "*"
@@ -1418,7 +1430,7 @@
     "longname": "src/tabs/tab-panel.js~TabPanel#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 10,
+    "lineNumber": 17,
     "undocument": true
   },
   {
@@ -1430,10 +1442,10 @@
     "async": false,
     "static": false,
     "longname": "src/tabs/tab-panel.js~TabPanel#connectedCallback",
-    "access": "public",
+    "access": "protected",
     "description": null,
-    "lineNumber": 16,
-    "undocument": true,
+    "lineNumber": 24,
+    "ignore": true,
     "params": [],
     "return": null
   },
@@ -1441,7 +1453,7 @@
     "__docId__": 99,
     "kind": "file",
     "name": "src/tabs/tab-set.js",
-    "content": "import {generateRandomId as idGenerator} from '../common/utils.js';\nimport ChangeEvent from '../common/change-event.js';\n\nconst generateTabId = idGenerator('tab');\nconst generateTabPanelId = idGenerator('tabpanel');\n\nconst template = document.createElement('template');\ntemplate.innerHTML = `<style>:host{display: flex;flex-direction: column}::slotted([role=tabpanel]){flex-grow: 1}[role=tablist]{display: flex;justify-content: var(--tab-justify,flex-start);}</style><div role=\"tablist\"><slot name=\"tablist\"></slot></div><slot name=\"tabpanels\"></slot>`;\n\nexport class TabSet extends HTMLElement {\n\n    /** @protected */\n    static get observedAttributes() {\n        return ['selected-tab-index'];\n    }\n\n    get length() {\n        return this._tabs.length;\n    }\n\n    get selectedIndex() {\n        return this._tabs.findIndex(t => t.selected);\n    }\n\n    set selectedIndex(index) {\n        if (index >= 0 < this._tabs.length) {\n            this.setAttribute('selected-tab-index', index);\n        }\n    }\n\n    /** @protected */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'selected-tab-index') {\n            const tabs = this._tabs;\n            tabs.forEach((tab, index) => {\n                const selected = index === Number(newValue);\n                tab.setAttribute('aria-selected', String(selected));\n                tab.setAttribute('tabindex', selected ? '0' : '-1');\n                const tabpanel = this._tabpanels[index];\n                if (selected) {\n                    tabpanel.removeAttribute('hidden');\n                } else {\n                    tabpanel.setAttribute('hidden', '');\n                }\n            });\n\n            this.dispatchEvent(new ChangeEvent(this.selectedIndex));\n        }\n    }\n\n    constructor() {\n        super();\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n        /** @private */\n        this._tabs = [];\n        /** @private */\n        this._tabpanels = [];\n        this._handleTabChangeEvent = this._handleTabChangeEvent.bind(this);\n        this._handleTabPanelChangeEvent = this._handleTabPanelChangeEvent.bind(this);\n        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);\n        this._handleClick = this._handleClick.bind(this);\n    }\n\n    connectedCallback() {\n        this.shadowRoot\n            .querySelector('slot[name=tablist]')\n            .addEventListener('slotchange', this._handleTabChangeEvent);\n\n        this.shadowRoot\n            .querySelector('slot[name=tabpanels]')\n            .addEventListener('slotchange', this._handleTabPanelChangeEvent);\n    }\n\n    /** @private */\n    _handleTabChangeEvent(ev) {\n\n        console.log('tab change');\n\n        this._tabs = [];\n\n        const tabs = this.shadowRoot\n            .querySelector('slot[name=tablist]')\n            .assignedNodes();\n\n        for (const tab of tabs) {\n            if (!tab.hasAttribute('id')) {\n                tab.setAttribute('id', generateTabId());\n            }\n            this._tabs.push(tab);\n            tab.addEventListener('keydown', this._handleKeydownEvent);\n            tab.addEventListener('click', this._handleClick);\n        }\n    }\n\n    /** @private */\n    _handleTabPanelChangeEvent(ev) {\n        console.log('tabpanel change');\n\n        this._tabpanels = [];\n\n        const tabpanels = this.shadowRoot\n            .querySelector('slot[name=tabpanels]')\n            .assignedNodes();\n\n        tabpanels.forEach((tp, index) => {\n            const tab = this._tabs[index];\n\n            if (!tp.hasAttribute('id')) {\n                tp.setAttribute('id', generateTabPanelId());\n            }\n\n            tab.setAttribute('aria-controls', tp.id);\n            tp.setAttribute('aria-labelledby', tab.id);\n\n            this._tabpanels.push(tp);\n        });\n\n        const selectedTabIndex = this._tabs.findIndex(t => t.hasAttribute('selected'));\n\n        this.selectedIndex = selectedTabIndex !== -1 ? selectedTabIndex : 0;\n    }\n\n    /** @private */\n    _handleKeydownEvent(ev) {\n        const {key, currentTarget: tab} = ev;\n        const currentIndex = this._tabs.indexOf(tab);\n        switch (key) {\n            case 'ArrowLeft': {\n                const index = (currentIndex - 1) >= 0 ? currentIndex - 1 : this.length - 1;\n                this._tabs[index].focus();\n                break;\n            }\n            case 'ArrowRight': {\n                const index = (currentIndex + 1) % this.length;\n                this._tabs[index].focus();\n                break;\n            }\n            case 'Home': {\n                const index = 0;\n                this._tabs[index].focus();\n                break;\n            }\n            case 'End': {\n                const index = this.length - 1;\n                this._tabs[index].focus();\n                break;\n            }\n            case ' ':\n            case 'Enter': {\n                this.selectedIndex = currentIndex;\n                break;\n            }\n\n        }\n    }\n\n    /** @private */\n    _handleClick(ev) {\n        const {currentTarget: tab} = ev;\n        this.selectedIndex = this._tabs.indexOf(tab);\n    }\n}",
+    "content": "import {generateRandomId as idGenerator} from '../common/utils.js';\nimport ChangeEvent from '../common/change-event.js';\n\nconst generateTabId = idGenerator('tab');\nconst generateTabPanelId = idGenerator('tabpanel');\n\nconst template = document.createElement('template');\ntemplate.innerHTML = `<style>:host{display: flex;flex-direction: column}::slotted([role=tabpanel]){flex-grow: 1}[role=tablist]{display: flex;justify-content: var(--tab-justify,flex-start);}</style><div role=\"tablist\"><slot name=\"tablist\"></slot></div><slot name=\"tabpanels\"></slot>`;\n\n/**\n * @desc Implements the Tabs pattern\n *\n * Keyboard interaction is handled for <kbd>Left Arrow</kbd>, <kbd>Right Arrow</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Space</kbd> and <kbd>Enter</kbd>\n *\n * Click on a tab is also handled\n *\n * Note, by default the tab is activated on user's demand ie it does not follow the focus. If you wish to automatically select the tab on focus,\n * add the ``follow-focus`` attribute\n *\n * @see https://www.w3.org/TR/wai-aria-practices/#tabpanel\n * @example\n * <ui-tabset>\n *     <ui-tab><span>some sophisticated template</span></ui-tab>\n *     <ui-tabpanel>\n *         <p>\n *             Some content very <strong>interesting</strong>\n *             The tab panel can come directly after its related tab\n *         </p>\n *     </ui-tabpanel>\n *     <ui-tab selected>selected by default</ui-tab>\n *     <ui-tab id=\"custom_id\">third tab</ui-tab>\n *     <ui-tabpanel>Or later, just the index matters</ui-tabpanel>\n *     <ui-tabpanel>Content for the third panel</ui-tabpanel>\n * </ui-tabset>\n *\n * <script type=\"module\">\n *     import {TabSet, Tab, TabPanel} from 'path/to/lib'\n *     customElements.define('ui-tabset', TabSet);\n *     customElements.define('ui-tab', Tab);\n *     customElements.define('ui-tabpanel', TabPanel);\n * </script>\n */\nexport class TabSet extends HTMLElement {\n\n    /** @protected */\n    static get observedAttributes() {\n        return ['selected-tab-index'];\n    }\n\n    /**\n     * @returns {boolean} Configure whether the tab activation should follow the focus\n     */\n    get followFocus() {\n        return this.hasAttribute('follow-focus');\n    }\n\n    /**\n     * @returns {number} The number of tabs in the set\n     */\n    get length() {\n        return this._tabs.length;\n    }\n\n    /**\n     * @returns {number} the index of the currently selected tab\n     */\n    get selectedIndex() {\n        return this._tabs.findIndex(t => t.selected);\n    }\n\n    /**\n     * @desc Reflects on ``selected-tab-index`` attribute\n     * @param index\n     * @emits {ChangeEvent}\n     */\n    set selectedIndex(index) {\n        if (index >= 0 < this._tabs.length) {\n            this.setAttribute('selected-tab-index', index);\n        }\n    }\n\n    /** @protected */\n    attributeChangedCallback(name, oldValue, newValue) {\n        if (name === 'selected-tab-index') {\n            const tabs = this._tabs;\n            tabs.forEach((tab, index) => {\n                const selected = index === Number(newValue);\n                tab.setAttribute('aria-selected', String(selected));\n                tab.setAttribute('tabindex', selected ? '0' : '-1');\n                const tabpanel = this._tabpanels[index];\n                if (selected) {\n                    tabpanel.removeAttribute('hidden');\n                } else {\n                    tabpanel.setAttribute('hidden', '');\n                }\n            });\n\n            this.dispatchEvent(new ChangeEvent(this.selectedIndex));\n        }\n    }\n\n    constructor() {\n        super();\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n        /** @private */\n        this._tabs = [];\n        /** @private */\n        this._tabpanels = [];\n        this._handleTabChangeEvent = this._handleTabChangeEvent.bind(this);\n        this._handleTabPanelChangeEvent = this._handleTabPanelChangeEvent.bind(this);\n        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);\n        this._handleClick = this._handleClick.bind(this);\n    }\n\n    /** @protected */\n    connectedCallback() {\n        this.shadowRoot\n            .querySelector('slot[name=tablist]')\n            .addEventListener('slotchange', this._handleTabChangeEvent);\n\n        this.shadowRoot\n            .querySelector('slot[name=tabpanels]')\n            .addEventListener('slotchange', this._handleTabPanelChangeEvent);\n    }\n\n    /** @private */\n    _handleTabChangeEvent(ev) {\n        this._tabs = [];\n\n        const tabs = this.shadowRoot\n            .querySelector('slot[name=tablist]')\n            .assignedNodes();\n\n        for (const tab of tabs) {\n            if (!tab.hasAttribute('id')) {\n                tab.setAttribute('id', generateTabId());\n            }\n            this._tabs.push(tab);\n            tab.addEventListener('keydown', this._handleKeydownEvent);\n            tab.addEventListener('click', this._handleClick);\n        }\n    }\n\n    /** @private */\n    _handleTabPanelChangeEvent(ev) {\n        this._tabpanels = [];\n\n        const tabpanels = this.shadowRoot\n            .querySelector('slot[name=tabpanels]')\n            .assignedNodes();\n\n        tabpanels.forEach((tp, index) => {\n            const tab = this._tabs[index];\n\n            if (!tp.hasAttribute('id')) {\n                tp.setAttribute('id', generateTabPanelId());\n            }\n\n            tab.setAttribute('aria-controls', tp.id);\n            tp.setAttribute('aria-labelledby', tab.id);\n\n            this._tabpanels.push(tp);\n        });\n\n        const selectedTabIndex = this._tabs.findIndex(t => t.hasAttribute('selected'));\n\n        this.selectedIndex = selectedTabIndex !== -1 ? selectedTabIndex : 0;\n    }\n\n    /** @private */\n    _handleKeydownEvent(ev) {\n        const {key, currentTarget: tab} = ev;\n        const currentIndex = this._tabs.indexOf(tab);\n        if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(key)) {\n            let index = currentIndex;\n            switch (key) {\n                case 'ArrowLeft': {\n                    index = (currentIndex - 1) >= 0 ? currentIndex - 1 : this.length - 1;\n                    break;\n                }\n                case 'ArrowRight': {\n                    index = (currentIndex + 1) % this.length;\n                    break;\n                }\n                case 'Home': {\n                    index = 0;\n                    break;\n                }\n                case 'End': {\n                    index = this.length - 1;\n                    break;\n                }\n            }\n            this._tabs[index].focus();\n            if (this.followFocus) {\n                this.selectedIndex = index;\n            }\n        } else if (key === ' ' || key === 'Enter') {\n            this.selectedIndex = currentIndex;\n        }\n    }\n\n    /** @private */\n    _handleClick(ev) {\n        const {currentTarget: tab} = ev;\n        this.selectedIndex = this._tabs.indexOf(tab);\n    }\n}",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/src/tabs/tab-set.js",
     "access": "public",
@@ -1522,9 +1534,14 @@
     "export": true,
     "importPath": "@citykleta/ui-kit/src/tabs/tab-set.js",
     "importStyle": "{TabSet}",
-    "description": null,
-    "lineNumber": 10,
-    "undocument": true,
+    "description": "Implements the Tabs pattern\n\nKeyboard interaction is handled for <kbd>Left Arrow</kbd>, <kbd>Right Arrow</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>Space</kbd> and <kbd>Enter</kbd>\n\nClick on a tab is also handled\n\nNote, by default the tab is activated on user's demand ie it does not follow the focus. If you wish to automatically select the tab on focus,\nadd the ``follow-focus`` attribute",
+    "examples": [
+      "<ui-tabset>\n    <ui-tab><span>some sophisticated template</span></ui-tab>\n    <ui-tabpanel>\n        <p>\n            Some content very <strong>interesting</strong>\n            The tab panel can come directly after its related tab\n        </p>\n    </ui-tabpanel>\n    <ui-tab selected>selected by default</ui-tab>\n    <ui-tab id=\"custom_id\">third tab</ui-tab>\n    <ui-tabpanel>Or later, just the index matters</ui-tabpanel>\n    <ui-tabpanel>Content for the third panel</ui-tabpanel>\n</ui-tabset>\n\n<script type=\"module\">\n    import {TabSet, Tab, TabPanel} from 'path/to/lib'\n    customElements.define('ui-tabset', TabSet);\n    customElements.define('ui-tab', Tab);\n    customElements.define('ui-tabpanel', TabPanel);\n</script>"
+    ],
+    "see": [
+      "https://www.w3.org/TR/wai-aria-practices/#tabpanel"
+    ],
+    "lineNumber": 43,
     "interface": false,
     "extends": [
       "HTMLElement"
@@ -1541,7 +1558,7 @@
     "longname": "src/tabs/tab-set.js~TabSet.observedAttributes",
     "access": "protected",
     "description": null,
-    "lineNumber": 13,
+    "lineNumber": 46,
     "ignore": true,
     "type": {
       "types": [
@@ -1552,16 +1569,29 @@
   {
     "__docId__": 105,
     "kind": "get",
-    "name": "length",
+    "name": "followFocus",
     "memberof": "src/tabs/tab-set.js~TabSet",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/tabs/tab-set.js~TabSet#length",
+    "longname": "src/tabs/tab-set.js~TabSet#followFocus",
     "access": "public",
-    "description": null,
-    "lineNumber": 17,
-    "undocument": true,
+    "description": "",
+    "lineNumber": 53,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{boolean} Configure whether the tab activation should follow the focus"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": "Configure whether the tab activation should follow the focus"
+    },
     "type": {
       "types": [
         "*"
@@ -1571,16 +1601,29 @@
   {
     "__docId__": 106,
     "kind": "get",
-    "name": "selectedIndex",
+    "name": "length",
     "memberof": "src/tabs/tab-set.js~TabSet",
     "generator": false,
     "async": false,
     "static": false,
-    "longname": "src/tabs/tab-set.js~TabSet#selectedIndex",
+    "longname": "src/tabs/tab-set.js~TabSet#length",
     "access": "public",
-    "description": null,
-    "lineNumber": 21,
-    "undocument": true,
+    "description": "",
+    "lineNumber": 60,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{number} The number of tabs in the set"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": "The number of tabs in the set"
+    },
     "type": {
       "types": [
         "*"
@@ -1589,6 +1632,38 @@
   },
   {
     "__docId__": 107,
+    "kind": "get",
+    "name": "selectedIndex",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#selectedIndex",
+    "access": "public",
+    "description": "",
+    "lineNumber": 67,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{number} the index of the currently selected tab"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "number"
+      ],
+      "spread": false,
+      "description": "the index of the currently selected tab"
+    },
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 108,
     "kind": "set",
     "name": "selectedIndex",
     "memberof": "src/tabs/tab-set.js~TabSet",
@@ -1597,12 +1672,31 @@
     "static": false,
     "longname": "src/tabs/tab-set.js~TabSet#selectedIndex",
     "access": "public",
-    "description": null,
-    "lineNumber": 25,
-    "undocument": true
+    "description": "Reflects on ``selected-tab-index`` attribute",
+    "lineNumber": 76,
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "index",
+        "description": ""
+      }
+    ],
+    "emits": [
+      {
+        "types": [
+          "ChangeEvent"
+        ],
+        "description": ""
+      }
+    ]
   },
   {
-    "__docId__": 108,
+    "__docId__": 109,
     "kind": "method",
     "name": "attributeChangedCallback",
     "memberof": "src/tabs/tab-set.js~TabSet",
@@ -1612,7 +1706,7 @@
     "longname": "src/tabs/tab-set.js~TabSet#attributeChangedCallback",
     "access": "protected",
     "description": null,
-    "lineNumber": 32,
+    "lineNumber": 83,
     "ignore": true,
     "params": [
       {
@@ -1637,7 +1731,7 @@
     "return": null
   },
   {
-    "__docId__": 109,
+    "__docId__": 110,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/tabs/tab-set.js~TabSet",
@@ -1647,11 +1741,11 @@
     "longname": "src/tabs/tab-set.js~TabSet#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 51,
+    "lineNumber": 102,
     "undocument": true
   },
   {
-    "__docId__": 110,
+    "__docId__": 111,
     "kind": "member",
     "name": "_tabs",
     "memberof": "src/tabs/tab-set.js~TabSet",
@@ -1659,7 +1753,7 @@
     "longname": "src/tabs/tab-set.js~TabSet#_tabs",
     "access": "private",
     "description": null,
-    "lineNumber": 56,
+    "lineNumber": 107,
     "ignore": true,
     "type": {
       "types": [
@@ -1668,7 +1762,7 @@
     }
   },
   {
-    "__docId__": 111,
+    "__docId__": 112,
     "kind": "member",
     "name": "_tabpanels",
     "memberof": "src/tabs/tab-set.js~TabSet",
@@ -1676,7 +1770,7 @@
     "longname": "src/tabs/tab-set.js~TabSet#_tabpanels",
     "access": "private",
     "description": null,
-    "lineNumber": 58,
+    "lineNumber": 109,
     "ignore": true,
     "type": {
       "types": [
@@ -1685,7 +1779,7 @@
     }
   },
   {
-    "__docId__": 116,
+    "__docId__": 117,
     "kind": "method",
     "name": "connectedCallback",
     "memberof": "src/tabs/tab-set.js~TabSet",
@@ -1693,15 +1787,15 @@
     "async": false,
     "static": false,
     "longname": "src/tabs/tab-set.js~TabSet#connectedCallback",
-    "access": "public",
+    "access": "protected",
     "description": null,
-    "lineNumber": 65,
-    "undocument": true,
+    "lineNumber": 117,
+    "ignore": true,
     "params": [],
     "return": null
   },
   {
-    "__docId__": 117,
+    "__docId__": 118,
     "kind": "method",
     "name": "_handleTabChangeEvent",
     "memberof": "src/tabs/tab-set.js~TabSet",
@@ -1711,7 +1805,7 @@
     "longname": "src/tabs/tab-set.js~TabSet#_handleTabChangeEvent",
     "access": "private",
     "description": null,
-    "lineNumber": 76,
+    "lineNumber": 128,
     "ignore": true,
     "params": [
       {
@@ -1724,7 +1818,7 @@
     "return": null
   },
   {
-    "__docId__": 119,
+    "__docId__": 120,
     "kind": "method",
     "name": "_handleTabPanelChangeEvent",
     "memberof": "src/tabs/tab-set.js~TabSet",
@@ -1734,7 +1828,7 @@
     "longname": "src/tabs/tab-set.js~TabSet#_handleTabPanelChangeEvent",
     "access": "private",
     "description": null,
-    "lineNumber": 97,
+    "lineNumber": 146,
     "ignore": true,
     "params": [
       {
@@ -1747,7 +1841,7 @@
     "return": null
   },
   {
-    "__docId__": 122,
+    "__docId__": 123,
     "kind": "method",
     "name": "_handleKeydownEvent",
     "memberof": "src/tabs/tab-set.js~TabSet",
@@ -1757,30 +1851,7 @@
     "longname": "src/tabs/tab-set.js~TabSet#_handleKeydownEvent",
     "access": "private",
     "description": null,
-    "lineNumber": 125,
-    "ignore": true,
-    "params": [
-      {
-        "name": "ev",
-        "types": [
-          "*"
-        ]
-      }
-    ],
-    "return": null
-  },
-  {
-    "__docId__": 124,
-    "kind": "method",
-    "name": "_handleClick",
-    "memberof": "src/tabs/tab-set.js~TabSet",
-    "generator": false,
-    "async": false,
-    "static": false,
-    "longname": "src/tabs/tab-set.js~TabSet#_handleClick",
-    "access": "private",
-    "description": null,
-    "lineNumber": 159,
+    "lineNumber": 172,
     "ignore": true,
     "params": [
       {
@@ -1794,9 +1865,32 @@
   },
   {
     "__docId__": 126,
+    "kind": "method",
+    "name": "_handleClick",
+    "memberof": "src/tabs/tab-set.js~TabSet",
+    "generator": false,
+    "async": false,
+    "static": false,
+    "longname": "src/tabs/tab-set.js~TabSet#_handleClick",
+    "access": "private",
+    "description": null,
+    "lineNumber": 205,
+    "ignore": true,
+    "params": [
+      {
+        "name": "ev",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": null
+  },
+  {
+    "__docId__": 128,
     "kind": "file",
     "name": "src/tabs/tab.js",
-    "content": "const template = document.createElement('template');\ntemplate.innerHTML = `<slot></slot>`;\n\nexport class Tab extends HTMLElement {\n\n    get selected() {\n        return this.getAttribute('aria-selected') === 'true';\n    }\n\n    constructor() {\n        super();\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n    }\n\n    connectedCallback() {\n        this.setAttribute('role', 'tab');\n        this.setAttribute('slot', 'tablist');\n    }\n}",
+    "content": "const template = document.createElement('template');\ntemplate.innerHTML = `<slot></slot>`;\n\n/**\n * @desc A tab to be nested inside a {@link TabSet} element. The order is important:\n * the nth tab will match the nth {@link TabPanel}\n */\nexport class Tab extends HTMLElement {\n\n    /**\n     * @returns {boolean} Whether the tab is currently active or not\n     */\n    get selected() {\n        return this.getAttribute('aria-selected') === 'true';\n    }\n\n    constructor() {\n        super();\n        this.attachShadow({mode: 'open'});\n        this.shadowRoot.appendChild(template.content.cloneNode(true));\n    }\n\n    /** @protected */\n    connectedCallback() {\n        this.setAttribute('role', 'tab');\n        this.setAttribute('slot', 'tablist');\n    }\n}",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/src/tabs/tab.js",
     "access": "public",
@@ -1804,7 +1898,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 127,
+    "__docId__": 129,
     "kind": "variable",
     "name": "template",
     "memberof": "src/tabs/tab.js",
@@ -1825,7 +1919,7 @@
     "ignore": true
   },
   {
-    "__docId__": 128,
+    "__docId__": 130,
     "kind": "class",
     "name": "Tab",
     "memberof": "src/tabs/tab.js",
@@ -1835,16 +1929,15 @@
     "export": true,
     "importPath": "@citykleta/ui-kit/src/tabs/tab.js",
     "importStyle": "{Tab}",
-    "description": null,
-    "lineNumber": 4,
-    "undocument": true,
+    "description": "A tab to be nested inside a {@link TabSet} element. The order is important:\nthe nth tab will match the nth {@link TabPanel}",
+    "lineNumber": 8,
     "interface": false,
     "extends": [
       "HTMLElement"
     ]
   },
   {
-    "__docId__": 129,
+    "__docId__": 131,
     "kind": "get",
     "name": "selected",
     "memberof": "src/tabs/tab.js~Tab",
@@ -1853,9 +1946,22 @@
     "static": false,
     "longname": "src/tabs/tab.js~Tab#selected",
     "access": "public",
-    "description": null,
-    "lineNumber": 6,
-    "undocument": true,
+    "description": "",
+    "lineNumber": 13,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{boolean} Whether the tab is currently active or not"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "boolean"
+      ],
+      "spread": false,
+      "description": "Whether the tab is currently active or not"
+    },
     "type": {
       "types": [
         "*"
@@ -1863,7 +1969,7 @@
     }
   },
   {
-    "__docId__": 130,
+    "__docId__": 132,
     "kind": "constructor",
     "name": "constructor",
     "memberof": "src/tabs/tab.js~Tab",
@@ -1873,11 +1979,11 @@
     "longname": "src/tabs/tab.js~Tab#constructor",
     "access": "public",
     "description": null,
-    "lineNumber": 10,
+    "lineNumber": 17,
     "undocument": true
   },
   {
-    "__docId__": 131,
+    "__docId__": 133,
     "kind": "method",
     "name": "connectedCallback",
     "memberof": "src/tabs/tab.js~Tab",
@@ -1885,10 +1991,10 @@
     "async": false,
     "static": false,
     "longname": "src/tabs/tab.js~Tab#connectedCallback",
-    "access": "public",
+    "access": "protected",
     "description": null,
-    "lineNumber": 16,
-    "undocument": true,
+    "lineNumber": 24,
+    "ignore": true,
     "params": [],
     "return": null
   },
@@ -1902,17 +2008,17 @@
   },
   {
     "kind": "packageJSON",
-    "content": "{\n  \"name\": \"@citykleta/ui-kit\",\n  \"version\": \"0.1.0\",\n  \"description\": \"web components for common widgets used across citykleta organization\",\n  \"main\": \"./dist/index\",\n  \"module\": \"./dist/citykleta-ui-kit.js\",\n  \"scripts\": {\n    \"serve\": \"http-serve -p 3002\",\n    \"build\": \"rollup -c ./rollup/build.js\",\n    \"build:test\": \"rollup -c ./rollup/test.js\",\n    \"build:docs\": \"rm -rf docs && esdoc\",\n    \"test:ci\": \"http-serve -s -p 3002 & (npm run test | tap-set-exit)\",\n    \"test\": \"node ./test/run-test.js\",\n    \"dev\": \"npm run serve & npm run build:test -- -w\"\n  },\n  \"files\": [\n    \"dist\"\n  ],\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/Citykleta/ui-kit.git\"\n  },\n  \"keywords\": [\n    \"ui\",\n    \"ux\",\n    \"components\",\n    \"web-components\",\n    \"webcomponents\",\n    \"aria\",\n    \"ally\",\n    \"wai-aria\",\n    \"widgets\"\n  ],\n  \"author\": \"Laurent RENARD\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/Citykleta/ui-kit/issues\"\n  },\n  \"homepage\": \"https://github.com/Citykleta/ui-kit#readme\",\n  \"devDependencies\": {\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"http-serve\": \"^1.0.1\",\n    \"puppeteer\": \"^1.20.0\",\n    \"rollup\": \"^1.22.0\",\n    \"rollup-plugin-node-resolve\": \"^5.2.0\",\n    \"tap-set-exit\": \"^1.1.1\",\n    \"zora\": \"^3.0.3\"\n  }\n}\n",
+    "content": "{\n  \"name\": \"@citykleta/ui-kit\",\n  \"version\": \"0.1.0\",\n  \"description\": \"web components for common widgets used across citykleta organization\",\n  \"main\": \"./dist/index\",\n  \"module\": \"./dist/citykleta-ui-kit.js\",\n  \"scripts\": {\n    \"serve\": \"http-serve -p 3002\",\n    \"build\": \"rollup -c ./rollup/build.js && npm run build:docs\",\n    \"build:test\": \"rollup -c ./rollup/test.js\",\n    \"build:docs\": \"rm -rf docs && esdoc\",\n    \"test:ci\": \"http-serve -s -p 3002 & (npm run test | tap-set-exit)\",\n    \"test\": \"node ./test/run-test.js\",\n    \"dev\": \"npm run serve & npm run build:test -- -w\"\n  },\n  \"files\": [\n    \"dist\"\n  ],\n  \"repository\": {\n    \"type\": \"git\",\n    \"url\": \"git+https://github.com/Citykleta/ui-kit.git\"\n  },\n  \"keywords\": [\n    \"ui\",\n    \"ux\",\n    \"components\",\n    \"web-components\",\n    \"webcomponents\",\n    \"aria\",\n    \"ally\",\n    \"wai-aria\",\n    \"widgets\"\n  ],\n  \"author\": \"Laurent RENARD\",\n  \"license\": \"MIT\",\n  \"bugs\": {\n    \"url\": \"https://github.com/Citykleta/ui-kit/issues\"\n  },\n  \"homepage\": \"https://github.com/Citykleta/ui-kit#readme\",\n  \"devDependencies\": {\n    \"esdoc\": \"^1.1.0\",\n    \"esdoc-standard-plugin\": \"^1.0.0\",\n    \"http-serve\": \"^1.0.1\",\n    \"puppeteer\": \"^1.20.0\",\n    \"rollup\": \"^1.22.0\",\n    \"rollup-plugin-node-resolve\": \"^5.2.0\",\n    \"tap-set-exit\": \"^1.1.1\",\n    \"zora\": \"^3.0.3\"\n  }\n}\n",
     "longname": "/Volumes/data/code/ui-kit/package.json",
     "name": "package.json",
     "static": true,
     "access": "public"
   },
   {
-    "__docId__": 132,
+    "__docId__": 134,
     "kind": "testFile",
     "name": "test/listbox/listbox-option.spec.js",
-    "content": "import {test} from 'zora';\nimport {body, LIST_BOX_OPTION_TAG_NAME} from './util.js';\n\n/**\n * @test {ListBoxOption}\n */\ntest('ListBoxOption component', ({test}) => {\n    test('ListBoxOption component is connected', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('role'), 'option', 'should have set the role');\n        t.eq(el.getAttribute('slot'), 'options', 'should have set the slot attribute');\n        t.eq(el.getAttribute('aria-label'), 'some label', 'should have updated the aria-label attribute');\n    });\n\n    /** @test {ListBoxOption#label} */\n    test('label property getter should default to textContent if attribute is not present', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.textContent = 'I am the text content';\n        body.appendChild(el);\n        t.eq(el.label, 'I am the text content');\n    });\n\n    /** @test {ListBoxOption#label} */\n    test('label property setter should reflect on aria-label attribute', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('aria-label'), 'some label', 'should have updated the aria-label attribute');\n        el.label = 'updated label';\n        t.eq(el.getAttribute('aria-label'), 'updated label', 'should have updated the aria-label attribute');\n    });\n\n    /** @test {ListBoxOption#selected} */\n    test('selected property getter', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.selected, false, 'should be false if no aria-selected is set');\n        el.setAttribute('aria-selected', 'false');\n        t.eq(el.selected, false, 'should be false if aria-selected value is \"false');\n        el.setAttribute('aria-selected', 'true');\n        t.eq(el.selected, true, 'should be true if aria-selected is \"true\"');\n    });\n});",
+    "content": "import {test} from 'zora';\nimport {body, LIST_BOX_OPTION_TAG_NAME} from '../util.js';\n\n/**\n * @test {ListBoxOption}\n */\ntest('ListBoxOption component', ({test}) => {\n    test('ListBoxOption component is connected', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('role'), 'option', 'should have set the role');\n        t.eq(el.getAttribute('slot'), 'options', 'should have set the slot attribute');\n        t.eq(el.getAttribute('aria-label'), 'some label', 'should have updated the aria-label attribute');\n    });\n\n    /** @test {ListBoxOption#label} */\n    test('label property getter should default to textContent if attribute is not present', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.textContent = 'I am the text content';\n        body.appendChild(el);\n        t.eq(el.label, 'I am the text content');\n    });\n\n    /** @test {ListBoxOption#label} */\n    test('label property setter should reflect on aria-label attribute', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('aria-label'), 'some label', 'should have updated the aria-label attribute');\n        el.label = 'updated label';\n        t.eq(el.getAttribute('aria-label'), 'updated label', 'should have updated the aria-label attribute');\n    });\n\n    /** @test {ListBoxOption#selected} */\n    test('selected property getter', t => {\n        const el = document.createElement(LIST_BOX_OPTION_TAG_NAME);\n        el.setAttribute('label', 'some label');\n        body.appendChild(el);\n\n        t.eq(el.selected, false, 'should be false if no aria-selected is set');\n        el.setAttribute('aria-selected', 'false');\n        t.eq(el.selected, false, 'should be false if aria-selected value is \"false');\n        el.setAttribute('aria-selected', 'true');\n        t.eq(el.selected, true, 'should be true if aria-selected is \"true\"');\n    });\n});",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/test/listbox/listbox-option.spec.js",
     "access": null,
@@ -1920,7 +2026,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 133,
+    "__docId__": 135,
     "kind": "test",
     "name": "test0",
     "testId": 0,
@@ -1936,7 +2042,7 @@
     ]
   },
   {
-    "__docId__": 134,
+    "__docId__": 136,
     "kind": "test",
     "name": "test1",
     "testId": 1,
@@ -1949,7 +2055,7 @@
     "lineNumber": 8
   },
   {
-    "__docId__": 135,
+    "__docId__": 137,
     "kind": "test",
     "name": "test2",
     "testId": 2,
@@ -1965,7 +2071,7 @@
     ]
   },
   {
-    "__docId__": 136,
+    "__docId__": 138,
     "kind": "test",
     "name": "test3",
     "testId": 3,
@@ -1981,7 +2087,7 @@
     ]
   },
   {
-    "__docId__": 137,
+    "__docId__": 139,
     "kind": "test",
     "name": "test4",
     "testId": 4,
@@ -1997,10 +2103,10 @@
     ]
   },
   {
-    "__docId__": 138,
+    "__docId__": 140,
     "kind": "testFile",
     "name": "test/listbox/listbox.spec.js",
-    "content": "import {test} from 'zora';\nimport {body, LIST_BOX_OPTION_TAG_NAME, LIST_BOX_TAG_NAME} from './util.js';\nimport {nextTick} from '../util.js';\n\n/**\n * @test {ListBox}\n */\ntest('ListBox component', ({test}) => {\n\n    test('Empty ListBox is connected', t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, -1, 'no element should be selected');\n        t.eq(el.selectedOption, null, 'no element should be selected');\n        t.eq(el.length, 0, 'length should be 0 as there is no option');\n    });\n\n    test('ListBox with some options but no default value is connected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 3</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 4</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 4, 'should have four options');\n\n        const [opt1, opt2, opt3, opt4] = el.querySelectorAll('[role=option]');\n\n        t.ok(opt1.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt2.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt3.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt4.id.startsWith('listbox-option'), 'should have assigned a generated id');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n        t.eq(opt3.getAttribute('aria-selected'), 'false');\n        t.eq(opt4.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n    });\n\n    test('ListBox with some options and default value is connected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected>option 3</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 4</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, 2, 'should select the option with the \"selected\" attribute');\n        t.eq(el.selectedOption, el.children[2], 'should return the 3rd option element');\n        t.eq(el.length, 4, 'should have four options');\n\n        const [opt1, opt2, opt3, opt4] = el.querySelectorAll('[role=option]');\n\n        t.ok(opt1.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.eq(opt2.id, 'custom-id', 'should use the provided id');\n        t.ok(opt3.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt4.id.startsWith('listbox-option'), 'should have assigned a generated id');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n        t.eq(opt3.getAttribute('aria-selected'), 'true');\n        t.eq(opt4.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), opt3.id, 'should have updated the aria-activedescendant with the selected option id');\n    });\n\n    /** @test {ListBox#selectedIndex} */\n    test('updating the selected index property should update the component', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.selectedIndex = 1;\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.selectedIndex = 666;\n\n        t.eq(el.selectedIndex, -1, 'should have unselected all');\n        t.eq(el.selectedOption, null, 'should have unselected all');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false', 'should have unselected all');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '', 'should have unselected all');\n    });\n\n    test('click an option should select it', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        opt1.click();\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key down should select the next option', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowDown'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key down should keep the last option in case it is already selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowDown'\n        }));\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n    });\n\n    test('arrow key up should select the last option if none is selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n    });\n\n    test('arrow key up should select the previous option', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key up should keep the first option selected if it is already selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('listbox should emit \"change\" event when selected option changes ', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        let selectedIndex = null;\n\n        el.addEventListener('change', ev => {\n            selectedIndex = ev.selectedIndex;\n        });\n\n        t.eq(selectedIndex, null);\n\n        el.selectedIndex = 0;\n\n        t.eq(selectedIndex, 0, 'event should have been emitted');\n    });\n});",
+    "content": "import {test} from 'zora';\nimport {nextTick, body, LIST_BOX_OPTION_TAG_NAME, LIST_BOX_TAG_NAME} from '../util.js';\n\n/**\n * @test {ListBox}\n */\ntest('ListBox component', ({test}) => {\n\n    test('Empty ListBox is connected', t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        body.appendChild(el);\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, -1, 'no element should be selected');\n        t.eq(el.selectedOption, null, 'no element should be selected');\n        t.eq(el.length, 0, 'length should be 0 as there is no option');\n    });\n\n    test('ListBox with some options but no default value is connected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 3</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 4</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 4, 'should have four options');\n\n        const [opt1, opt2, opt3, opt4] = el.querySelectorAll('[role=option]');\n\n        t.ok(opt1.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt2.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt3.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt4.id.startsWith('listbox-option'), 'should have assigned a generated id');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n        t.eq(opt3.getAttribute('aria-selected'), 'false');\n        t.eq(opt4.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n    });\n\n    test('ListBox with some options and default value is connected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME}>option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected>option 3</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME}>option 4</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.getAttribute('role'), 'listbox', 'should have set the role');\n        t.eq(el.getAttribute('tabindex'), '0', 'should have added the element in tab sequence');\n        t.eq(el.selectedIndex, 2, 'should select the option with the \"selected\" attribute');\n        t.eq(el.selectedOption, el.children[2], 'should return the 3rd option element');\n        t.eq(el.length, 4, 'should have four options');\n\n        const [opt1, opt2, opt3, opt4] = el.querySelectorAll('[role=option]');\n\n        t.ok(opt1.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.eq(opt2.id, 'custom-id', 'should use the provided id');\n        t.ok(opt3.id.startsWith('listbox-option'), 'should have assigned a generated id');\n        t.ok(opt4.id.startsWith('listbox-option'), 'should have assigned a generated id');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n        t.eq(opt3.getAttribute('aria-selected'), 'true');\n        t.eq(opt4.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), opt3.id, 'should have updated the aria-activedescendant with the selected option id');\n    });\n\n    /** @test {ListBox#selectedIndex} */\n    test('updating the selected index property should update the component', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.selectedIndex = 1;\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.selectedIndex = 666;\n\n        t.eq(el.selectedIndex, -1, 'should have unselected all');\n        t.eq(el.selectedOption, null, 'should have unselected all');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false', 'should have unselected all');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '', 'should have unselected all');\n    });\n\n    test('click an option should select it', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        opt1.click();\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key down should select the next option', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowDown'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key down should keep the last option in case it is already selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowDown'\n        }));\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n    });\n\n    test('arrow key up should select the last option if none is selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.selectedIndex, -1);\n        t.eq(el.selectedOption, null);\n        t.eq(el.length, 2, 'should have two options');\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), '');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n    });\n\n    test('arrow key up should select the previous option', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 1);\n        t.eq(el.selectedOption, opt2);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'false');\n        t.eq(opt2.getAttribute('aria-selected'), 'true');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-2');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('arrow key up should keep the first option selected if it is already selected', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} selected id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        const [opt1, opt2] = el.querySelectorAll('[role=option]');\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n\n        el.dispatchEvent(new KeyboardEvent('keydown', {\n            key: 'ArrowUp'\n        }));\n\n        t.eq(el.selectedIndex, 0);\n        t.eq(el.selectedOption, opt1);\n\n        t.eq(opt1.getAttribute('aria-selected'), 'true');\n        t.eq(opt2.getAttribute('aria-selected'), 'false');\n\n        t.eq(el.getAttribute('aria-activedescendant'), 'custom-id-1');\n    });\n\n    test('listbox should emit \"change\" event when selected option changes ', async t => {\n        const el = document.createElement(LIST_BOX_TAG_NAME);\n        el.innerHTML = `\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-1\">option 1</${LIST_BOX_OPTION_TAG_NAME}>\n        <${LIST_BOX_OPTION_TAG_NAME} id=\"custom-id-2\">option 2</${LIST_BOX_OPTION_TAG_NAME}>\n        `;\n\n        body.appendChild(el);\n\n        await nextTick();\n\n        let selectedIndex = null;\n\n        el.addEventListener('change', ev => {\n            selectedIndex = ev.selectedIndex;\n        });\n\n        t.eq(selectedIndex, null);\n\n        el.selectedIndex = 0;\n\n        t.eq(selectedIndex, 0, 'event should have been emitted');\n    });\n});",
     "static": true,
     "longname": "/Volumes/data/code/ui-kit/test/listbox/listbox.spec.js",
     "access": null,
@@ -2008,7 +2114,7 @@
     "lineNumber": 1
   },
   {
-    "__docId__": 139,
+    "__docId__": 141,
     "kind": "test",
     "name": "test5",
     "testId": 5,
@@ -2018,13 +2124,13 @@
     "longname": "test/listbox/listbox.spec.js~test5",
     "access": null,
     "description": "ListBox component",
-    "lineNumber": 8,
+    "lineNumber": 7,
     "testTargets": [
       "ListBox"
     ]
   },
   {
-    "__docId__": 140,
+    "__docId__": 142,
     "kind": "test",
     "name": "test6",
     "testId": 6,
@@ -2034,10 +2140,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test6",
     "access": null,
     "description": "Empty ListBox is connected",
-    "lineNumber": 10
+    "lineNumber": 9
   },
   {
-    "__docId__": 141,
+    "__docId__": 143,
     "kind": "test",
     "name": "test7",
     "testId": 7,
@@ -2047,10 +2153,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test7",
     "access": null,
     "description": "ListBox with some options but no default value is connected",
-    "lineNumber": 21
+    "lineNumber": 20
   },
   {
-    "__docId__": 142,
+    "__docId__": 144,
     "kind": "test",
     "name": "test8",
     "testId": 8,
@@ -2060,10 +2166,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test8",
     "access": null,
     "description": "ListBox with some options and default value is connected",
-    "lineNumber": 55
+    "lineNumber": 54
   },
   {
-    "__docId__": 143,
+    "__docId__": 145,
     "kind": "test",
     "name": "test9",
     "testId": 9,
@@ -2073,13 +2179,13 @@
     "longname": "test/listbox/listbox.spec.js~test5.test9",
     "access": null,
     "description": "updating the selected index property should update the component",
-    "lineNumber": 90,
+    "lineNumber": 89,
     "testTargets": [
       "ListBox#selectedIndex"
     ]
   },
   {
-    "__docId__": 144,
+    "__docId__": 146,
     "kind": "test",
     "name": "test10",
     "testId": 10,
@@ -2089,10 +2195,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test10",
     "access": null,
     "description": "click an option should select it",
-    "lineNumber": 133
+    "lineNumber": 132
   },
   {
-    "__docId__": 145,
+    "__docId__": 147,
     "kind": "test",
     "name": "test11",
     "testId": 11,
@@ -2102,10 +2208,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test11",
     "access": null,
     "description": "arrow key down should select the next option",
-    "lineNumber": 166
+    "lineNumber": 165
   },
   {
-    "__docId__": 146,
+    "__docId__": 148,
     "kind": "test",
     "name": "test12",
     "testId": 12,
@@ -2115,10 +2221,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test12",
     "access": null,
     "description": "arrow key down should keep the last option in case it is already selected",
-    "lineNumber": 201
+    "lineNumber": 200
   },
   {
-    "__docId__": 147,
+    "__docId__": 149,
     "kind": "test",
     "name": "test13",
     "testId": 13,
@@ -2128,10 +2234,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test13",
     "access": null,
     "description": "arrow key up should select the last option if none is selected",
-    "lineNumber": 235
+    "lineNumber": 234
   },
   {
-    "__docId__": 148,
+    "__docId__": 150,
     "kind": "test",
     "name": "test14",
     "testId": 14,
@@ -2141,10 +2247,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test14",
     "access": null,
     "description": "arrow key up should select the previous option",
-    "lineNumber": 270
+    "lineNumber": 269
   },
   {
-    "__docId__": 149,
+    "__docId__": 151,
     "kind": "test",
     "name": "test15",
     "testId": 15,
@@ -2154,10 +2260,10 @@
     "longname": "test/listbox/listbox.spec.js~test5.test15",
     "access": null,
     "description": "arrow key up should keep the first option selected if it is already selected",
-    "lineNumber": 304
+    "lineNumber": 303
   },
   {
-    "__docId__": 150,
+    "__docId__": 152,
     "kind": "test",
     "name": "test16",
     "testId": 16,
@@ -2167,6 +2273,288 @@
     "longname": "test/listbox/listbox.spec.js~test5.test16",
     "access": null,
     "description": "listbox should emit \"change\" event when selected option changes ",
-    "lineNumber": 338
+    "lineNumber": 337
+  },
+  {
+    "__docId__": 153,
+    "kind": "testFile",
+    "name": "test/tabs/tab-panel.spec.js",
+    "content": "import {test} from 'zora';\nimport {body, TAB_PANEL_TAG_NAME} from '../util.js';\n\n/**\n * @test {TabPanel}\n */\ntest('TabPanel Component', ({test}) => {\n\n    test('TabPanel is connected', t => {\n        const el = document.createElement(TAB_PANEL_TAG_NAME);\n        body.appendChild(el);\n        t.eq(el.getAttribute('role'), 'tabpanel', 'should have the role tabpanel');\n        t.eq(el.getAttribute('slot'), 'tabpanels', 'should be put in the tabpanels slot');\n    });\n\n    /**\n     * @test {Tab#active}\n     */\n    test('active getter should follow the `hidden` attribute', t => {\n        const el = document.createElement(TAB_PANEL_TAG_NAME);\n        t.eq(el.active, true);\n        el.setAttribute('hidden', '');\n        t.eq(el.active, false);\n    });\n});",
+    "static": true,
+    "longname": "/Volumes/data/code/ui-kit/test/tabs/tab-panel.spec.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 154,
+    "kind": "test",
+    "name": "test17",
+    "testId": 17,
+    "memberof": "test/tabs/tab-panel.spec.js",
+    "testDepth": 0,
+    "static": true,
+    "longname": "test/tabs/tab-panel.spec.js~test17",
+    "access": null,
+    "description": "TabPanel Component",
+    "lineNumber": 7,
+    "testTargets": [
+      "TabPanel"
+    ]
+  },
+  {
+    "__docId__": 155,
+    "kind": "test",
+    "name": "test18",
+    "testId": 18,
+    "memberof": "test/tabs/tab-panel.spec.js~test17",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/tabs/tab-panel.spec.js~test17.test18",
+    "access": null,
+    "description": "TabPanel is connected",
+    "lineNumber": 9
+  },
+  {
+    "__docId__": 156,
+    "kind": "test",
+    "name": "test19",
+    "testId": 19,
+    "memberof": "test/tabs/tab-panel.spec.js~test17",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/tabs/tab-panel.spec.js~test17.test19",
+    "access": null,
+    "description": "active getter should follow the `hidden` attribute",
+    "lineNumber": 19,
+    "testTargets": [
+      "Tab#active"
+    ]
+  },
+  {
+    "__docId__": 157,
+    "kind": "testFile",
+    "name": "test/tabs/tab-set.spec.js",
+    "content": "import {test} from 'zora';\nimport {body, nextTick, TAB_PANEL_TAG_NAME, TAB_SET_TAG_NAME, TAB_TAG_NAME} from '../util.js';\n\n/**\n * @test {TabSet}\n */\n\nconst createTabSet = () => {\n    const tabset = document.createElement(TAB_SET_TAG_NAME);\n    tabset.innerHTML = `\n  <${TAB_TAG_NAME}><span>tab 1</span></${TAB_TAG_NAME}>\n  <${TAB_TAG_NAME} id=\"custom-tab-id\">tab 2</${TAB_TAG_NAME}>\n  <${TAB_TAG_NAME}>tab 3</${TAB_TAG_NAME}>\n  <${TAB_PANEL_TAG_NAME} id=\"custom-tab-panel-id-1\">content panel 1</${TAB_PANEL_TAG_NAME}>\n  <${TAB_PANEL_TAG_NAME} id=\"custom-tab-panel-id-2\">content <strong>panel 2</strong></${TAB_PANEL_TAG_NAME}>\n  <${TAB_PANEL_TAG_NAME}>content panel 3</${TAB_PANEL_TAG_NAME}>\n  `;\n    return tabset;\n};\n\nconst checkAttributes = (items, expected, assert) => {\n    items.forEach((item, index) => {\n        for (const [attribute, value] of Object.entries(expected[index])) {\n            assert.eq(item.getAttribute(attribute), value);\n        }\n    });\n};\n\n/**\n * @test {TabSet}\n */\ntest('TabSet Component', ({test}) => {\n\n    test('TabSet is connected: it should select the first tab if none has the `selected` attribute', async t => {\n        const el = createTabSet();\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.length, 3);\n        t.eq(el.selectedIndex, 0);\n\n        const [tab1, tab2, tab3] = el.querySelectorAll(TAB_TAG_NAME);\n        const [tabpanel1, tabpanel2, tabpanel3] = el.querySelectorAll(TAB_PANEL_TAG_NAME);\n\n        checkAttributes([tab1, tab2, tab3], [\n            {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n            {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'},\n            {'aria-selected': 'false', 'aria-controls': tabpanel3.id, tabindex: '-1'}\n        ], t);\n\n        checkAttributes([tabpanel1, tabpanel2, tabpanel3], [\n            {'aria-labelledby': tab1.id, hidden: null},\n            {'aria-labelledby': tab2.id, hidden: ''},\n            {'aria-labelledby': tab3.id, hidden: ''}\n        ], t);\n    });\n\n    test('TabSet is connected: it should select the tab with the `selected` attribute', async t => {\n        const el = createTabSet();\n        body.appendChild(el);\n\n        el.querySelectorAll(TAB_TAG_NAME)[1].setAttribute('selected', '');\n\n        await nextTick();\n\n        t.eq(el.length, 3);\n        t.eq(el.selectedIndex, 1);\n\n        const [tab1, tab2, tab3] = el.querySelectorAll(TAB_TAG_NAME);\n        const [tabpanel1, tabpanel2, tabpanel3] = el.querySelectorAll(TAB_PANEL_TAG_NAME);\n\n        checkAttributes([tab1, tab2, tab3], [\n            {'aria-selected': 'false', 'aria-controls': tabpanel1.id, tabindex: '-1'},\n            {'aria-selected': 'true', 'aria-controls': tabpanel2.id, tabindex: '0'},\n            {'aria-selected': 'false', 'aria-controls': tabpanel3.id, tabindex: '-1'}\n        ], t);\n\n        checkAttributes([tabpanel1, tabpanel2, tabpanel3], [\n            {'aria-labelledby': tab1.id, hidden: ''},\n            {'aria-labelledby': tab2.id, hidden: null},\n            {'aria-labelledby': tab3.id, hidden: ''}\n        ], t);\n    });\n\n    test('click should select the new tab', async t => {\n        const el = createTabSet();\n        body.appendChild(el);\n\n        await nextTick();\n\n        t.eq(el.length, 3);\n        t.eq(el.selectedIndex, 0);\n\n        const [tab1, tab2, tab3] = el.querySelectorAll(TAB_TAG_NAME);\n        const [tabpanel1, tabpanel2, tabpanel3] = el.querySelectorAll(TAB_PANEL_TAG_NAME);\n\n        checkAttributes([tab1, tab2, tab3], [\n            {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n            {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'},\n            {'aria-selected': 'false', 'aria-controls': tabpanel3.id, tabindex: '-1'}\n        ], t);\n\n        checkAttributes([tabpanel1, tabpanel2, tabpanel3], [\n            {'aria-labelledby': tab1.id, hidden: null},\n            {'aria-labelledby': tab2.id, hidden: ''},\n            {'aria-labelledby': tab3.id, hidden: ''}\n        ], t);\n\n        tab2.click();\n\n        checkAttributes([tab1, tab2, tab3], [\n            {'aria-selected': 'false', 'aria-controls': tabpanel1.id, tabindex: '-1'},\n            {'aria-selected': 'true', 'aria-controls': tabpanel2.id, tabindex: '0'},\n            {'aria-selected': 'false', 'aria-controls': tabpanel3.id, tabindex: '-1'}\n        ], t);\n\n        checkAttributes([tabpanel1, tabpanel2, tabpanel3], [\n            {'aria-labelledby': tab1.id, hidden: ''},\n            {'aria-labelledby': tab2.id, hidden: null},\n            {'aria-labelledby': tab3.id, hidden: ''}\n        ], t);\n\n        t.eq(el.selectedIndex, 1);\n    });\n\n    test('keyboard navigation with `follow-focus` attribute', ({test}) => {\n\n        const createTabSet = () => {\n            const tabset = document.createElement(TAB_SET_TAG_NAME);\n            tabset.innerHTML = `\n  <${TAB_TAG_NAME}><span>tab 1</span></${TAB_TAG_NAME}>\n  <${TAB_TAG_NAME}>tab 2</${TAB_TAG_NAME}>\n  <${TAB_PANEL_TAG_NAME}>content panel 1</${TAB_PANEL_TAG_NAME}>\n  <${TAB_PANEL_TAG_NAME}>content <strong>panel 2</strong></${TAB_PANEL_TAG_NAME}>\n  `;\n            tabset.setAttribute('follow-focus', '');\n            return tabset;\n        };\n\n        test('RightArrow navigation', async t => {\n            const el = createTabSet();\n            body.appendChild(el);\n\n            await nextTick();\n\n            t.eq(el.length, 2);\n            t.eq(el.selectedIndex, 0);\n\n            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);\n            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            tab1.dispatchEvent(new KeyboardEvent('keydown', {\n                key: 'ArrowRight'\n            }));\n\n            t.eq(el.selectedIndex, 1);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'false', 'aria-controls': tabpanel1.id, tabindex: '-1'},\n                {'aria-selected': 'true', 'aria-controls': tabpanel2.id, tabindex: '0'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: ''},\n                {'aria-labelledby': tab2.id, hidden: null}\n            ], t);\n\n            t.is(el.querySelector(':focus'), tab2);\n\n            tab2.dispatchEvent(new KeyboardEvent('keydown', {\n                key: 'ArrowRight'\n            }));\n\n            t.eq(el.selectedIndex, 0);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            t.is(el.querySelector(':focus'), tab1);\n        });\n\n        test('LeftArrow navigation', async t => {\n            const el = createTabSet();\n            body.appendChild(el);\n\n            await nextTick();\n\n            t.eq(el.length, 2);\n            t.eq(el.selectedIndex, 0);\n\n            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);\n            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            tab1.dispatchEvent(new KeyboardEvent('keydown', {\n                key: 'ArrowLeft'\n            }));\n\n            t.eq(el.selectedIndex, 1);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'false', 'aria-controls': tabpanel1.id, tabindex: '-1'},\n                {'aria-selected': 'true', 'aria-controls': tabpanel2.id, tabindex: '0'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: ''},\n                {'aria-labelledby': tab2.id, hidden: null}\n            ], t);\n\n            t.is(el.querySelector(':focus'), tab2);\n\n            tab2.dispatchEvent(new KeyboardEvent('keydown', {\n                key: 'ArrowLeft'\n            }));\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            t.eq(el.selectedIndex, 0);\n\n            t.is(el.querySelector(':focus'), tab1);\n        });\n\n    });\n\n    test('keyboard navigation without `follow-focus` attribute', ({test}) => {\n\n        const createTabSet = () => {\n            const tabset = document.createElement(TAB_SET_TAG_NAME);\n            tabset.innerHTML = `\n  <${TAB_TAG_NAME}><span>tab 1</span></${TAB_TAG_NAME}>\n  <${TAB_TAG_NAME}>tab 2</${TAB_TAG_NAME}>\n  <${TAB_PANEL_TAG_NAME}>content panel 1</${TAB_PANEL_TAG_NAME}>\n  <${TAB_PANEL_TAG_NAME}>content <strong>panel 2</strong></${TAB_PANEL_TAG_NAME}>\n  `;\n            return tabset;\n        };\n\n        test('RightArrow navigation', async t => {\n            const el = createTabSet();\n            body.appendChild(el);\n\n            await nextTick();\n\n            t.eq(el.length, 2);\n            t.eq(el.selectedIndex, 0);\n\n            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);\n            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            tab1.dispatchEvent(new KeyboardEvent('keydown', {\n                key: 'ArrowRight'\n            }));\n\n            t.eq(el.selectedIndex, 0);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            t.is(el.querySelector(':focus'), tab2);\n\n            tab2.dispatchEvent(new KeyboardEvent('keydown', {\n                key: 'ArrowRight'\n            }));\n\n            t.eq(el.selectedIndex, 0);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            t.is(el.querySelector(':focus'), tab1);\n        });\n\n        test('LeftArrow navigation', async t => {\n            const el = createTabSet();\n            body.appendChild(el);\n\n            await nextTick();\n\n            t.eq(el.length, 2);\n            t.eq(el.selectedIndex, 0);\n\n            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);\n            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            tab1.dispatchEvent(new KeyboardEvent('keydown', {\n                key: 'ArrowLeft'\n            }));\n\n            t.eq(el.selectedIndex, 0);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            t.is(el.querySelector(':focus'), tab2);\n\n            tab2.dispatchEvent(new KeyboardEvent('keydown', {\n                key: 'ArrowLeft'\n            }));\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            t.eq(el.selectedIndex, 0);\n\n            t.is(el.querySelector(':focus'), tab1);\n        });\n\n        test('select tab on Enter keydown', async t => {\n            const el = createTabSet();\n            body.appendChild(el);\n\n            await nextTick();\n\n            t.eq(el.length, 2);\n            t.eq(el.selectedIndex, 0);\n\n            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);\n            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            tab2.dispatchEvent(new KeyboardEvent('keydown', {\n                key: 'Enter'\n            }));\n\n            t.eq(el.selectedIndex, 1);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'false', 'aria-controls': tabpanel1.id, tabindex: '-1'},\n                {'aria-selected': 'true', 'aria-controls': tabpanel2.id, tabindex: '0'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: ''},\n                {'aria-labelledby': tab2.id, hidden: null}\n            ], t);\n        });\n\n        test('select tab on Space keydown', async t => {\n            const el = createTabSet();\n            body.appendChild(el);\n\n            await nextTick();\n\n            t.eq(el.length, 2);\n            t.eq(el.selectedIndex, 0);\n\n            const [tab1, tab2] = el.querySelectorAll(TAB_TAG_NAME);\n            const [tabpanel1, tabpanel2] = el.querySelectorAll(TAB_PANEL_TAG_NAME);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'true', 'aria-controls': tabpanel1.id, tabindex: '0'},\n                {'aria-selected': 'false', 'aria-controls': tabpanel2.id, tabindex: '-1'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: null},\n                {'aria-labelledby': tab2.id, hidden: ''}\n            ], t);\n\n            tab2.dispatchEvent(new KeyboardEvent('keydown', {\n                key: ' '\n            }));\n\n            t.eq(el.selectedIndex, 1);\n\n            checkAttributes([tab1, tab2], [\n                {'aria-selected': 'false', 'aria-controls': tabpanel1.id, tabindex: '-1'},\n                {'aria-selected': 'true', 'aria-controls': tabpanel2.id, tabindex: '0'}\n            ], t);\n\n            checkAttributes([tabpanel1, tabpanel2], [\n                {'aria-labelledby': tab1.id, hidden: ''},\n                {'aria-labelledby': tab2.id, hidden: null}\n            ], t);\n        });\n    });\n});",
+    "static": true,
+    "longname": "/Volumes/data/code/ui-kit/test/tabs/tab-set.spec.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 158,
+    "kind": "test",
+    "name": "test20",
+    "testId": 20,
+    "memberof": "test/tabs/tab-set.spec.js",
+    "testDepth": 0,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20",
+    "access": null,
+    "description": "TabSet Component",
+    "lineNumber": 32,
+    "testTargets": [
+      "TabSet"
+    ]
+  },
+  {
+    "__docId__": 159,
+    "kind": "test",
+    "name": "test21",
+    "testId": 21,
+    "memberof": "test/tabs/tab-set.spec.js~test20",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test21",
+    "access": null,
+    "description": "TabSet is connected: it should select the first tab if none has the `selected` attribute",
+    "lineNumber": 34
+  },
+  {
+    "__docId__": 160,
+    "kind": "test",
+    "name": "test22",
+    "testId": 22,
+    "memberof": "test/tabs/tab-set.spec.js~test20",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test22",
+    "access": null,
+    "description": "TabSet is connected: it should select the tab with the `selected` attribute",
+    "lineNumber": 59
+  },
+  {
+    "__docId__": 161,
+    "kind": "test",
+    "name": "test23",
+    "testId": 23,
+    "memberof": "test/tabs/tab-set.spec.js~test20",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test23",
+    "access": null,
+    "description": "click should select the new tab",
+    "lineNumber": 86
+  },
+  {
+    "__docId__": 162,
+    "kind": "test",
+    "name": "test24",
+    "testId": 24,
+    "memberof": "test/tabs/tab-set.spec.js~test20",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test24",
+    "access": null,
+    "description": "keyboard navigation with `follow-focus` attribute",
+    "lineNumber": 127
+  },
+  {
+    "__docId__": 163,
+    "kind": "test",
+    "name": "test25",
+    "testId": 25,
+    "memberof": "test/tabs/tab-set.spec.js~test20.test24",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test24.test25",
+    "access": null,
+    "description": "RightArrow navigation",
+    "lineNumber": 141
+  },
+  {
+    "__docId__": 164,
+    "kind": "test",
+    "name": "test26",
+    "testId": 26,
+    "memberof": "test/tabs/tab-set.spec.js~test20.test24",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test24.test26",
+    "access": null,
+    "description": "LeftArrow navigation",
+    "lineNumber": 200
+  },
+  {
+    "__docId__": 165,
+    "kind": "test",
+    "name": "test27",
+    "testId": 27,
+    "memberof": "test/tabs/tab-set.spec.js~test20",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test27",
+    "access": null,
+    "description": "keyboard navigation without `follow-focus` attribute",
+    "lineNumber": 261
+  },
+  {
+    "__docId__": 166,
+    "kind": "test",
+    "name": "test28",
+    "testId": 28,
+    "memberof": "test/tabs/tab-set.spec.js~test20.test27",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test27.test28",
+    "access": null,
+    "description": "RightArrow navigation",
+    "lineNumber": 274
+  },
+  {
+    "__docId__": 167,
+    "kind": "test",
+    "name": "test29",
+    "testId": 29,
+    "memberof": "test/tabs/tab-set.spec.js~test20.test27",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test27.test29",
+    "access": null,
+    "description": "LeftArrow navigation",
+    "lineNumber": 333
+  },
+  {
+    "__docId__": 168,
+    "kind": "test",
+    "name": "test30",
+    "testId": 30,
+    "memberof": "test/tabs/tab-set.spec.js~test20.test27",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test27.test30",
+    "access": null,
+    "description": "select tab on Enter keydown",
+    "lineNumber": 392
+  },
+  {
+    "__docId__": 169,
+    "kind": "test",
+    "name": "test31",
+    "testId": 31,
+    "memberof": "test/tabs/tab-set.spec.js~test20.test27",
+    "testDepth": 2,
+    "static": true,
+    "longname": "test/tabs/tab-set.spec.js~test20.test27.test31",
+    "access": null,
+    "description": "select tab on Space keydown",
+    "lineNumber": 431
+  },
+  {
+    "__docId__": 170,
+    "kind": "testFile",
+    "name": "test/tabs/tab.spec.js",
+    "content": "import {test} from 'zora';\nimport {body, TAB_TAG_NAME} from '../util.js';\n\n/**\n * @test {Tab}\n */\ntest('Tab Component', ({test}) => {\n\n    test('Tab is connected', t => {\n        const el = document.createElement(TAB_TAG_NAME);\n        body.appendChild(el);\n        t.eq(el.getAttribute('role'), 'tab', 'should have the role tab');\n        t.eq(el.getAttribute('slot'), 'tablist', 'should be put in the tablist slot');\n    });\n\n    /**\n     * @test {Tab#selected}\n     */\n    test('selected getter should follow aria-selected attribute', t => {\n        const el = document.createElement(TAB_TAG_NAME);\n        t.eq(el.selected, false);\n        el.setAttribute('aria-selected', 'true');\n        t.eq(el.selected, true);\n        el.setAttribute('aria-selected', 'false');\n        t.eq(el.selected, false);\n    });\n});",
+    "static": true,
+    "longname": "/Volumes/data/code/ui-kit/test/tabs/tab.spec.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 171,
+    "kind": "test",
+    "name": "test32",
+    "testId": 32,
+    "memberof": "test/tabs/tab.spec.js",
+    "testDepth": 0,
+    "static": true,
+    "longname": "test/tabs/tab.spec.js~test32",
+    "access": null,
+    "description": "Tab Component",
+    "lineNumber": 7,
+    "testTargets": [
+      "Tab"
+    ]
+  },
+  {
+    "__docId__": 172,
+    "kind": "test",
+    "name": "test33",
+    "testId": 33,
+    "memberof": "test/tabs/tab.spec.js~test32",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/tabs/tab.spec.js~test32.test33",
+    "access": null,
+    "description": "Tab is connected",
+    "lineNumber": 9
+  },
+  {
+    "__docId__": 173,
+    "kind": "test",
+    "name": "test34",
+    "testId": 34,
+    "memberof": "test/tabs/tab.spec.js~test32",
+    "testDepth": 1,
+    "static": true,
+    "longname": "test/tabs/tab.spec.js~test32.test34",
+    "access": null,
+    "description": "selected getter should follow aria-selected attribute",
+    "lineNumber": 19,
+    "testTargets": [
+      "Tab#selected"
+    ]
   }
 ]
