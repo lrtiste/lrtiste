@@ -4,26 +4,6 @@
 export class ListBoxOption extends HTMLElement {
 
     /**
-     * @protected
-     */
-    static get observedAttributes() {
-        return ['label'];
-    }
-
-    /**
-     * @protected
-     */
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'label') {
-            if (newValue) {
-                this.setAttribute('aria-label', newValue);
-            } else {
-                this.removeAttribute('aria-label');
-            }
-        }
-    }
-
-    /**
      * @returns {boolean} whether the option is currently selected or not
      */
     get selected() {
@@ -31,18 +11,18 @@ export class ListBoxOption extends HTMLElement {
     }
 
     /**
-     * @returns {string} The label or text content to be used by assistive technologies to describe the option
+     * @returns {string} The value related to the option
      */
-    get label() {
-        return this.hasAttribute('label') ? this.getAttribute('label') : this.textContent;
+    get value() {
+        return this.hasAttribute('value') ? this.getAttribute('value') : this.label;
     }
 
     /**
-     * @desc Reflects on ``aria-label`` attribute
-     * @param value
+     * @desc Reflects on ``value`` attribute
+     * @param value {String}
      */
-    set label(value) {
-        this.setAttribute('label', value);
+    set value(value) {
+        this.setAttribute('value', value);
     }
 
     /**

@@ -2,10 +2,6 @@ import {test} from 'zora';
 import {body, nextTick, TAB_PANEL_TAG_NAME, TAB_SET_TAG_NAME, TAB_TAG_NAME} from '../util.js';
 import ChangeEvent from '../../src/common/change-event.js';
 
-/**
- * @test {TabSet}
- */
-
 const createTabSet = () => {
     const tabset = document.createElement(TAB_SET_TAG_NAME);
     tabset.innerHTML = `
@@ -177,7 +173,7 @@ test('TabSet Component', ({test}) => {
                 {'aria-labelledby': tab2.id, hidden: null}
             ], t);
 
-            t.is(el.querySelector(':focus'), tab2);
+            t.is(document.activeElement, tab2);
 
             tab2.dispatchEvent(new KeyboardEvent('keydown', {
                 key: 'ArrowRight'
@@ -195,7 +191,7 @@ test('TabSet Component', ({test}) => {
                 {'aria-labelledby': tab2.id, hidden: ''}
             ], t);
 
-            t.is(el.querySelector(':focus'), tab1);
+            t.is(document.activeElement, tab1);
         });
 
         test('LeftArrow navigation', async t => {
@@ -236,7 +232,7 @@ test('TabSet Component', ({test}) => {
                 {'aria-labelledby': tab2.id, hidden: null}
             ], t);
 
-            t.is(el.querySelector(':focus'), tab2);
+            t.is(document.activeElement, tab2);
 
             tab2.dispatchEvent(new KeyboardEvent('keydown', {
                 key: 'ArrowLeft'
@@ -254,7 +250,7 @@ test('TabSet Component', ({test}) => {
 
             t.eq(el.selectedIndex, 0);
 
-            t.is(el.querySelector(':focus'), tab1);
+            t.is(document.activeElement, tab1);
         });
 
     });
@@ -310,7 +306,7 @@ test('TabSet Component', ({test}) => {
                 {'aria-labelledby': tab2.id, hidden: ''}
             ], t);
 
-            t.is(el.querySelector(':focus'), tab2);
+            t.is(document.activeElement, tab2);
 
             tab2.dispatchEvent(new KeyboardEvent('keydown', {
                 key: 'ArrowRight'
@@ -328,7 +324,7 @@ test('TabSet Component', ({test}) => {
                 {'aria-labelledby': tab2.id, hidden: ''}
             ], t);
 
-            t.is(el.querySelector(':focus'), tab1);
+            t.is(document.activeElement, tab1);
         });
 
         test('LeftArrow navigation', async t => {
@@ -369,7 +365,7 @@ test('TabSet Component', ({test}) => {
                 {'aria-labelledby': tab2.id, hidden: ''}
             ], t);
 
-            t.is(el.querySelector(':focus'), tab2);
+            t.is(document.activeElement, tab2);
 
             tab2.dispatchEvent(new KeyboardEvent('keydown', {
                 key: 'ArrowLeft'
@@ -387,7 +383,7 @@ test('TabSet Component', ({test}) => {
 
             t.eq(el.selectedIndex, 0);
 
-            t.is(el.querySelector(':focus'), tab1);
+            t.is(document.activeElement, tab1);
         });
 
         test('select tab on Enter keydown', async t => {

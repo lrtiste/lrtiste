@@ -29,7 +29,13 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#common">common</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#common">common</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/activate-event.js~ActivateEvent.html">ActivateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/toggle-event.js~ToggleEvent.html">ToggleEvent</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#disclosure">disclosure</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-disclosureContainer">disclosureContainer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-disclosureSection">disclosureSection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-toggleButton">toggleButton</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#dropdown-menu">dropdown-menu</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/dropdown-menu/menuitem.js~Menuitem.html">Menuitem</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#tabs">tabs</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-panel.js~TabPanel.html">TabPanel</a></span></span></li>
@@ -43,10 +49,6 @@
 <pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {test} from &apos;zora&apos;;
 import {body, nextTick, TAB_PANEL_TAG_NAME, TAB_SET_TAG_NAME, TAB_TAG_NAME} from &apos;../util.js&apos;;
 import ChangeEvent from &apos;../../src/common/change-event.js&apos;;
-
-/**
- * @test {TabSet}
- */
 
 const createTabSet = () =&gt; {
     const tabset = document.createElement(TAB_SET_TAG_NAME);
@@ -219,7 +221,7 @@ test(&apos;TabSet Component&apos;, ({test}) =&gt; {
                 {&apos;aria-labelledby&apos;: tab2.id, hidden: null}
             ], t);
 
-            t.is(el.querySelector(&apos;:focus&apos;), tab2);
+            t.is(document.activeElement, tab2);
 
             tab2.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
                 key: &apos;ArrowRight&apos;
@@ -237,7 +239,7 @@ test(&apos;TabSet Component&apos;, ({test}) =&gt; {
                 {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
             ], t);
 
-            t.is(el.querySelector(&apos;:focus&apos;), tab1);
+            t.is(document.activeElement, tab1);
         });
 
         test(&apos;LeftArrow navigation&apos;, async t =&gt; {
@@ -278,7 +280,7 @@ test(&apos;TabSet Component&apos;, ({test}) =&gt; {
                 {&apos;aria-labelledby&apos;: tab2.id, hidden: null}
             ], t);
 
-            t.is(el.querySelector(&apos;:focus&apos;), tab2);
+            t.is(document.activeElement, tab2);
 
             tab2.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
                 key: &apos;ArrowLeft&apos;
@@ -296,7 +298,7 @@ test(&apos;TabSet Component&apos;, ({test}) =&gt; {
 
             t.eq(el.selectedIndex, 0);
 
-            t.is(el.querySelector(&apos;:focus&apos;), tab1);
+            t.is(document.activeElement, tab1);
         });
 
     });
@@ -352,7 +354,7 @@ test(&apos;TabSet Component&apos;, ({test}) =&gt; {
                 {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
             ], t);
 
-            t.is(el.querySelector(&apos;:focus&apos;), tab2);
+            t.is(document.activeElement, tab2);
 
             tab2.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
                 key: &apos;ArrowRight&apos;
@@ -370,7 +372,7 @@ test(&apos;TabSet Component&apos;, ({test}) =&gt; {
                 {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
             ], t);
 
-            t.is(el.querySelector(&apos;:focus&apos;), tab1);
+            t.is(document.activeElement, tab1);
         });
 
         test(&apos;LeftArrow navigation&apos;, async t =&gt; {
@@ -411,7 +413,7 @@ test(&apos;TabSet Component&apos;, ({test}) =&gt; {
                 {&apos;aria-labelledby&apos;: tab2.id, hidden: &apos;&apos;}
             ], t);
 
-            t.is(el.querySelector(&apos;:focus&apos;), tab2);
+            t.is(document.activeElement, tab2);
 
             tab2.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
                 key: &apos;ArrowLeft&apos;
@@ -429,7 +431,7 @@ test(&apos;TabSet Component&apos;, ({test}) =&gt; {
 
             t.eq(el.selectedIndex, 0);
 
-            t.is(el.querySelector(&apos;:focus&apos;), tab1);
+            t.is(document.activeElement, tab1);
         });
 
         test(&apos;select tab on Enter keydown&apos;, async t =&gt; {

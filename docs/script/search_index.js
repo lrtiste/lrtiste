@@ -1,5 +1,23 @@
 window.esdocSearchIndex = [
   [
+    "dropdownmenu dropdownmenu,dropdownmenu",
+    "test-file/test/dropdown/dropdown-menu.spec.js.html#lineNumber24",
+    "",
+    "test"
+  ],
+  [
+    "dropdownmenuitem dropdownmenuitem,dropdownmenuitem",
+    "test-file/test/dropdown/dropdown-menuitem.spec.js.html#lineNumber5",
+    "",
+    "test"
+  ],
+  [
+    "@citykleta/ui-kit/src/common/activate-event.js~activateevent",
+    "class/src/common/activate-event.js~ActivateEvent.html",
+    "<span>ActivateEvent</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/common/activate-event.js</span>",
+    "class"
+  ],
+  [
     "@citykleta/ui-kit/src/common/change-event.js~changeevent",
     "class/src/common/change-event.js~ChangeEvent.html",
     "<span>ChangeEvent</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/common/change-event.js</span>",
@@ -15,6 +33,12 @@ window.esdocSearchIndex = [
     "@citykleta/ui-kit/src/listbox/listbox-option.js~listboxoption",
     "class/src/listbox/listbox-option.js~ListBoxOption.html",
     "<span>ListBoxOption</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/listbox/listbox-option.js</span>",
+    "class"
+  ],
+  [
+    "@citykleta/ui-kit/src/dropdown-menu/menuitem.js~menuitem",
+    "class/src/dropdown-menu/menuitem.js~Menuitem.html",
+    "<span>Menuitem</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/dropdown-menu/menuitem.js</span>",
     "class"
   ],
   [
@@ -34,6 +58,30 @@ window.esdocSearchIndex = [
     "class/src/tabs/tab-set.js~TabSet.html",
     "<span>TabSet</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/tabs/tab-set.js</span>",
     "class"
+  ],
+  [
+    "@citykleta/ui-kit/src/common/toggle-event.js~toggleevent",
+    "class/src/common/toggle-event.js~ToggleEvent.html",
+    "<span>ToggleEvent</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/common/toggle-event.js</span>",
+    "class"
+  ],
+  [
+    "@citykleta/ui-kit/src/disclosure/mixins.js~disclosurecontainer",
+    "variable/index.html#static-variable-disclosureContainer",
+    "<span>disclosureContainer</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/disclosure/mixins.js</span>",
+    "variable"
+  ],
+  [
+    "@citykleta/ui-kit/src/disclosure/mixins.js~disclosuresection",
+    "variable/index.html#static-variable-disclosureSection",
+    "<span>disclosureSection</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/disclosure/mixins.js</span>",
+    "variable"
+  ],
+  [
+    "@citykleta/ui-kit/src/disclosure/mixins.js~togglebutton",
+    "variable/index.html#static-variable-toggleButton",
+    "<span>toggleButton</span> <span class=\"search-result-import-path\">@citykleta/ui-kit/src/disclosure/mixins.js</span>",
+    "variable"
   ],
   [
     "listbox src/listbox/listbox.js~listbox,listbox",
@@ -120,20 +168,8 @@ window.esdocSearchIndex = [
     "test"
   ],
   [
-    "listboxoption#label src/listbox/listbox-option.js~listboxoption#label,listboxoption#label",
-    "test-file/test/listbox/listbox-option.spec.js.html#lineNumber19",
-    "ListBoxOption component label property getter should default to textContent if attribute is not present",
-    "test"
-  ],
-  [
-    "listboxoption#label src/listbox/listbox-option.js~listboxoption#label,listboxoption#label",
-    "test-file/test/listbox/listbox-option.spec.js.html#lineNumber27",
-    "ListBoxOption component label property setter should reflect on aria-label attribute",
-    "test"
-  ],
-  [
     "listboxoption#selected src/listbox/listbox-option.js~listboxoption#selected,listboxoption#selected",
-    "test-file/test/listbox/listbox-option.spec.js.html#lineNumber38",
+    "test-file/test/listbox/listbox-option.spec.js.html#lineNumber17",
     "ListBoxOption component selected property getter",
     "test"
   ],
@@ -175,79 +211,79 @@ window.esdocSearchIndex = [
   ],
   [
     "tabset src/tabs/tab-set.js~tabset,tabset",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber33",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber29",
     "TabSet Component",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber35",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber31",
     "TabSet Component TabSet is connected: it should select the first tab if none has the `selected` attribute",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber60",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber56",
     "TabSet Component TabSet is connected: it should select the tab with the `selected` attribute",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber87",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber83",
     "TabSet Component click should select the new tab",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber128",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber124",
     "TabSet Component keyboard navigation with `follow-focus` attribute",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber201",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber197",
     "TabSet Component keyboard navigation with `follow-focus` attribute LeftArrow navigation",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber142",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber138",
     "TabSet Component keyboard navigation with `follow-focus` attribute RightArrow navigation",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber262",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber258",
     "TabSet Component keyboard navigation without `follow-focus` attribute",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber334",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber330",
     "TabSet Component keyboard navigation without `follow-focus` attribute LeftArrow navigation",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber275",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber271",
     "TabSet Component keyboard navigation without `follow-focus` attribute RightArrow navigation",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber393",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber389",
     "TabSet Component keyboard navigation without `follow-focus` attribute select tab on Enter keydown",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber432",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber428",
     "TabSet Component keyboard navigation without `follow-focus` attribute select tab on Space keydown",
     "test"
   ],
   [
     "",
-    "test-file/test/tabs/tab-set.spec.js.html#lineNumber472",
+    "test-file/test/tabs/tab-set.spec.js.html#lineNumber468",
     "TabSet Component selecting a new tab should trigger a `change event`",
     "test"
   ],
@@ -534,6 +570,18 @@ window.esdocSearchIndex = [
     "external"
   ],
   [
+    "src/common/activate-event.js",
+    "file/src/common/activate-event.js.html",
+    "src/common/activate-event.js",
+    "file"
+  ],
+  [
+    "src/common/activate-event.js~activateevent#constructor",
+    "class/src/common/activate-event.js~ActivateEvent.html#instance-constructor-constructor",
+    "src/common/activate-event.js~ActivateEvent#constructor",
+    "method"
+  ],
+  [
     "src/common/change-event.js",
     "file/src/common/change-event.js.html",
     "src/common/change-event.js",
@@ -552,10 +600,100 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/common/toggle-event.js",
+    "file/src/common/toggle-event.js.html",
+    "src/common/toggle-event.js",
+    "file"
+  ],
+  [
+    "src/common/toggle-event.js~toggleevent#constructor",
+    "class/src/common/toggle-event.js~ToggleEvent.html#instance-constructor-constructor",
+    "src/common/toggle-event.js~ToggleEvent#constructor",
+    "method"
+  ],
+  [
+    "src/common/toggle-event.js~toggleevent#open",
+    "class/src/common/toggle-event.js~ToggleEvent.html#instance-get-open",
+    "src/common/toggle-event.js~ToggleEvent#open",
+    "member"
+  ],
+  [
     "src/common/utils.js",
     "file/src/common/utils.js.html",
     "src/common/utils.js",
     "file"
+  ],
+  [
+    "src/disclosure/disclosure-section.js",
+    "file/src/disclosure/disclosure-section.js.html",
+    "src/disclosure/disclosure-section.js",
+    "file"
+  ],
+  [
+    "src/disclosure/disclosure.js",
+    "file/src/disclosure/disclosure.js.html",
+    "src/disclosure/disclosure.js",
+    "file"
+  ],
+  [
+    "src/disclosure/index.js",
+    "file/src/disclosure/index.js.html",
+    "src/disclosure/index.js",
+    "file"
+  ],
+  [
+    "src/disclosure/mixins.js",
+    "file/src/disclosure/mixins.js.html",
+    "src/disclosure/mixins.js",
+    "file"
+  ],
+  [
+    "src/disclosure/toggle-button.js",
+    "file/src/disclosure/toggle-button.js.html",
+    "src/disclosure/toggle-button.js",
+    "file"
+  ],
+  [
+    "src/dropdown-menu/dropdown.js",
+    "file/src/dropdown-menu/dropdown.js.html",
+    "src/dropdown-menu/dropdown.js",
+    "file"
+  ],
+  [
+    "src/dropdown-menu/index.js",
+    "file/src/dropdown-menu/index.js.html",
+    "src/dropdown-menu/index.js",
+    "file"
+  ],
+  [
+    "src/dropdown-menu/menu-button.js",
+    "file/src/dropdown-menu/menu-button.js.html",
+    "src/dropdown-menu/menu-button.js",
+    "file"
+  ],
+  [
+    "src/dropdown-menu/menu.js",
+    "file/src/dropdown-menu/menu.js.html",
+    "src/dropdown-menu/menu.js",
+    "file"
+  ],
+  [
+    "src/dropdown-menu/menuitem.js",
+    "file/src/dropdown-menu/menuitem.js.html",
+    "src/dropdown-menu/menuitem.js",
+    "file"
+  ],
+  [
+    "src/dropdown-menu/menuitem.js~menuitem#activate",
+    "class/src/dropdown-menu/menuitem.js~Menuitem.html#instance-method-activate",
+    "src/dropdown-menu/menuitem.js~Menuitem#activate",
+    "method"
+  ],
+  [
+    "src/dropdown-menu/menuitem.js~menuitem#connectedcallback",
+    "class/src/dropdown-menu/menuitem.js~Menuitem.html#instance-method-connectedCallback",
+    "src/dropdown-menu/menuitem.js~Menuitem#connectedCallback",
+    "method"
   ],
   [
     "src/index.js",
@@ -576,21 +714,21 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/listbox/listbox-option.js~listboxoption#label",
-    "class/src/listbox/listbox-option.js~ListBoxOption.html#instance-get-label",
-    "src/listbox/listbox-option.js~ListBoxOption#label",
-    "member"
-  ],
-  [
-    "src/listbox/listbox-option.js~listboxoption#label",
-    "class/src/listbox/listbox-option.js~ListBoxOption.html#instance-set-label",
-    "src/listbox/listbox-option.js~ListBoxOption#label",
-    "member"
-  ],
-  [
     "src/listbox/listbox-option.js~listboxoption#selected",
     "class/src/listbox/listbox-option.js~ListBoxOption.html#instance-get-selected",
     "src/listbox/listbox-option.js~ListBoxOption#selected",
+    "member"
+  ],
+  [
+    "src/listbox/listbox-option.js~listboxoption#value",
+    "class/src/listbox/listbox-option.js~ListBoxOption.html#instance-get-value",
+    "src/listbox/listbox-option.js~ListBoxOption#value",
+    "member"
+  ],
+  [
+    "src/listbox/listbox-option.js~listboxoption#value",
+    "class/src/listbox/listbox-option.js~ListBoxOption.html#instance-set-value",
+    "src/listbox/listbox-option.js~ListBoxOption#value",
     "member"
   ],
   [
@@ -630,6 +768,24 @@ window.esdocSearchIndex = [
     "member"
   ],
   [
+    "src/slide-show/index.js",
+    "file/src/slide-show/index.js.html",
+    "src/slide-show/index.js",
+    "file"
+  ],
+  [
+    "src/slide-show/slide-show.js",
+    "file/src/slide-show/slide-show.js.html",
+    "src/slide-show/slide-show.js",
+    "file"
+  ],
+  [
+    "src/slide-show/slide.js",
+    "file/src/slide-show/slide.js.html",
+    "src/slide-show/slide.js",
+    "file"
+  ],
+  [
     "src/tabs/index.js",
     "file/src/tabs/index.js.html",
     "src/tabs/index.js",
@@ -646,12 +802,6 @@ window.esdocSearchIndex = [
     "class/src/tabs/tab-panel.js~TabPanel.html#instance-get-active",
     "src/tabs/tab-panel.js~TabPanel#active",
     "member"
-  ],
-  [
-    "src/tabs/tab-panel.js~tabpanel#constructor",
-    "class/src/tabs/tab-panel.js~TabPanel.html#instance-constructor-constructor",
-    "src/tabs/tab-panel.js~TabPanel#constructor",
-    "method"
   ],
   [
     "src/tabs/tab-set.js",
@@ -696,16 +846,22 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
-    "src/tabs/tab.js~tab#constructor",
-    "class/src/tabs/tab.js~Tab.html#instance-constructor-constructor",
-    "src/tabs/tab.js~Tab#constructor",
-    "method"
-  ],
-  [
     "src/tabs/tab.js~tab#selected",
     "class/src/tabs/tab.js~Tab.html#instance-get-selected",
     "src/tabs/tab.js~Tab#selected",
     "member"
+  ],
+  [
+    "test/dropdown/dropdown-menu.spec.js",
+    "test-file/test/dropdown/dropdown-menu.spec.js.html",
+    "test/dropdown/dropdown-menu.spec.js",
+    "testFile"
+  ],
+  [
+    "test/dropdown/dropdown-menuitem.spec.js",
+    "test-file/test/dropdown/dropdown-menuitem.spec.js.html",
+    "test/dropdown/dropdown-menuitem.spec.js",
+    "testFile"
   ],
   [
     "test/listbox/listbox-option.spec.js",

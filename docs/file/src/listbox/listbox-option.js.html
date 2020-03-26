@@ -29,7 +29,13 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#common">common</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#common">common</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/activate-event.js~ActivateEvent.html">ActivateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/toggle-event.js~ToggleEvent.html">ToggleEvent</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#disclosure">disclosure</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-disclosureContainer">disclosureContainer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-disclosureSection">disclosureSection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-toggleButton">toggleButton</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#dropdown-menu">dropdown-menu</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/dropdown-menu/menuitem.js~Menuitem.html">Menuitem</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#tabs">tabs</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-panel.js~TabPanel.html">TabPanel</a></span></span></li>
@@ -46,26 +52,6 @@
 export class ListBoxOption extends HTMLElement {
 
     /**
-     * @protected
-     */
-    static get observedAttributes() {
-        return [&apos;label&apos;];
-    }
-
-    /**
-     * @protected
-     */
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (name === &apos;label&apos;) {
-            if (newValue) {
-                this.setAttribute(&apos;aria-label&apos;, newValue);
-            } else {
-                this.removeAttribute(&apos;aria-label&apos;);
-            }
-        }
-    }
-
-    /**
      * @returns {boolean} whether the option is currently selected or not
      */
     get selected() {
@@ -73,18 +59,18 @@ export class ListBoxOption extends HTMLElement {
     }
 
     /**
-     * @returns {string} The label or text content to be used by assistive technologies to describe the option
+     * @returns {string} The value related to the option
      */
-    get label() {
-        return this.hasAttribute(&apos;label&apos;) ? this.getAttribute(&apos;label&apos;) : this.textContent;
+    get value() {
+        return this.hasAttribute(&apos;value&apos;) ? this.getAttribute(&apos;value&apos;) : this.label;
     }
 
     /**
-     * @desc Reflects on ``aria-label`` attribute
-     * @param value
+     * @desc Reflects on ``value`` attribute
+     * @param value {String}
      */
-    set label(value) {
-        this.setAttribute(&apos;label&apos;, value);
+    set value(value) {
+        this.setAttribute(&apos;value&apos;, value);
     }
 
     /**

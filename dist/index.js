@@ -4,17 +4,68 @@
     (global = global || self, factory(global.CitykletaUI = {}));
 }(this, function (exports) { 'use strict';
 
-    /**
-     * @private
-     */
+    /** @private */
     const generateRandomId = (prefix) => {
         let counter = 0;
         return () => `${prefix}-${++counter}`;
     };
-    /**
-     * @private
-     */
+
+    /** @private */
     const isSelectedPredicate = i => i.getAttribute('aria-selected') === 'true';
+
+    /** @private */
+    function eventuallySetAttribute(target, attribute, value) {
+        if (!target.hasAttribute(attribute)) {
+            target.setAttribute(attribute, value);
+        }
+    }
+
+    /** @private */
+    const mixin = (...mixins) => klass => {
+        const proto = klass.prototype;
+        for (const mix of mixins) {
+            const keys = Object.keys(mix);
+            for (const key of keys) {
+                switch (key) {
+                    case 'connectedCallback': {
+                        const original = proto.connectedCallback;
+                        proto.connectedCallback = function () {
+                            if (original) {
+                                original.call(this);
+                            }
+                            mix.connectedCallback.call(this);
+                        };
+                        break;
+                    }
+                    case 'attributeChangedCallback': {
+                        const original = proto.attributeChangedCallback;
+                        proto.attributeChangedCallback = function (name, oldValue, newValue) {
+                            if (original) {
+                                original.call(this, name, oldValue, newValue);
+                            }
+                            mix.attributeChangedCallback.call(this, name, oldValue, newValue);
+                        };
+                        break;
+                    }
+                    case 'observedAttributes': {
+                        const propList = (klass.observedAttributes || []).concat(mix.observedAttributes);
+                        Object.defineProperty(klass, 'observedAttributes', {
+                            configurable: true,
+                            get() {
+                                return propList;
+                            }
+                        });
+                        break;
+                    }
+                    default:
+                        Object.defineProperty(proto, key, Object.assign({
+                            enumerable: true
+                        }, mix[key]));
+                }
+            }
+        }
+        return klass;
+    };
 
     /**
      * @desc Custom event emitted when the selected option of a {@link ListBox} or a {@link TabSet} has changed.
@@ -146,16 +197,12 @@
 
         constructor() {
             super();
-            /**
-             * @type {ListBoxOption[]}
-             * @private
-             */
             this._optionElements = [];
             this.attachShadow({mode: 'open'});
             this.shadowRoot.appendChild(template.content.cloneNode(true));
             this._handleOptionChangeEvent = this._handleOptionChangeEvent.bind(this);
             this._handleKeydownEvent = this._handleKeydownEvent.bind(this);
-            this._handleOptionClick = this._handleOptionClick.bind(this);
+            this._handleOptionClickEvent = this._handleOptionClickEvent.bind(this);
         }
 
         /** @protected */
@@ -174,7 +221,7 @@
         }
 
         /** @private */
-        _handleOptionClick(ev) {
+        _handleOptionClickEvent(ev) {
             const {currentTarget: option} = ev;
             const index = this._optionElements.indexOf(option);
             if (index !== -1) {
@@ -193,7 +240,7 @@
                 if (!opt.hasAttribute('id')) {
                     opt.setAttribute('id', generateRandomId$1());
                 }
-                opt.addEventListener('click', this._handleOptionClick);
+                opt.addEventListener('click', this._handleOptionClickEvent);
             }
 
             this.selectedIndex = this._optionElements.findIndex(i => i.hasAttribute('selected'));
@@ -233,26 +280,6 @@
     class ListBoxOption extends HTMLElement {
 
         /**
-         * @protected
-         */
-        static get observedAttributes() {
-            return ['label'];
-        }
-
-        /**
-         * @protected
-         */
-        attributeChangedCallback(name, oldValue, newValue) {
-            if (name === 'label') {
-                if (newValue) {
-                    this.setAttribute('aria-label', newValue);
-                } else {
-                    this.removeAttribute('aria-label');
-                }
-            }
-        }
-
-        /**
          * @returns {boolean} whether the option is currently selected or not
          */
         get selected() {
@@ -260,18 +287,18 @@
         }
 
         /**
-         * @returns {string} The label or text content to be used by assistive technologies to describe the option
+         * @returns {string} The value related to the option
          */
-        get label() {
-            return this.hasAttribute('label') ? this.getAttribute('label') : this.textContent;
+        get value() {
+            return this.hasAttribute('value') ? this.getAttribute('value') : this.label;
         }
 
         /**
-         * @desc Reflects on ``aria-label`` attribute
-         * @param value
+         * @desc Reflects on ``value`` attribute
+         * @param value {String}
          */
-        set label(value) {
-            this.setAttribute('label', value);
+        set value(value) {
+            this.setAttribute('value', value);
         }
 
         /**
@@ -324,6 +351,14 @@
      */
     class TabSet extends HTMLElement {
 
+        constructor() {
+            super();
+            this.attachShadow({mode: 'open'});
+            this.shadowRoot.appendChild(template$1.content.cloneNode(true));
+            this._tabs = [];
+            this._tabpanels = [];
+        }
+
         /** @protected */
         static get observedAttributes() {
             return ['selected-tab-index'];
@@ -363,47 +398,29 @@
 
         /** @protected */
         attributeChangedCallback(name, oldValue, newValue) {
-            if (name === 'selected-tab-index') {
+            if (name === 'selected-tab-index' && oldValue !== newValue) {
                 const tabs = this._tabs;
                 tabs.forEach((tab, index) => {
                     const selected = index === Number(newValue);
                     tab.setAttribute('aria-selected', String(selected));
                     tab.setAttribute('tabindex', selected ? '0' : '-1');
                     const tabpanel = this._tabpanels[index];
-                    if (selected) {
-                        tabpanel.removeAttribute('hidden');
-                    } else {
-                        tabpanel.setAttribute('hidden', '');
-                    }
+                    tabpanel.hidden = !selected;
                 });
 
                 this.dispatchEvent(new ChangeEvent(this.selectedIndex));
             }
         }
 
-        constructor() {
-            super();
-            this.attachShadow({mode: 'open'});
-            this.shadowRoot.appendChild(template$1.content.cloneNode(true));
-            /** @private */
-            this._tabs = [];
-            /** @private */
-            this._tabpanels = [];
-            this._handleTabChangeEvent = this._handleTabChangeEvent.bind(this);
-            this._handleTabPanelChangeEvent = this._handleTabPanelChangeEvent.bind(this);
-            this._handleKeydownEvent = this._handleKeydownEvent.bind(this);
-            this._handleClick = this._handleClick.bind(this);
-        }
-
         /** @protected */
         connectedCallback() {
             this.shadowRoot
                 .querySelector('slot[name=tablist]')
-                .addEventListener('slotchange', this._handleTabChangeEvent);
+                .addEventListener('slotchange', this._handleTabChangeEvent.bind(this));
 
             this.shadowRoot
                 .querySelector('slot[name=tabpanels]')
-                .addEventListener('slotchange', this._handleTabPanelChangeEvent);
+                .addEventListener('slotchange', this._handleTabPanelChangeEvent.bind(this));
         }
 
         /** @private */
@@ -419,8 +436,8 @@
                     tab.setAttribute('id', generateTabId());
                 }
                 this._tabs.push(tab);
-                tab.addEventListener('keydown', this._handleKeydownEvent);
-                tab.addEventListener('click', this._handleClick);
+                tab.addEventListener('keydown', this._handleKeydownEvent.bind(this));
+                tab.addEventListener('click', this._handleClick.bind(this));
             }
         }
 
@@ -490,9 +507,6 @@
         }
     }
 
-    const template$2 = document.createElement('template');
-    template$2.innerHTML = `<slot></slot>`;
-
     /**
      * @desc A tab to be nested inside a {@link TabSet} element. The order is important:
      * the nth tab will match the nth {@link TabPanel}
@@ -506,21 +520,12 @@
             return this.getAttribute('aria-selected') === 'true';
         }
 
-        constructor() {
-            super();
-            this.attachShadow({mode: 'open'});
-            this.shadowRoot.appendChild(template$2.content.cloneNode(true));
-        }
-
         /** @protected */
         connectedCallback() {
             this.setAttribute('role', 'tab');
             this.setAttribute('slot', 'tablist');
         }
     }
-
-    const template$3 = document.createElement('template');
-    template$3.innerHTML = `<slot></slot>`;
 
     /**
      * @desc A tab panel to be nested inside a {@link TabSet} element. The order is important:
@@ -532,13 +537,7 @@
          * @returns {boolean} Whether the panel is currently active
          */
         get active() {
-            return this.hasAttribute('hidden') === false;
-        }
-
-        constructor() {
-            super();
-            this.attachShadow({mode: 'open'});
-            this.shadowRoot.appendChild(template$3.content.cloneNode(true));
+            return !this.hidden;
         }
 
         /** @protected */
@@ -548,11 +547,309 @@
         }
     }
 
+    const toggleButton = mixin({
+        expanded: {
+            get() {
+                return this.hasAttribute('aria-expanded');
+            },
+            set(val) {
+                this.setAttribute('aria-expanded', String(val));
+            }
+        },
+        connectedCallback: function () {
+            eventuallySetAttribute(this, 'tabindex', '0');
+            this.setAttribute('aria-haspopup', 'true');
+            this.setAttribute('role', 'button');
+            const container = this.closest('[data-wc-disclosure]');
+            container.toggleButton = this;
+        }
+    });
+
+    const disclosureSection = mixin({
+        connectedCallback() {
+            const container = this.closest('[data-wc-disclosure]');
+            container.disclosureSection = this;
+        }
+    });
+
+    const disclosureContainer = mixin({
+        expanded: {
+            get() {
+                return this.hasAttribute('expanded');
+            },
+            set(val) {
+                if (val) {
+                    this.setAttribute('expanded', '');
+                } else {
+                    this.removeAttribute('expanded');
+                }
+            }
+        },
+        toggle: {
+            value: function () {
+                this.expanded = !this.expanded;
+            }
+        },
+        connectedCallback() {
+            this.setAttribute('data-wc-disclosure', ''); // we add a custom classname so children element can refer to this instance with a css selector
+        },
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (name === 'expanded') {
+                this._button.expanded = this.expanded;
+                this._section.hidden = !this.expanded;
+            }
+        },
+        observedAttributes: ['expanded']
+    });
+
+    const generateToggleId = generateRandomId('toggle');
+    const generateSectionId = generateRandomId('section');
+
+    var dropdown = disclosureContainer(class Dropdown extends HTMLElement {
+
+        get preventClose() {
+            return this.hasAttribute('prevent-close');
+        }
+
+        set toggleButton(button) {
+            this._button = button;
+            eventuallySetAttribute(button, 'id', generateToggleId());
+            button.addEventListener('click', this.toggle.bind(this));
+            button.addEventListener('keydown', ev => {
+                const {key} = ev;
+                if (key === ' ' || key === 'Enter') {
+                    this.toggle();
+                    if (this.expanded) {
+                        this._section.selectedIndex = 0;
+                    }
+                } else if (key === 'ArrowDown' || key === 'ArrowUp') {
+                    this.openMenu(key === 'ArrowUp');
+                }
+            });
+        }
+
+        set disclosureSection(section) {
+            this._section = section;
+            eventuallySetAttribute(section, 'id', generateSectionId());
+            eventuallySetAttribute(section, 'aria-labelledBy', this._button.id);
+            eventuallySetAttribute(this._button, 'aria-controls', section.id);
+            section.addEventListener('keydown', this._handleMenuKeydown.bind(this));
+            this._button.expanded = this.expanded;
+            section.hidden = !this.expanded;
+        }
+
+        connectedCallback() {
+
+            let timer = null;
+
+            this.addEventListener('focusin', () => {
+                if (timer) {
+                    clearTimeout(timer);
+                }
+            });
+
+            this.addEventListener('focusout', () => {
+                timer = setTimeout(() => this.closeMenu(), 100);
+            });
+
+            this.addEventListener('activate-item', ev => {
+                if (!this.preventClose) {
+                    this.closeMenu(true);
+                    ev.stopPropagation();
+                }
+            });
+        }
+
+        openMenu(end = false) {
+            this.expanded = true;
+            this._section.selectedIndex = end ? this._section.length - 1 : 0;
+        }
+
+        closeMenu(focus) {
+            this.expanded = false;
+            this._section.selectedIndex = -1;
+            if (focus) {
+                this._button.focus();
+            }
+        }
+
+        _handleMenuKeydown(ev) {
+            const {key} = ev;
+            if (key === 'Escape') {
+                this.closeMenu(true);
+            }
+        };
+    });
+
+    var menu = disclosureSection(class Menu extends HTMLElement {
+
+        constructor() {
+            super();
+            this._items = [];
+        }
+
+        static get observedAttributes() {
+            return ['selected-index'];
+        }
+
+        get length() {
+            return this._items.length;
+        }
+
+        get selectedItem() {
+            return this.selectedIndex > -1 ? this._items[this.selectedIndex] : null;
+        }
+
+        get selectedIndex() {
+            return this.hasAttribute('selected-index') ? Number(this.getAttribute('selected-index')) : -1;
+        }
+
+        set selectedIndex(index) {
+            if (index < 0 || index >= this.length) {
+                this.setAttribute('selected-index', '-1');
+            } else {
+                this.setAttribute('selected-index', index);
+            }
+        }
+
+        attributeChangedCallback(name, oldValue, newValue) {
+            if (name === 'selected-index' && this.selectedItem) {
+                this.selectedItem.focus();
+            }
+        }
+
+        addItem(item) {
+            this._items.push(item);
+        }
+
+        connectedCallback() {
+            this.setAttribute('role', 'menu');
+            this.addEventListener('keydown', this._handleKeydown.bind(this));
+        }
+
+        _handleKeydown(ev) {
+            const {key} = ev;
+            switch (key) {
+                case 'ArrowDown': {
+                    this.selectedIndex = (this.selectedIndex + 1) % this.length;
+                    break;
+                }
+                case 'ArrowUp': {
+                    this.selectedIndex = (this.selectedIndex - 1) >= 0 ? this.selectedIndex - 1 : this.length - 1;
+                    break;
+                }
+                case 'Home': {
+                    this.selectedIndex = this.length ? 0 : -1;
+                    break;
+                }
+                case 'End': {
+                    this.selectedIndex = this.length - 1;
+                    break;
+                }
+            }
+        }
+    });
+
+    /**
+     * @desc Custom event emitted when an item is activated in a menu.
+     */
+    class ActivateEvent extends CustomEvent {
+        constructor(item) {
+            super('activate-item', {detail: {item}, bubbles: true});
+        }
+    }
+
+    /**
+     * @desc A menu item within a menu. Usually you should register listener to the custom event ``activate-item``
+     * @example
+     *
+     * <ui-dropdown-menu>
+     *  <span slot="menu-button.js">Actions</span>
+     *  <ui-dropdown-menuitem>action 1</ui-dropdown-menuitem>
+     *  <ui-dropdown-menuitem id="custom-id">action 2</ui-dropdown-menuitem>
+     *  <ui-dropdown-menuitem><span>templated</span></ui-dropdown-menuitem>
+     * </ui-dropdown-menu>
+     *
+     * <script type="module">
+     *  import {DropdownMenu, DropdownMenuitem} from '/path/to/lib.js';
+     *
+     *  customElements.define('ui-dropdown-menu', DropdownMenu);
+     *  customElements.define('ui-dropdown-menuitem', DropdownMenuitem);
+     *
+     *  document
+     *      .querySelectorAll('ui-dropdown-menuitem')
+     *      .forEach(item => item.addEventListener('activate-item',
+     *          () => console.log(`${item.textContent} activated`))
+     *      );
+     * </script>
+     *
+     */
+    class Menuitem extends HTMLElement {
+
+        connectedCallback() {
+            this.setAttribute('tabindex', '-1');
+            this.setAttribute('role', 'menuitem');
+            this.closest('[role=menu]').addItem(this);
+            this.addEventListener('click', this.activate.bind(this));
+            this.addEventListener('keydown',ev => {
+                const {key} = ev;
+                if(key===' ' || key === 'Enter'){
+                    this.activate();
+                }
+            });
+        }
+
+        /**
+         * activate the item
+         * @Emits {ActivateEvent}
+         */
+        activate() {
+            this.dispatchEvent(new ActivateEvent(this));
+        }
+    }
+
+    var disclosureSection$1 = disclosureSection(class DisclosureSection extends HTMLElement {
+    });
+
+    const generateToggleId$1 = generateRandomId('toggle');
+    const generateSectionId$1 = generateRandomId('section');
+
+    var disclosure = disclosureContainer(class Disclosure extends HTMLElement {
+        set toggleButton(button) {
+            this._button = button;
+            eventuallySetAttribute(button, 'id', generateToggleId$1());
+            button.addEventListener('click', this.toggle.bind(this));
+            button.addEventListener('keydown', ev => {
+                if (ev.key === ' ' || ev.key === 'Enter') {
+                    this.toggle();
+                }
+            });
+        }
+
+        set disclosureSection(section) {
+            this._section = section;
+            eventuallySetAttribute(section, 'id', generateSectionId$1());
+            eventuallySetAttribute(section, 'aria-labelledBy', this._button.id);
+            eventuallySetAttribute(this._button, 'aria-controls', section.id);
+            this._button.expanded = this.expanded;
+            section.hidden = !this.expanded;
+        }
+    });
+
+    var toggleButton$1 = toggleButton(class ToggleButton extends HTMLElement {
+    });
+
+    exports.Disclosure = disclosure;
+    exports.DisclosureSection = disclosureSection$1;
+    exports.Dropdown = dropdown;
     exports.ListBox = ListBox;
     exports.ListBoxOption = ListBoxOption;
+    exports.Menu = menu;
+    exports.Menuitem = Menuitem;
     exports.Tab = Tab;
     exports.TabPanel = TabPanel;
     exports.TabSet = TabSet;
+    exports.ToggleButton = toggleButton$1;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

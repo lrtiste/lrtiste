@@ -108,16 +108,12 @@ export class ListBox extends HTMLElement {
 
     constructor() {
         super();
-        /**
-         * @type {ListBoxOption[]}
-         * @private
-         */
         this._optionElements = [];
         this.attachShadow({mode: 'open'});
         this.shadowRoot.appendChild(template.content.cloneNode(true));
         this._handleOptionChangeEvent = this._handleOptionChangeEvent.bind(this);
         this._handleKeydownEvent = this._handleKeydownEvent.bind(this);
-        this._handleOptionClick = this._handleOptionClick.bind(this);
+        this._handleOptionClickEvent = this._handleOptionClickEvent.bind(this);
     }
 
     /** @protected */
@@ -136,7 +132,7 @@ export class ListBox extends HTMLElement {
     }
 
     /** @private */
-    _handleOptionClick(ev) {
+    _handleOptionClickEvent(ev) {
         const {currentTarget: option} = ev;
         const index = this._optionElements.indexOf(option);
         if (index !== -1) {
@@ -155,7 +151,7 @@ export class ListBox extends HTMLElement {
             if (!opt.hasAttribute('id')) {
                 opt.setAttribute('id', generateRandomId());
             }
-            opt.addEventListener('click', this._handleOptionClick);
+            opt.addEventListener('click', this._handleOptionClickEvent);
         }
 
         this.selectedIndex = this._optionElements.findIndex(i => i.hasAttribute('selected'));

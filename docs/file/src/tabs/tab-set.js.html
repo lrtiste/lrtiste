@@ -29,7 +29,13 @@
 <nav class="navigation" data-ice="nav"><div>
   <ul>
     
-  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#common">common</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#common">common</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/activate-event.js~ActivateEvent.html">ActivateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/toggle-event.js~ToggleEvent.html">ToggleEvent</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#disclosure">disclosure</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-disclosureContainer">disclosureContainer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-disclosureSection">disclosureSection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-toggleButton">toggleButton</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#dropdown-menu">dropdown-menu</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/dropdown-menu/menuitem.js~Menuitem.html">Menuitem</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
 <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
 <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#tabs">tabs</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-panel.js~TabPanel.html">TabPanel</a></span></span></li>
@@ -84,6 +90,14 @@ template.innerHTML = `&lt;style&gt;:host{display: flex;flex-direction: column}::
  */
 export class TabSet extends HTMLElement {
 
+    constructor() {
+        super();
+        this.attachShadow({mode: &apos;open&apos;});
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        this._tabs = [];
+        this._tabpanels = [];
+    }
+
     /** @protected */
     static get observedAttributes() {
         return [&apos;selected-tab-index&apos;];
@@ -123,47 +137,29 @@ export class TabSet extends HTMLElement {
 
     /** @protected */
     attributeChangedCallback(name, oldValue, newValue) {
-        if (name === &apos;selected-tab-index&apos;) {
+        if (name === &apos;selected-tab-index&apos; &amp;&amp; oldValue !== newValue) {
             const tabs = this._tabs;
             tabs.forEach((tab, index) =&gt; {
                 const selected = index === Number(newValue);
                 tab.setAttribute(&apos;aria-selected&apos;, String(selected));
                 tab.setAttribute(&apos;tabindex&apos;, selected ? &apos;0&apos; : &apos;-1&apos;);
                 const tabpanel = this._tabpanels[index];
-                if (selected) {
-                    tabpanel.removeAttribute(&apos;hidden&apos;);
-                } else {
-                    tabpanel.setAttribute(&apos;hidden&apos;, &apos;&apos;);
-                }
+                tabpanel.hidden = !selected;
             });
 
             this.dispatchEvent(new ChangeEvent(this.selectedIndex));
         }
     }
 
-    constructor() {
-        super();
-        this.attachShadow({mode: &apos;open&apos;});
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
-        /** @private */
-        this._tabs = [];
-        /** @private */
-        this._tabpanels = [];
-        this._handleTabChangeEvent = this._handleTabChangeEvent.bind(this);
-        this._handleTabPanelChangeEvent = this._handleTabPanelChangeEvent.bind(this);
-        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);
-        this._handleClick = this._handleClick.bind(this);
-    }
-
     /** @protected */
     connectedCallback() {
         this.shadowRoot
             .querySelector(&apos;slot[name=tablist]&apos;)
-            .addEventListener(&apos;slotchange&apos;, this._handleTabChangeEvent);
+            .addEventListener(&apos;slotchange&apos;, this._handleTabChangeEvent.bind(this));
 
         this.shadowRoot
             .querySelector(&apos;slot[name=tabpanels]&apos;)
-            .addEventListener(&apos;slotchange&apos;, this._handleTabPanelChangeEvent);
+            .addEventListener(&apos;slotchange&apos;, this._handleTabPanelChangeEvent.bind(this));
     }
 
     /** @private */
@@ -179,8 +175,8 @@ export class TabSet extends HTMLElement {
                 tab.setAttribute(&apos;id&apos;, generateTabId());
             }
             this._tabs.push(tab);
-            tab.addEventListener(&apos;keydown&apos;, this._handleKeydownEvent);
-            tab.addEventListener(&apos;click&apos;, this._handleClick);
+            tab.addEventListener(&apos;keydown&apos;, this._handleKeydownEvent.bind(this));
+            tab.addEventListener(&apos;click&apos;, this._handleClick.bind(this));
         }
     }
 

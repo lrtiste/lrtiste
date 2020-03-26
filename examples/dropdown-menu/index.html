@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dropdown menu example</title>
+</head>
+<body>
+<style>
+
+    body {
+        box-sizing: border-box;
+    }
+
+    body * {
+        box-sizing: inherit;
+    }
+
+    *:focus {
+        outline: 1px dashed red;
+    }
+
+    ui-dropdown{
+        display: block;
+        position: relative;
+    }
+
+    ui-menu-button{
+        padding: 0.5em 1em;
+    }
+
+    ui-menu{
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        z-index: 9;
+        background: lightskyblue;
+    }
+
+    ui-menu:not([hidden]){
+        display: flex;
+        width: 200px;
+    }
+
+    ui-menuitem{
+        padding: 0.5em 1em;
+    }
+
+
+</style>
+<div>
+    <ui-dropdown id="menu">
+        <ui-menu-button>Actions</ui-menu-button>
+        <ui-menu hidden>
+            <ui-menuitem>action 1</ui-menuitem>
+            <ui-menuitem><span>action 1</span></ui-menuitem>
+            <ui-menuitem>action 3</ui-menuitem>
+        </ui-menu>
+    </ui-dropdown>
+
+    <button>bim</button>
+
+    <!--    <button onclick="document.getElementById('menu').openMenu()">open</button>-->
+    <!--    <button onclick="document.getElementById('menu').closeMenu()">close</button>-->
+</div>
+
+<script type="module">
+    import {Menu, Menuitem, Dropdown, ToggleButton} from '../../src/dropdown-menu/index.js';
+
+    customElements.define('ui-dropdown', Dropdown);
+    customElements.define('ui-menu-button', ToggleButton);
+    customElements.define('ui-menu', Menu);
+    customElements.define('ui-menuitem', Menuitem);
+
+    document
+        .querySelectorAll('ui-menuitem')
+        .forEach((item, index) => {
+            item.addEventListener('activate-item', () => {
+                console.log(`activate ${index}`);
+            });
+        });
+</script>
+</body>
+</html>

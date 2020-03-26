@@ -1,57 +1,98 @@
 {
-  "coverage": "80.35%",
-  "expectCount": 56,
-  "actualCount": 45,
+  "coverage": "71.64%",
+  "expectCount": 67,
+  "actualCount": 48,
   "files": {
+    "src/common/activate-event.js": {
+      "expectCount": 2,
+      "actualCount": 1,
+      "undocumentLines": [
+        5
+      ]
+    },
     "src/common/change-event.js": {
       "expectCount": 3,
       "actualCount": 3,
       "undocumentLines": []
     },
-    "src/common/utils.js": {
-      "expectCount": 2,
-      "actualCount": 2,
+    "src/common/toggle-event.js": {
+      "expectCount": 3,
+      "actualCount": 3,
       "undocumentLines": []
     },
+    "src/common/utils.js": {
+      "expectCount": 4,
+      "actualCount": 4,
+      "undocumentLines": []
+    },
+    "src/disclosure/disclosure.js": {
+      "expectCount": 2,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        5
+      ]
+    },
+    "src/disclosure/mixins.js": {
+      "expectCount": 3,
+      "actualCount": 0,
+      "undocumentLines": [
+        3,
+        21,
+        28
+      ]
+    },
+    "src/dropdown-menu/dropdown.js": {
+      "expectCount": 2,
+      "actualCount": 0,
+      "undocumentLines": [
+        4,
+        5
+      ]
+    },
+    "src/dropdown-menu/menuitem.js": {
+      "expectCount": 3,
+      "actualCount": 2,
+      "undocumentLines": [
+        30
+      ]
+    },
     "src/listbox/listbox-option.js": {
-      "expectCount": 7,
-      "actualCount": 7,
+      "expectCount": 5,
+      "actualCount": 5,
       "undocumentLines": []
     },
     "src/listbox/listbox.js": {
       "expectCount": 16,
-      "actualCount": 13,
+      "actualCount": 12,
       "undocumentLines": [
         4,
         6,
-        109
+        109,
+        111
       ]
     },
     "src/tabs/tab-panel.js": {
-      "expectCount": 5,
+      "expectCount": 3,
       "actualCount": 3,
-      "undocumentLines": [
-        1,
-        17
-      ]
+      "undocumentLines": []
     },
     "src/tabs/tab-set.js": {
       "expectCount": 18,
-      "actualCount": 14,
+      "actualCount": 12,
       "undocumentLines": [
         4,
         5,
         7,
-        102
+        45,
+        49,
+        50
       ]
     },
     "src/tabs/tab.js": {
-      "expectCount": 5,
+      "expectCount": 3,
       "actualCount": 3,
-      "undocumentLines": [
-        1,
-        17
-      ]
+      "undocumentLines": []
     }
   }
 }

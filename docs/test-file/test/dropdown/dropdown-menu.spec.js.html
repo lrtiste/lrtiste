@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">test/dropdown/dropdown-menu.spec.js | @citykleta/ui-kit</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  <script src="script/manual.js"></script>
+<meta name="description" content="web components for common widgets used across citykleta organization"><meta property="twitter:card" content="summary"><meta property="twitter:title" content="@citykleta/ui-kit"><meta property="twitter:description" content="web components for common widgets used across citykleta organization"></head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  <a href="test.html" data-ice="testLink">Test</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+<a style="position:relative; top:3px;" href="https://github.com/Citykleta/ui-kit"><img width="20px" src="./image/github.png"></a></header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#common">common</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/activate-event.js~ActivateEvent.html">ActivateEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/change-event.js~ChangeEvent.html">ChangeEvent</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/common/toggle-event.js~ToggleEvent.html">ToggleEvent</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#disclosure">disclosure</a><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-disclosureContainer">disclosureContainer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-disclosureSection">disclosureSection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-toggleButton">toggleButton</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#dropdown-menu">dropdown-menu</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/dropdown-menu/menuitem.js~Menuitem.html">Menuitem</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#listbox">listbox</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox-option.js~ListBoxOption.html">ListBoxOption</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/listbox/listbox.js~ListBox.html">ListBox</a></span></span></li>
+<li data-ice="doc"><a data-ice="dirPath" class="nav-dir-path" href="identifiers.html#tabs">tabs</a><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-panel.js~TabPanel.html">TabPanel</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab-set.js~TabSet.html">TabSet</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/tabs/tab.js~Tab.html">Tab</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">test/dropdown/dropdown-menu.spec.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">import {test} from &apos;zora&apos;;
+import {body, DROPDOWN_MENU_TAG_NAME, DROPDOWN_MENUITEM_TAG_NAME, wait} from &apos;../util.js&apos;;
+
+const TOGGLE_TIME = 110;
+
+const createMenu = () =&gt; {
+    const el = document.createElement(DROPDOWN_MENU_TAG_NAME);
+    el.innerHTML = `
+&lt;span slot=&quot;menu-button&quot;&gt;Menu Label&lt;/span&gt;
+&lt;${DROPDOWN_MENUITEM_TAG_NAME}&gt;&lt;span&gt;action 1&lt;/span&gt;&lt;/${DROPDOWN_MENUITEM_TAG_NAME}&gt;
+&lt;${DROPDOWN_MENUITEM_TAG_NAME} id=&quot;custom-id&quot;&gt;action 2&lt;/${DROPDOWN_MENUITEM_TAG_NAME}&gt;
+&lt;${DROPDOWN_MENUITEM_TAG_NAME}&gt;action 3&lt;/${DROPDOWN_MENUITEM_TAG_NAME}&gt;
+`;
+
+    const button = el.shadowRoot.getElementById(&apos;menu-button.js&apos;);
+    const menu = el.shadowRoot.getElementById(&apos;menu-content&apos;);
+
+    return {button, menu, el};
+};
+
+/**
+ * @test {DropdownMenu}
+ */
+test(`DropdownMenuComponent`, t =&gt; {
+    t.test(`Empty Dropdown is connected`, t =&gt; {
+        const el = document.createElement(DROPDOWN_MENU_TAG_NAME);
+        body.appendChild(el);
+
+        t.eq(el.length, 0);
+        t.eq(el.selectedIndex, -1);
+        t.eq(el.selectedItem, null);
+        t.notOk(el.open);
+
+        const menuButton = el.shadowRoot.getElementById(&apos;menu-button.js&apos;);
+        const menu = el.shadowRoot.getElementById(&apos;menu-content&apos;);
+        t.eq(menuButton.getAttribute(&apos;aria-haspopup&apos;), &apos;true&apos;);
+        t.eq(menuButton.getAttribute(&apos;aria-expanded&apos;), &apos;false&apos;);
+        t.eq(menuButton.getAttribute(&apos;aria-controls&apos;), &apos;menu-content&apos;);
+        t.eq(menuButton.textContent, &apos;Menu&apos;, &apos;&quot;Menu&quot; by default&apos;);
+        t.eq(menu.getAttribute(&apos;role&apos;), &apos;menu&apos;);
+        t.eq(menu.getAttribute(&apos;aria-labelledby&apos;), &apos;menu-button.js&apos;);
+        t.ok(menu.hasAttribute(&apos;hidden&apos;));
+    });
+
+    t.test(`toggle menu with attribute`, t =&gt; {
+        const {el, button, menu} = createMenu();
+        let eventArg;
+        body.appendChild(el);
+
+        el.addEventListener(&apos;toggle&apos;, ev =&gt; {
+            eventArg = ev.open;
+        });
+
+        el.setAttribute(&apos;open&apos;, &apos;&apos;);
+        t.eq(el.open, true);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+        t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+        t.eq(eventArg, true, &apos;should have triggered event&apos;);
+
+        el.removeAttribute(&apos;open&apos;);
+        t.eq(el.open, false);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;false&apos;);
+        t.ok(menu.hasAttribute(&apos;hidden&apos;));
+        t.eq(eventArg, false, &apos;should have triggered event&apos;);
+    });
+
+    /** @test{DropdownMenu#open} */
+    t.test(`toggle menu with property setter`, t =&gt; {
+        const {el, button, menu} = createMenu();
+        body.appendChild(el);
+
+        el.open = true;
+        t.eq(el.open, true);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+        t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+
+        el.open = false;
+        t.eq(el.open, false);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;false&apos;);
+        t.ok(menu.hasAttribute(&apos;hidden&apos;));
+    });
+
+    /** @test {DropdownMenuitem#toggleMenu} */
+    t.test(`toggle menu with &apos;toggleMenu&apos; method`, t =&gt; {
+        const {el, button, menu} = createMenu();
+        body.appendChild(el);
+
+        t.eq(el.open, false);
+
+        el.toggleMenu();
+
+        t.eq(el.open, true);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+        t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+
+        el.toggleMenu();
+
+        t.eq(el.open, false);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;false&apos;);
+        t.ok(menu.hasAttribute(&apos;hidden&apos;));
+    });
+
+    /** @test{DropdownMenu#openMenu} */
+    t.test(`open menu with &apos;openMenu&apos; method`, t =&gt; {
+
+        t.test(`with the first menuitem selected by default`, async t =&gt; {
+            const {el, button, menu} = createMenu();
+            body.appendChild(el);
+
+            // wait menuitem to trigger slot changed
+            await wait();
+
+            el.openMenu();
+            t.eq(el.open, true);
+            t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+            t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+            t.eq(el.selectedIndex, 0, &apos;should have selected the first item by default&apos;);
+        });
+
+        t.test(`with the last menuitem selected`, async t =&gt; {
+            const {el, button, menu} = createMenu();
+            body.appendChild(el);
+
+            // wait menuitem to trigger slot changed
+            await wait();
+            el.openMenu(true);
+            t.eq(el.open, true);
+            t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+            t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+            t.eq(el.selectedIndex, 2, &apos;should have selected the first item by default&apos;);
+        });
+    });
+
+    t.test(`open menu when clicking on menu button`, async t =&gt; {
+        const {el, button, menu} = createMenu();
+        body.appendChild(el);
+
+        // wait menuitem to trigger slot changed
+        await wait();
+
+        button.click();
+        t.eq(el.open, true);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+        t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+        t.eq(el.selectedIndex, 0, &apos;should have selected the first item by default&apos;);
+    });
+
+    t.test(`open menu with keyboard`, t =&gt; {
+
+        t.test(`pressing ArrowDown`, async t =&gt; {
+            const {el, button, menu} = createMenu();
+            body.appendChild(el);
+
+            // wait menuitem to trigger slot changed
+            await wait();
+
+            button.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;ArrowDown&apos;
+            }));
+
+            t.eq(el.open, true);
+            t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+            t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+            t.eq(el.selectedIndex, 0, &apos;should have selected the first item by default&apos;);
+        });
+
+        t.test(`pressing ArrowUp`, async t =&gt; {
+            const {el, button, menu} = createMenu();
+            body.appendChild(el);
+
+            // wait menuitem to trigger slot changed
+            await wait();
+
+            button.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;ArrowUp&apos;
+            }));
+
+            t.eq(el.open, true);
+            t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+            t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+            t.eq(el.selectedIndex, 2, &apos;should have selected the last item by default&apos;);
+        });
+    });
+
+    /** @test{DropdownMenu#closeMenu} */
+    t.test(`close menu with &apos;closeMenu&apos; method`, t =&gt; {
+        t.test(`when no focus flag`, async t =&gt; {
+            const {el, button, menu} = createMenu();
+            body.appendChild(el);
+
+            // wait menuitem to trigger slot changed
+            await wait();
+
+            el.openMenu();
+            t.eq(el.open, true);
+            t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+            t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+            t.eq(el.selectedIndex, 0, &apos;should have selected the first item by default&apos;);
+
+            el.closeMenu();
+            t.eq(el.open, false);
+            t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;false&apos;);
+            t.ok(menu.hasAttribute(&apos;hidden&apos;));
+            t.eq(el.selectedIndex, -1, &apos;should have unselected any item&apos;);
+        });
+
+        t.test(`when focus flag should focus toggle button`, async t =&gt; {
+            const {el, button, menu} = createMenu();
+            body.appendChild(el);
+
+            // wait menuitem to trigger slot changed
+            await wait();
+
+            el.openMenu();
+            t.eq(el.open, true);
+            t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+            t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+            t.eq(el.selectedIndex, 0, &apos;should have selected the first item by default&apos;);
+
+            el.closeMenu(true);
+            t.eq(el.open, false);
+            t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;false&apos;);
+            t.ok(menu.hasAttribute(&apos;hidden&apos;));
+            t.eq(el.selectedIndex, -1, &apos;should have unselected any item&apos;);
+        });
+    });
+
+    t.test(`close menu when clicking on menu button`, async t =&gt; {
+        const {el, button, menu} = createMenu();
+        body.appendChild(el);
+
+        // wait menuitem to trigger slot changed
+        await wait();
+
+        el.open = true;
+
+        t.eq(el.open, true);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+        t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+
+        button.click();
+
+        t.eq(el.open, false);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;false&apos;);
+        t.ok(menu.hasAttribute(&apos;hidden&apos;));
+    });
+
+    t.test(`close menu with keyboard`, async t =&gt; {
+        const {el, button, menu} = createMenu();
+        body.appendChild(el);
+
+        // wait menuitem to trigger slot changed
+        await wait();
+
+        el.open = true;
+
+        t.eq(el.open, true);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;true&apos;);
+        t.notOk(menu.hasAttribute(&apos;hidden&apos;));
+
+        menu.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+            key: &apos;Escape&apos;
+        }));
+
+        t.eq(el.open, false);
+        t.eq(button.getAttribute(&apos;aria-expanded&apos;), &apos;false&apos;);
+        t.ok(menu.hasAttribute(&apos;hidden&apos;));
+    });
+
+    t.test(`navigate between items with keyboard`, t =&gt; {
+
+        t.test(`going down`, async t =&gt; {
+            const {el, button, menu} = createMenu();
+            body.appendChild(el);
+
+            // wait menuitem to trigger slot changed
+            await wait();
+
+            el.openMenu();
+
+            t.eq(el.selectedIndex, 0);
+
+            const key = &apos;ArrowDown&apos;;
+            el.selectedItem.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key,
+                bubbles: true
+            }));
+
+            t.eq(el.selectedIndex, 1);
+
+            el.selectedItem.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: key,
+                bubbles: true
+            }));
+
+            t.eq(el.selectedIndex, 2);
+
+            el.selectedItem.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: key,
+                bubbles: true
+            }));
+
+            t.eq(el.selectedIndex, 0, &apos;should have gone back to first menu item&apos;);
+        });
+
+        t.test(`going up`, async t =&gt; {
+            const {el, button, menu} = createMenu();
+            body.appendChild(el);
+
+            // wait menuitem to trigger slot changed
+            await wait();
+
+            el.openMenu(true);
+
+            t.eq(el.selectedIndex, 2);
+
+            const key = &apos;ArrowUp&apos;;
+
+            el.selectedItem.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: key,
+                bubbles: true
+            }));
+
+            t.eq(el.selectedIndex, 1);
+
+            el.selectedItem.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: key,
+                bubbles: true
+            }));
+
+            t.eq(el.selectedIndex, 0);
+
+            el.selectedItem.dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: key,
+                bubbles: true
+            }));
+
+            t.eq(el.selectedIndex, 2, &apos;should have gone back to first menu item&apos;);
+        });
+
+    });
+
+    t.test(`activate item on click`, async t =&gt; {
+        const {el, button, menu} = createMenu();
+        const counters = [0, 0, 0];
+        body.appendChild(el);
+
+        // wait menuitem to trigger slot changed
+        await wait();
+
+        const items = [...el.querySelectorAll(DROPDOWN_MENUITEM_TAG_NAME)];
+
+        items.forEach((i, index) =&gt; i.addEventListener(&apos;activate-item&apos;, () =&gt; counters[index]++));
+
+        items[1].click();
+
+        t.eq(counters, [0, 1, 0]);
+    });
+
+    t.test(`activate item on keyboard`, t =&gt; {
+
+        t.test(`pressing Space`, async t =&gt; {
+            const {el, button, menu} = createMenu();
+            const counters = [0, 0, 0];
+            body.appendChild(el);
+
+            // wait menuitem to trigger slot changed
+            await wait();
+
+            const items = [...el.querySelectorAll(DROPDOWN_MENUITEM_TAG_NAME)];
+
+            items.forEach((i, index) =&gt; i.addEventListener(&apos;activate-item&apos;, () =&gt; counters[index]++));
+
+            el.selectedIndex = 0;
+
+            items[0].dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos; &apos;,
+                bubbles: true
+            }));
+
+            t.eq(counters, [1, 0, 0]);
+        });
+
+        t.test(`pressing Enter`, async t =&gt; {
+            const {el, button, menu} = createMenu();
+            const counters = [0, 0, 0];
+            body.appendChild(el);
+
+            // wait menuitem to trigger slot changed
+            await wait();
+
+            const items = [...el.querySelectorAll(DROPDOWN_MENUITEM_TAG_NAME)];
+
+            items.forEach((i, index) =&gt; i.addEventListener(&apos;activate-item&apos;, () =&gt; counters[index]++));
+
+            el.selectedIndex = 2;
+
+            items[2].dispatchEvent(new KeyboardEvent(&apos;keydown&apos;, {
+                key: &apos;Enter&apos;,
+                bubbles: true
+            }));
+
+            t.eq(counters, [0, 0, 1]);
+        });
+    });
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(1.1.0)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

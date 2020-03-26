@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Disclosure example</title>
+    <style>
+        ui-toggle {
+            display: inline-block;
+            padding: 0.5em 0.8em;
+            border: 2px solid gray;
+            outline: none;
+        }
+
+        ui-toggle:focus{
+            border-color: red;
+        }
+
+        ui-section:not([hidden]) {
+            display: block;
+            padding: 0.2em;
+        }
+
+        ui-toggle[aria-expanded=false] .closed{
+            display: none;
+        }
+
+        ui-toggle[aria-expanded=true] .open{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<header>
+<ui-disclosure>
+    <ui-toggle>Toggle <span class="open">open</span><span class="closed">close</span></ui-toggle>
+    <ui-section>Hello world</ui-section>
+</ui-disclosure>
+</header>
+
+</body>
+<script type="module">
+    import {ToggleButton, Disclosure, DisclosureSection} from '../../src/disclosure/index.js';
+
+    customElements.define('ui-disclosure', Disclosure);
+    customElements.define('ui-toggle', ToggleButton);
+    customElements.define('ui-section', DisclosureSection);
+
+</script>
+</html>

@@ -16,7 +16,7 @@ const wait = (time = 1000) => new Promise(resolve => {
         await wait(1000);
     } catch (e) {
         console.error(e);
-        process.exit(1);
+        process.exitCode = 1;
     } finally {
         browser.close();
     }

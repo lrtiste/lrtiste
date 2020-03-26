@@ -40,11 +40,15 @@
   "devDependencies": {
     "esdoc": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
+    "esm": "^3.2.25",
     "http-serve": "^1.0.1",
     "puppeteer": "^1.20.0",
-    "rollup": "^1.22.0",
+    "rollup": "^1.32.1",
     "rollup-plugin-node-resolve": "^5.2.0",
     "tap-set-exit": "^1.1.1",
-    "zora": "^3.0.3"
+    "zora": "^3.1.8"
+  },
+  "dependencies": {
+    "@lorenzofox3/for-await": "^0.2.1"
   }
 }

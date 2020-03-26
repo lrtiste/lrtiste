@@ -42,6 +42,14 @@ template.innerHTML = `<style>:host{display: flex;flex-direction: column}::slotte
  */
 export class TabSet extends HTMLElement {
 
+    constructor() {
+        super();
+        this.attachShadow({mode: 'open'});
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+        this._tabs = [];
+        this._tabpanels = [];
+    }
+
     /** @protected */
     static get observedAttributes() {
         return ['selected-tab-index'];
@@ -81,47 +89,29 @@ export class TabSet extends HTMLElement {
 
     /** @protected */
     attributeChangedCallback(name, oldValue, newValue) {
-        if (name === 'selected-tab-index') {
+        if (name === 'selected-tab-index' && oldValue !== newValue) {
             const tabs = this._tabs;
             tabs.forEach((tab, index) => {
                 const selected = index === Number(newValue);
                 tab.setAttribute('aria-selected', String(selected));
                 tab.setAttribute('tabindex', selected ? '0' : '-1');
                 const tabpanel = this._tabpanels[index];
-                if (selected) {
-                    tabpanel.removeAttribute('hidden');
-                } else {
-                    tabpanel.setAttribute('hidden', '');
-                }
+                tabpanel.hidden = !selected;
             });
 
             this.dispatchEvent(new ChangeEvent(this.selectedIndex));
         }
     }
 
-    constructor() {
-        super();
-        this.attachShadow({mode: 'open'});
-        this.shadowRoot.appendChild(template.content.cloneNode(true));
-        /** @private */
-        this._tabs = [];
-        /** @private */
-        this._tabpanels = [];
-        this._handleTabChangeEvent = this._handleTabChangeEvent.bind(this);
-        this._handleTabPanelChangeEvent = this._handleTabPanelChangeEvent.bind(this);
-        this._handleKeydownEvent = this._handleKeydownEvent.bind(this);
-        this._handleClick = this._handleClick.bind(this);
-    }
-
     /** @protected */
     connectedCallback() {
         this.shadowRoot
             .querySelector('slot[name=tablist]')
-            .addEventListener('slotchange', this._handleTabChangeEvent);
+            .addEventListener('slotchange', this._handleTabChangeEvent.bind(this));
 
         this.shadowRoot
             .querySelector('slot[name=tabpanels]')
-            .addEventListener('slotchange', this._handleTabPanelChangeEvent);
+            .addEventListener('slotchange', this._handleTabPanelChangeEvent.bind(this));
     }
 
     /** @private */
@@ -137,8 +127,8 @@ export class TabSet extends HTMLElement {
                 tab.setAttribute('id', generateTabId());
             }
             this._tabs.push(tab);
-            tab.addEventListener('keydown', this._handleKeydownEvent);
-            tab.addEventListener('click', this._handleClick);
+            tab.addEventListener('keydown', this._handleKeydownEvent.bind(this));
+            tab.addEventListener('click', this._handleClick.bind(this));
         }
     }
 
