@@ -1,17 +1,15 @@
 import node from 'rollup-plugin-node-resolve';
 
+import pkg from '../package.json';
+
 export default {
     input: './src/index.js',
     output: [{
-        file: './dist/citykleta-ui-kit.js',
+        file: `./dist/${pkg.name}.js`,
         format: 'es'
     }, {
-        file: './dist/index.mjs',
+        file: `./dist/${pkg.name}.mjs`,
         format: 'es'
-    }, {
-        file: './dist/index.js',
-        format: 'umd',
-        name: 'CitykletaUI'
     }],
     plugins: [node()]
 };

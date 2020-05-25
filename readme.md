@@ -1,6 +1,6 @@
 [![CircleCI](https://badgen.net/circleci/github/Citykleta/ui-kit)](https://circleci.com/gh/Citykleta/ui-kit)
 
-# Citykleta UI-Kit
+# lrtiste
 
 Common widgets built with native **web components** (no extra lib or framework) and with **accessibility** in mind. Based on the 
 [wai-aria authoring recommendations](https://www.w3.org/TR/wai-aria-practices/#combobox)
@@ -9,7 +9,7 @@ Common widgets built with native **web components** (no extra lib or framework) 
 
 ### Installation
 
-``npm install --save @citykleta/ui-kit``
+``npm install --save lritste``
 
 ### Getting Started
 

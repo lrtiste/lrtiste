@@ -599,6 +599,9 @@ const disclosureContainer = mixin({
 const generateToggleId = generateRandomId('toggle');
 const generateSectionId = generateRandomId('section');
 
+/**
+ * @class Dropdown
+ */
 var dropdown = disclosureContainer(class Dropdown extends HTMLElement {
 
     get preventClose() {
